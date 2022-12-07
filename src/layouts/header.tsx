@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Box, Icon, IconButton, Modal, Typography } from '@mui/material';
+import { Avatar, Box, Button, Divider, IconButton, Modal } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { Indicator, LOGO } from 'src/config/images';
@@ -10,12 +10,18 @@ import { useStore } from 'src/context/StoreContext';
 import CustomizedMenus from 'src/components/Dropdown';
 import { NotificationsNone, Person, Dehaze, Search, Close } from '@mui/icons-material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
+import { useAccount, useDisconnect } from 'wagmi';
+import { CustomConnectButton } from 'src/components/CustomConnectButton';
+import { LanguageList } from 'src/components/List/Language';
+import { CurrencyList } from 'src/components/List/Currency';
+import { NavList } from 'src/components/List/NavList';
+import { AccountSetting } from 'src/components/List/AccountSetting';
 export const Header = () => {
   const { page, setPage } = useStore();
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const handleOpen = () => setModalOpen(true);
-  const handleClose = () => setModalOpen(false);
+
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
@@ -25,10 +31,11 @@ export const Header = () => {
     position: 'absolute',
     top: '0',
     left: '0',
-    width: 324,
+    width: 340,
+    maxHeight: '100vh',
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 2
+    overflow: 'auto'
   };
 
   return (
@@ -55,7 +62,7 @@ export const Header = () => {
                   <CustomTab label={<Discord />} {...a11yProps(3)} />
                 </Tabs>
               </TabContainer>
-              <MobileTab onClick={handleOpen}>
+              <MobileTab onClick={() => setModalOpen(true)}>
                 <Dehaze />
               </MobileTab>
               <Actions>
@@ -81,7 +88,7 @@ export const Header = () => {
               <IconButton aria-label="alarm" component="label">
                 <NotificationsNone />
               </IconButton>
-              <IconButton aria-label="alarm" component="label" onClick={handleOpen}>
+              <IconButton aria-label="alarm" component="label" onClick={() => setModalOpen(true)}>
                 <Dehaze />
               </IconButton>
             </MobileActiveBar>
@@ -91,14 +98,34 @@ export const Header = () => {
       <Modal
         keepMounted
         open={isModalOpen}
-        onClose={handleClose}
+        onClose={() => setModalOpen(false)}
         aria-labelledby="keep-mounted-modal-title"
         aria-describedby="keep-mounted-modal-description"
       >
         <Box sx={style}>
-          <IconButton>
-            <Close />
-          </IconButton>
+          <ModalContainer>
+            <IconButton sx={{ width: 40, height: 40 }} onClick={() => setModalOpen(false)}>
+              <Close />
+            </IconButton>
+            <WalletButtons>
+              {isConnected ? (
+                <>
+                  <ContAddy>
+                    {address?.slice(0, 4)}...{address?.slice(-4)}
+                  </ContAddy>
+                  <Disconnect onClick={() => disconnect()}>Disconnect wallet</Disconnect>{' '}
+                </>
+              ) : (
+                <CustomConnectButton />
+              )}
+            </WalletButtons>
+          </ModalContainer>
+          <LanguageList />
+          <CurrencyList />
+          <Divider />
+          <NavList />
+          <Divider />
+          <AccountSetting />
         </Box>
       </Modal>
     </>
@@ -193,4 +220,32 @@ const MobileActiveBar = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center'
   }
+}));
+
+const WalletButtons = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between'
+}));
+
+const ContAddy = styled(Button)(({ theme }) => ({
+  borderRadius: '10px',
+  border: '1px solid #3772FF',
+  backgroundColor: 'none',
+  textTransform: 'none',
+  padding: '5px 20px 5px 20px'
+}));
+
+const Disconnect = styled(Button)(({ theme }) => ({
+  border: '1px solid #EB5757',
+  borderRadius: '10px',
+  color: '#EB5757',
+  textTransform: 'none',
+  padding: '5px 20px 5px 20px'
+}));
+
+const ModalContainer = styled(Box)(({ theme }) => ({
+  padding: '1rem 1.5rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem'
 }));
