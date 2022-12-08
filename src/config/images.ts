@@ -8,6 +8,7 @@ import TradeSvg from '../assets/icons/trade.svg';
 import MetamaskSvg from '../assets/icons/metamask.svg';
 import CopySvg from '../assets/icons/copy.svg';
 import ExpandSvg from '../assets/icons/expand.svg';
+import GasStationSvg from '../assets/icons/gas-station.svg';
 
 export {
   LOGO,
@@ -19,5 +20,6 @@ export {
   TradeSvg,
   MetamaskSvg,
   CopySvg,
-  ExpandSvg
+  ExpandSvg,
+  GasStationSvg
 };

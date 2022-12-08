@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 
 import { PUBLIC_ROUTES } from './config/routes';
 

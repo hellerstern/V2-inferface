@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Box, Button, Divider, IconButton, Modal } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
-import { Indicator, LOGO } from 'src/config/images';
+import { GasStationSvg, Indicator, LOGO } from 'src/config/images';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { a11yProps } from 'src/components/TabPanel';
@@ -16,12 +16,19 @@ import { LanguageList } from 'src/components/List/Language';
 import { CurrencyList } from 'src/components/List/Currency';
 import { NavList } from 'src/components/List/NavList';
 import { AccountSetting } from 'src/components/List/AccountSetting';
+import { useNavigate } from 'react-router-dom';
+// import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
+  const navigate = useNavigate();
   const { page, setPage } = useStore();
   const [isModalOpen, setModalOpen] = React.useState(false);
 
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
+
+  // React.useEffect(() => {
+  //   console.log('shell-balance: ', getShellBalance());
+  // }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
@@ -43,7 +50,7 @@ export const Header = () => {
       <HeaderContainer>
         <Container>
           <ContainerWrapper>
-            <TigrisLogo>
+            <TigrisLogo onClick={() => navigate('/')}>
               <Img src={LOGO} alt="tigris-logo" />
             </TigrisLogo>
             <ActiveBar>
@@ -70,6 +77,10 @@ export const Header = () => {
                 <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
                   <NotificationsNone />
                 </IconButton>
+                <ShellButton>
+                  <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
+                  <GasAmount>0.000 ETH</GasAmount>
+                </ShellButton>
                 <ConnectButton
                   showBalance={{
                     smallScreen: false,
@@ -88,6 +99,7 @@ export const Header = () => {
               <IconButton aria-label="alarm" component="label">
                 <NotificationsNone />
               </IconButton>
+
               <IconButton aria-label="alarm" component="label" onClick={() => setModalOpen(true)}>
                 <Dehaze />
               </IconButton>
@@ -119,6 +131,10 @@ export const Header = () => {
                 <CustomConnectButton />
               )}
             </WalletButtons>
+            <MobileShellButton>
+              <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
+              <GasAmount>0.000 ETH</GasAmount>
+            </MobileShellButton>
           </ModalContainer>
           <LanguageList />
           <CurrencyList />
@@ -161,14 +177,15 @@ const ContainerWrapper = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   height: '100%',
   justifyContent: 'inherit',
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('tablet')]: {
     justifyContent: 'space-between'
   }
 }));
 
 const TigrisLogo = styled(Box)({
   width: '200px',
-  height: 'auto'
+  height: 'auto',
+  cursor: 'pointer'
 });
 
 const Img = styled('img')({
@@ -182,7 +199,7 @@ const ActiveBar = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   width: '100%',
   height: '100%',
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('tablet')]: {
     display: 'none'
   }
 }));
@@ -216,10 +233,34 @@ const Actions = styled(Box)({
 
 const MobileActiveBar = styled(Box)(({ theme }) => ({
   display: 'none',
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('tablet')]: {
     display: 'flex',
     alignItems: 'center'
   }
+}));
+
+const ShellButton = styled(Button)(({ theme }) => ({
+  border: '1px solid #FFFFFF',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: 9,
+  marginRight: '12px'
+}));
+
+const MobileShellButton = styled(Button)(({ theme }) => ({
+  border: '1px solid #FFFFFF',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px'
+}));
+
+const GasAmount = styled(Box)(({ theme }) => ({
+  fontWeight: '500',
+  fontSize: '15px',
+  lineHeight: '14px'
 }));
 
 const WalletButtons = styled(Box)(({ theme }) => ({

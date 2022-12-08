@@ -10,7 +10,12 @@ export const CustomConnectButton = () => {
         // can remove all 'authenticationStatus' checks
         const isReady = mounted && authenticationStatus !== 'loading';
         const hasConnected =
-          isReady && account && chain && (!authenticationStatus || authenticationStatus === 'authenticated');
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+          isReady &&
+          account != null &&
+          chain != null &&
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+          (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <Box
             {...(!isReady && {
@@ -30,7 +35,7 @@ export const CustomConnectButton = () => {
                   </CustomButton>
                 );
               }
-              if (chain.unsupported) {
+              if (chain.unsupported ?? false) {
                 return (
                   <CustomButton onClick={openChainModal} type="button">
                     Wrong network
@@ -55,7 +60,7 @@ export const CustomConnectButton = () => {
                           marginRight: 4
                         }}
                       >
-                        {chain.iconUrl && (
+                        {chain.iconUrl != null && (
                           <img alt={chain.name ?? 'Chain icon'} src={chain.iconUrl} style={{ width: 12, height: 12 }} />
                         )}
                       </Box>
@@ -64,7 +69,7 @@ export const CustomConnectButton = () => {
                   </CustomButton>
                   <CustomButton onClick={openAccountModal} type="button">
                     {account.displayName}
-                    {account.displayBalance ? ` (${account.displayBalance})` : ''}
+                    {account.displayBalance != null ? ` (${account.displayBalance})` : ''}
                   </CustomButton>
                 </Box>
               );

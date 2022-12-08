@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings } from '@mui/icons-material';
-import { Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { CopySvg, ExpandSvg, MetamaskSvg } from 'src/config/images';
 import { styled } from '@mui/system';
 import { useAccount } from 'wagmi';

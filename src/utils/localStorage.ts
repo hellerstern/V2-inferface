@@ -42,7 +42,7 @@ export function localStorageSet(name: string, value: any) {
  */
 export function localStorageDelete(name: string) {
   // console.log(`localStorageDelete(${name})`);
-  if (name) {
+  if (name.length > 0) {
     localStorage.removeItem(name);
   } else {
     localStorage.clear();

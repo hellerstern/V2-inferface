@@ -5,11 +5,6 @@ import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
-interface CustomizedMenusProps {
-  title: string;
-  arr: object;
-}
-
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}

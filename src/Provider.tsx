@@ -17,6 +17,18 @@ declare module '@mui/material/styles' {
       danger: string;
     };
   }
+
+  interface BreakpointOverrides {
+    xs: true; // removes the `xs` breakpoint
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+    mobile: true; // adds the `mobile` breakpoint
+    tablet: true;
+    laptop: true;
+    desktop: true;
+  }
   // allow configuration using `createTheme`
   interface CustomThemeOptions extends ThemeOptions {
     status?: {
@@ -101,11 +113,12 @@ const LIGHT_THEME = {
 const DARK_THEME: any = {
   breakpoints: {
     values: {
-      xs: 390,
+      xs: 450,
       sm: 540,
-      md: 768,
+      md: 840,
       lg: 1024,
-      xl: 1366
+      xl: 1480,
+      tablet: 920
     }
   },
   palette: {

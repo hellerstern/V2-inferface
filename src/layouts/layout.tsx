@@ -1,10 +1,8 @@
-import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 
 import { Header } from './header';
 import { Footer } from './footer';
 import { Container } from 'src/components/Container';
-
 interface LayoutProps {
   children: React.ReactNode;
 }

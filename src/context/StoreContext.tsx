@@ -44,7 +44,7 @@ export default StoreProvider;
 
 export const useStore = () => {
   const context = useContext(StoreContext);
-  if (!context) {
+  if (context === null) {
     throw new Error("can't find context");
   }
   return context;
