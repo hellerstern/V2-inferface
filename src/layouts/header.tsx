@@ -65,7 +65,7 @@ export const Header = () => {
                   <CustomTab label="Vault" {...a11yProps(1)} />
                   <CustomTab label="Governance" {...a11yProps(2)} />
                   <CustomTab label="Referral" {...a11yProps(3)} />
-                  <CustomTab label="Documentation" {...a11yProps(3)} />
+                  <CustomTab label="Docs" {...a11yProps(3)} />
                   <CustomTab label={<Discord />} {...a11yProps(3)} />
                 </Tabs>
               </TabContainer>
