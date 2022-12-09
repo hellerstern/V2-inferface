@@ -3,7 +3,7 @@ import React from 'react';
 import { VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { NavigateNext, NavigateBefore } from '@mui/icons-material';
 
-function Arrow({
+function ArrowRight({
   children,
   disabled,
   onClick
@@ -19,20 +19,54 @@ function Arrow({
       style={{
         cursor: 'pointer',
         display: 'flex',
+        position: 'absolute',
         flexDirection: 'column',
         justifyContent: 'center',
-        right: '1%',
-        opacity: disabled ? '0' : '1',
+        opacity: disabled ? '0' : '0.6',
         userSelect: 'none',
-        background: '#2B2F3A',
-        borderRadius: '5px',
+        background: 'none',
         border: 'none',
         color: '#FFFFFF',
         minWidth: '30px',
         minHeight: '30px',
         alignItems: 'center',
-        marginLeft: '10px',
-        marginRight: '10px'
+        zIndex: '1000',
+        right: '1%'
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ArrowLeft({
+  children,
+  disabled,
+  onClick
+}: {
+  children: React.ReactNode;
+  disabled: boolean;
+  onClick: VoidFunction;
+}) {
+  return (
+    <button
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        cursor: 'pointer',
+        display: 'flex',
+        position: 'absolute',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        opacity: disabled ? '0' : '0.8',
+        userSelect: 'none',
+        background: 'none',
+        border: 'none',
+        color: '#FFFFFF',
+        minWidth: '30px',
+        minHeight: '30px',
+        alignItems: 'center',
+        zIndex: '1000'
       }}
     >
       {children}
@@ -55,9 +89,10 @@ export function LeftArrow() {
   console.log('initComplete: ', initComplete);
 
   return (
-    <Arrow disabled={isDisabled} onClick={() => scrollPrev()}>
+    visibleElements.length > 10 ? <></> :
+    <ArrowLeft disabled={isDisabled} onClick={() => scrollPrev()}>
       <NavigateBefore />
-    </Arrow>
+    </ArrowLeft>
   );
 }
 
@@ -73,8 +108,9 @@ export function RightArrow() {
   }, [isLastItemVisible, visibleElements]);
 
   return (
-    <Arrow disabled={isDisabled} onClick={() => scrollNext()}>
+    visibleElements.length > 10 ? <></> :
+    <ArrowRight disabled={isDisabled} onClick={() => scrollNext()}>
       <NavigateNext />
-    </Arrow>
+    </ArrowRight>
   );
 }
