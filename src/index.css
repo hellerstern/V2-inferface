@@ -6,6 +6,10 @@
 * font-family: 'Source Sans Pro', sans-serif;  // clean font
 */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
 
@@ -30,4 +34,18 @@ button {
 .MuiButton-endIcon {
   margin-top: -1px;
   margin-left: 4px !important;
+}
+
+/* chrome and chromium based */
+.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.react-horizontal-scrolling-menu--scroll-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+::-webkit-scrollbar {
+  display: none;
 }

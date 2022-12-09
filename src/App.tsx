@@ -8,6 +8,8 @@ import { Layout } from './layouts/layout';
 
 import { Home } from './pages/home';
 
+import './App.css';
+
 function App() {
   return (
     <Suspense fallback={<>Loading</>}>

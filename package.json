@@ -2,7 +2,7 @@
   "name": "tigris-landing",
   "version": "0.1.0",
   "author": {
-    "name": "Cool709"
+    "name": "Tolmany"
   },
   "private": true,
   "dependencies": {
@@ -27,11 +27,13 @@
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-horizontal-scrolling-menu": "^3.2.3",
     "react-icons": "^4.6.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.6",
     "react-toastify": "9.0.3",
+    "swiper": "^8.4.5",
     "typescript": "*",
     "universal-cookie": "^4.0.4",
     "wagmi": "0.7.15",

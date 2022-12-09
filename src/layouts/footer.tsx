@@ -7,28 +7,30 @@ import { GasStationSvg } from 'src/config/images';
 export const Footer = () => {
   return (
     <FooterContainer>
-      <FooterWrapper>
-        <FooterInfo>
-          <TextCoin>
-            <BsFillCheckCircleFill color={'#58BD7D'} />
-            <Text>BTC/USDT</Text>
-          </TextCoin>
-          <SmallText>Server time: 10-02 10:36:42 UTC</SmallText>
-          <GasFee>
-            <img src={GasStationSvg} alt="gas-station" style={{ width: '12px', height: '12px' }} />
-            <SmallText>Gas fee: 2.22%</SmallText>
-          </GasFee>
-        </FooterInfo>
-        <Line />
-        <FooterNav>
-          <NavLinks>
-            <SmallText>Discord</SmallText>
-            <SmallText>Twitter</SmallText>
-            <SmallText>Telegram</SmallText>
-          </NavLinks>
-          <SmallText>© 2022. All rights reserved</SmallText>
-        </FooterNav>
-      </FooterWrapper>
+      <Container>
+        <FooterWrapper>
+          <FooterInfo>
+            <TextCoin>
+              <BsFillCheckCircleFill color={'#58BD7D'} />
+              <Text>BTC/USDT</Text>
+            </TextCoin>
+            <SmallText>Server time: 10-02 10:36:42 UTC</SmallText>
+            <GasFee>
+              <img src={GasStationSvg} alt="gas-station" style={{ width: '12px', height: '12px' }} />
+              <SmallText>Gas fee: 2.22%</SmallText>
+            </GasFee>
+          </FooterInfo>
+          <Line />
+          <FooterNav>
+            <NavLinks>
+              <SmallText>Discord</SmallText>
+              <SmallText>Twitter</SmallText>
+              <SmallText>Telegram</SmallText>
+            </NavLinks>
+            <SmallText>© 2022. All rights reserved</SmallText>
+          </FooterNav>
+        </FooterWrapper>
+      </Container>
     </FooterContainer>
   );
 };
@@ -36,7 +38,7 @@ export const Footer = () => {
 const FooterContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'center',
   minHeight: '50px',
   backgroundColor: '#18191D',
   alignItems: 'center'
@@ -48,6 +50,7 @@ const FooterWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  maxWidth: '1440px',
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column'
   }
@@ -58,8 +61,6 @@ const FooterInfo = styled(Box)(({ theme }) => ({
   gap: '2rem',
   minHeight: '50px',
   alignItems: 'center',
-  marginLeft: '2%',
-  marginRight: '2%',
   [theme.breakpoints.down('md')]: {
     justifyContent: 'space-between'
   },
@@ -77,7 +78,10 @@ const TextCoin = styled(Box)(({ theme }) => ({
 const Text = styled(Box)(({ theme }) => ({
   fontWeight: '500',
   fontSize: '12px',
-  lineHeight: '20px'
+  lineHeight: '20px',
+  [theme.breakpoints.down('xs')]: {
+    fontSize: '10px'
+  }
 }));
 
 const SmallText = styled(Box)(({ theme }) => ({
@@ -85,7 +89,10 @@ const SmallText = styled(Box)(({ theme }) => ({
   fontWeight: '400',
   fontSize: '12px',
   lineHeight: '20px',
-  textAlign: 'center'
+  textAlign: 'center',
+  [theme.breakpoints.down('xs')]: {
+    fontSize: '10px'
+  }
 }));
 
 const GasFee = styled(Box)(({ theme }) => ({

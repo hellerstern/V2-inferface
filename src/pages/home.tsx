@@ -1,3 +1,4 @@
+import { Trade } from 'src/components/page-elements/Trade';
 import { TabPanel } from 'src/components/TabPanel';
 import { useStore } from 'src/context/StoreContext';
 
@@ -6,7 +7,7 @@ export const Home = () => {
   return (
     <>
       <TabPanel value={page} index={0}>
-        Trade
+        <Trade />
       </TabPanel>
       <TabPanel value={page} index={1}>
         Vault

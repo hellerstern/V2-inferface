@@ -113,7 +113,7 @@ const LIGHT_THEME = {
 const DARK_THEME: any = {
   breakpoints: {
     values: {
-      xs: 450,
+      xs: 451,
       sm: 540,
       md: 840,
       lg: 1024,

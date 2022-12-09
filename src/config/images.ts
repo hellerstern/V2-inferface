@@ -10,6 +10,9 @@ import CopySvg from '../assets/icons/copy.svg';
 import ExpandSvg from '../assets/icons/expand.svg';
 import GasStationSvg from '../assets/icons/gas-station.svg';
 
+// Coins & Tokens
+import BtcImg from '../assets/images/btc.png';
+
 export {
   LOGO,
   Indicator,
@@ -21,5 +24,6 @@ export {
   MetamaskSvg,
   CopySvg,
   ExpandSvg,
-  GasStationSvg
+  GasStationSvg,
+  BtcImg
 };
