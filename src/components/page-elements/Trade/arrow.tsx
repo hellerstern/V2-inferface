@@ -89,7 +89,6 @@ export function LeftArrow() {
   console.log('initComplete: ', initComplete);
 
   return (
-    visibleElements.length > 10 ? <></> :
     <ArrowLeft disabled={isDisabled} onClick={() => scrollPrev()}>
       <NavigateBefore />
     </ArrowLeft>
@@ -108,7 +107,6 @@ export function RightArrow() {
   }, [isLastItemVisible, visibleElements]);
 
   return (
-    visibleElements.length > 10 ? <></> :
     <ArrowRight disabled={isDisabled} onClick={() => scrollNext()}>
       <NavigateNext />
     </ArrowRight>
