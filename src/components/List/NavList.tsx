@@ -31,12 +31,6 @@ export const NavList = () => {
         </ListItemIcon>
         <ListItemText primary={'Referral'} />
       </ListItemButton>
-      <ListItemButton sx={{ paddingX: '1.5rem' }} onClick={() => setPage(4)}>
-        <ListItemIcon sx={{ minWidth: 30 }}>
-          <Img src={DocumentSvg} alt="documentation-svg" />
-        </ListItemIcon>
-        <ListItemText primary={'Documentation'} />
-      </ListItemButton>
       <ListItemButton sx={{ paddingX: '1.5rem' }}>
         <ListItemText primary={<Discord />} />
       </ListItemButton>
