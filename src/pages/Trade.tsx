@@ -4,20 +4,20 @@ import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { TokenDetails } from 'src/components/page-elements/TokenDetails';
 import { TradingDetailsTable } from 'src/components/TradingDetailsTable';
-// import TradingChart from 'src/components/TradingChart/TradingChart';
+import TradingChart from 'src/components/TradingChart/TradingChart';
 
 export const Trade = () => {
-  // const [cAsset, setAsset] = React.useState(0);
-  // const [pendingChartLine, setPendingChartLine] = React.useState(0);
-  // const [prices, setPrices] = React.useState([]);
+  const [cAsset, setAsset] = React.useState(0);
+  const [pendingChartLine, setPendingChartLine] = React.useState(0);
+  const [prices, setPrices] = React.useState([]);
   return (
     <TradeContainer>
       <TokenDetails />
       <Container>
         <TradingForm>
           <TradingChartSection>
-            {/* <TradingChart asset={cAsset} prices={prices} pendingLine={pendingChartLine} /> */}
-            Trading Chart
+            <TradingChart asset={cAsset} prices={prices} pendingLine={pendingChartLine} />
+            {/* Trading Chart */}
           </TradingChartSection>
           <TradingDetailsTable />
         </TradingForm>
@@ -42,7 +42,7 @@ const TradingForm = styled(Box)(({ theme }) => ({
 }));
 
 const TradingChartSection = styled(Box)({
-  backgroundColor: 'gray',
+  // backgroundColor: 'gray',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
