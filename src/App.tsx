@@ -1,12 +1,11 @@
 import { Suspense } from 'react';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
-
 import { PUBLIC_ROUTES } from './config/routes';
 
 import { AppThemeProvider } from './Provider';
 import { Layout } from './layouts/layout';
 
-import { Home } from './pages/home';
+import { Home } from './pages';
 
 import './App.css';
 

@@ -14,13 +14,13 @@ body {
   margin: 0;
 
   /* base font */
-  font-family: 'DM Sans';
-  font-size: 12px;
+  font-family: 'DM Sans' !important;
+  font-size: 12px !important;
   color: #ffffff;
 }
 
 button {
-  font-family: 'DM Sans';
+  font-family: 'DM Sans' !important;
 
   padding: 0;
   margin: 0;
