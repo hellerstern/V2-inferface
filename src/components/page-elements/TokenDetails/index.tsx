@@ -52,7 +52,7 @@ export const TokenDetails = () => {
               <img src={BtcImg} alt="btc-img" />
               <span className="token-name">BTC/USDT</span>
               <Box className="multi-value">
-                <span>20X</span>
+                <span>100X</span>
               </Box>
             </Tokens>
             <AiFillStar />
@@ -142,14 +142,15 @@ const Tokens = styled(Box)(({ theme }) => ({
   '.multi-value': {
     border: '1px solid #3772FF',
     borderRadius: '4px',
-    width: '30px',
     height: '20px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     span: {
+      marginLeft: '4px',
+      marginRight: '4px',
       fontWeight: '700',
-      fontSize: '12px',
+      fontSize: '11px',
       lineHeight: '9px',
       background: 'linear-gradient(180deg, #D737FF 0%, #3772FF 100%)',
       backgroundClip: 'text',
