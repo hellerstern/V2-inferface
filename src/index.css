@@ -8,6 +8,7 @@
 
 * {
   box-sizing: border-box;
+  font-family: 'DM Sans' !important;
 }
 
 body {
@@ -15,13 +16,11 @@ body {
   padding: 0;
   /* base font */
   font-family: 'DM Sans' !important;
-  font-size: 12px !important;
   color: #ffffff;
 }
 
 button {
   font-family: 'DM Sans' !important;
-
   padding: 0;
   margin: 0;
 }
@@ -34,6 +33,11 @@ button {
 .MuiButton-endIcon {
   margin-top: -1px;
   margin-left: 4px !important;
+}
+
+.MuiTableCell-root {
+  padding: 8px !important;
+  border-bottom: none !important;
 }
 
 /* chrome and chromium based */

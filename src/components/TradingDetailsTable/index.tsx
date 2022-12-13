@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 import { SearchBar } from '../SearchBar';
 import { a11yProps, TabPanel } from '../TabPanel';
 import { Star } from '@mui/icons-material';
+import { USDPairsTable } from './USDPairsTable';
 
 export const TradingDetailsTable = () => {
   const [value, setValue] = React.useState(0);
@@ -13,7 +14,9 @@ export const TradingDetailsTable = () => {
   return (
     <TradingDetailContainer>
       <SearchContainer>
-        <SearchBar />
+        <Box sx={{ padding: '15px 9px 0 9px' }}>
+          <SearchBar />
+        </Box>
         <TabsContainer sx={{ borderColor: 'divider' }}>
           <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
           <Tabs
@@ -30,7 +33,7 @@ export const TradingDetailsTable = () => {
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          USD pairs
+          <USDPairsTable />
         </TabPanel>
         <TabPanel value={value} index={1}>
           BTC pairs
@@ -58,14 +61,15 @@ const TradingDetailContainer = styled(Box)(({ theme }) => ({
 }));
 
 const SearchContainer = styled(Box)({
-  padding: '15px 9px'
+  // padding: '15px 9px'
 });
 
 const TabsContainer = styled(Box)({
   borderBottom: '1px solid gray',
   display: 'flex',
   alignItems: 'center',
-  marginTop: '15px'
+  marginTop: '15px',
+  padding: '0 9px'
 });
 
 const CustomTab = styled(Tab)({

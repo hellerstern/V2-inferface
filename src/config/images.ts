@@ -9,6 +9,11 @@ import MetamaskSvg from '../assets/icons/metamask.svg';
 import CopySvg from '../assets/icons/copy.svg';
 import ExpandSvg from '../assets/icons/expand.svg';
 import GasStationSvg from '../assets/icons/gas-station.svg';
+import BitcoinSvg from '../assets/images/CoinImage/BitcoinLogo.svg';
+import EtherLogoSvg from '../assets/images/CoinImage/EtherLogo.svg';
+import LunaLogoSvg from '../assets/images/CoinImage/LunaLogo.svg';
+import MinexLogo from '../assets/images/CoinImage/MinexLogo.svg';
+import XrpLogoSvg from '../assets/images/CoinImage/XrpLogo.svg';
 
 // Coins & Tokens
 import BtcImg from '../assets/images/btc.png';
@@ -25,5 +30,10 @@ export {
   CopySvg,
   ExpandSvg,
   GasStationSvg,
-  BtcImg
+  BtcImg,
+  BitcoinSvg,
+  EtherLogoSvg,
+  LunaLogoSvg,
+  MinexLogo,
+  XrpLogoSvg
 };
