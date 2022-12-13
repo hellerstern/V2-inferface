@@ -12,12 +12,12 @@ export const Footer = () => {
           <FooterInfo>
             <TextCoin>
               <BsFillCheckCircleFill color={'#58BD7D'} />
-              <Text>BTC/USDT</Text>
+              <Text>Oracle Connection</Text>
             </TextCoin>
             <SmallText>Server time: 10-02 10:36:42 UTC</SmallText>
             <GasFee>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '12px', height: '12px' }} />
-              <SmallText>Gas fee: 2.22%</SmallText>
+              <SmallText>Gas fee: 0.1 Gwei</SmallText>
             </GasFee>
           </FooterInfo>
           <Line />
@@ -41,7 +41,8 @@ const FooterContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   minHeight: '50px',
   backgroundColor: '#18191D',
-  alignItems: 'center'
+  alignItems: 'center',
+  marginTop: '5px'
 }));
 
 const FooterWrapper = styled(Box)(({ theme }) => ({

@@ -47,10 +47,10 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 		studies_overrides: {},
 		theme: 'Dark',
 		overrides: {
-			"paneProperties.background": "#101418",
+			"paneProperties.background": "#17191D",
 			 "paneProperties.backgroundType": "solid",
 		},
-		toolbar_bg: '#101418'
+		toolbar_bg: '#17191D'
 	};
 	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
 	

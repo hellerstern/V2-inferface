@@ -13,17 +13,16 @@ import { LeftArrow, RightArrow } from './arrow';
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 const INFOS: any = [
-  { name: 'Price', value: '$44,44k', label: '' },
-  { name: 'Daily Change', value: '+2.22%', label: '', active: true },
-  { name: '24h Volume', value: '$300,000.0', label: '' },
-  { name: 'Avg. 1h Funding Rate', value: '0.0006% (4.96%)', label: '' },
-  { name: 'Open Interest', value: '1.234.45 BTC', label: '' },
-  { name: 'Long Funding Fee', value: '0,456472% Per Hour', label: '' },
-  { name: 'Short Funding Fee', value: '0,456472% Per Hour', label: '' },
-  { name: 'Opening', value: '0% ($0.00)', label: '' },
-  { name: 'Closing', value: '0.6% ($0.00)', label: '' },
+  { name: 'Price', value: '$17139.02', label: '' },
+  { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
+  { name: '24h Volume', value: '$230,050.00', label: '' },
   { name: 'Long Open interest', value: '0/ ', label: 'Unlimited' },
-  { name: 'Short Open interest', value: '0/ ', label: 'Unlimited' }
+  { name: 'Short Open interest', value: '0/ ', label: 'Unlimited' },
+  { name: 'Opening Fee', value: '0.10%', label: ' ($0.50)' },
+  { name: 'Closing Fee', value: '0.10%', label: '' },
+  { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
+  { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
+  { name: 'Price spread', value: '0.04%', label: '' }
 ];
 
 export const TokenDetails = () => {
@@ -52,7 +51,7 @@ export const TokenDetails = () => {
               <img src={BtcImg} alt="btc-img" />
               <span className="token-name">BTC/USDT</span>
               <Box className="multi-value">
-                <span>20X</span>
+                <span>100X</span>
               </Box>
             </Tokens>
             <AiFillStar />
@@ -62,7 +61,7 @@ export const TokenDetails = () => {
               {INFOS.map((item: any, index: number) => (
                 <Box className="index-info" key={index}>
                   <p className="title">{item.name}</p>
-                  <p className="value" style={{ color: item.active === true ? '#6FCF97' : '#E5E3EC' }}>
+                  <p className="value" style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}>
                     {item.value}
                     <span>{item.label}</span>
                   </p>
@@ -74,7 +73,7 @@ export const TokenDetails = () => {
             {INFOS.map((item: any, index: number) => (
               <Box className="index-info" key={index}>
                 <p className="title">{item.name}</p>
-                <p className="value" style={{ color: item.active === true ? '#6FCF97' : '#E5E3EC' }}>
+                <p className="value" style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}>
                   {item.value}
                   <span>{item.label}</span>
                 </p>
@@ -142,14 +141,15 @@ const Tokens = styled(Box)(({ theme }) => ({
   '.multi-value': {
     border: '1px solid #3772FF',
     borderRadius: '4px',
-    width: '30px',
     height: '20px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     span: {
+      marginLeft: '4px',
+      marginRight: '4px',
       fontWeight: '700',
-      fontSize: '12px',
+      fontSize: '11px',
       lineHeight: '9px',
       background: 'linear-gradient(180deg, #D737FF 0%, #3772FF 100%)',
       backgroundClip: 'text',
