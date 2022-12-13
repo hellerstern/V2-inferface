@@ -48,5 +48,6 @@ const TradingChartSection = styled(Box)({
   alignItems: 'center',
   fontSize: '30px',
   width: '100%',
-  minHeight: '560px'
+  minHeight: '560px',
+  height: '560px'
 });
