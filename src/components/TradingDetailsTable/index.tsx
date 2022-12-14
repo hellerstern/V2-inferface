@@ -32,7 +32,7 @@ export const TradingDetailsTable = () => {
             <CustomTab label="USD Pairs" {...a11yProps(0)} />
             <CustomTab label="BTC pairs" {...a11yProps(1)} />
             <CustomTab label="Forex" {...a11yProps(2)} />
-            <CustomTab label="commodities" {...a11yProps(3)} />
+            <CustomTab label="Commodities" {...a11yProps(3)} />
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>

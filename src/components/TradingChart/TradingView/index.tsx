@@ -55,13 +55,38 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
 	
 	useEffect(() => {
-		setTVWidget(new widget(widgetOptions));
+		localStorage.setItem("LastPairSelected", asset);
+		let _widget = new widget(widgetOptions);
+		setTVWidget(_widget);
+		_widget.onChartReady(() => {
+			if (localStorage.getItem("StoredChart" + asset)) {
+				_widget.load(JSON.parse(localStorage.getItem("StoredChart" + asset) as string));
+			} else {
+				_widget.save((data) => {
+					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+				});			
+			}
+			_widget.subscribe("drawing_event", () => {
+				_widget.save((data) => {
+					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+				});
+			})
+			_widget.subscribe("study_event", () => {
+				_widget.save((data) => {
+					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+				});
+			})
+		});
 	}, []);
 
 	useEffect(() => {
+		localStorage.setItem("LastPairSelected", asset);
 		try {
 			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => {});
 			tvWidget?.chart().removeAllShapes();
+			tvWidget?.save((data) => {
+				localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+			});
 		} catch {
 			setTVWidget(new widget(widgetOptions));
 		}

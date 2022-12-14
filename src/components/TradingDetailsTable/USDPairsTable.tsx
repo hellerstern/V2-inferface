@@ -48,12 +48,12 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 
 const rows = [
   createData(
-    <PairField favor={true} icon={MinexLogo} name={'BTC/USDT'} />,
+    <PairField favor={true} icon={BitcoinSvg} name={'BTC/USD'} />,
     17810,
     <Benefit percent={0.63} value={110} />
   ),
   createData(
-    <PairField favor={false} icon={BitcoinSvg} name={'BTC/USDT'} />,
+    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USD'} />,
     846,
     <Benefit percent={-6.62} value={-60.0} />
   ),
