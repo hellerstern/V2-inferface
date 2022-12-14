@@ -1,15 +1,1 @@
-<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_278_3526)">
-<path d="M5.7382 0L5.62891 0.364612V10.9439L5.7382 11.051L10.7383 8.14822L5.7382 0Z" fill="#343434"/>
-<path d="M5.73699 0L0.736816 8.14822L5.73699 11.051V5.91608V0Z" fill="#8C8C8C"/>
-<path d="M5.73836 11.9811L5.67676 12.0549V15.8234L5.73836 16L10.7415 9.0799L5.73836 11.9811Z" fill="#3C3C3B"/>
-<path d="M5.73699 16V11.9811L0.736816 9.0799L5.73699 16Z" fill="#8C8C8C"/>
-<path d="M5.74023 11.0508L10.7403 8.14803L5.74023 5.91589V11.0508Z" fill="#141414"/>
-<path d="M0.736816 8.14803L5.73699 11.0508V5.91589L0.736816 8.14803Z" fill="#393939"/>
-</g>
-<defs>
-<clipPath id="clip0_278_3526">
-<rect width="11.2" height="16" fill="white" transform="translate(0.445312)"/>
-</clipPath>
-</defs>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16.29 16"><defs><style>.cls-1{fill:none;}.cls-2{clip-path:url(#clippath);}.cls-3{fill:#8c8c8c;}.cls-4{fill:#141414;}.cls-5{fill:#393939;}.cls-6{fill:#3c3c3b;}.cls-7{fill:#343434;}</style><clipPath id="clippath"><rect class="cls-1" x="2.82" width="11.2" height="16"/></clipPath></defs><g class="cls-2"><g><path class="cls-7" d="M8.12,0l-.11,.36V10.94l.11,.11,5-2.9L8.12,0Z"/><path class="cls-3" d="M8.12,0L3.12,8.15l5,2.9V0Z"/><path class="cls-6" d="M8.12,11.98l-.06,.07v3.77l.06,.18,5-6.92-5,2.9Z"/><path class="cls-3" d="M8.12,16v-4.02l-5-2.9,5,6.92Z"/><path class="cls-4" d="M8.12,11.05l5-2.9-5-2.23v5.13Z"/><path class="cls-5" d="M3.12,8.15l5,2.9V5.92l-5,2.23Z"/></g></g></svg>

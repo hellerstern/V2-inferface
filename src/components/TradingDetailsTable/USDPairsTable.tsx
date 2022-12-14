@@ -26,7 +26,7 @@ const PairField = ({ favor, icon, name }: PairFieldProps) => {
         <StarBorder sx={{ width: '20px', height: '20px' }} />
       )}
       <IconBox>
-        <Avatar src={icon} sx={{ width: 15, height: 15 }} />
+        <Avatar src={icon} sx={{ width: 20, height: 20 }} />
       </IconBox>
       <CoinName>{name}</CoinName>
     </PairFieldContainer>
