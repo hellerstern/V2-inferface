@@ -86,31 +86,44 @@ const rows = [
     <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
     3465,
     <Benefit percent={6.62} value={60.0} />
+  ),
+  createData(
+    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />
   )
 ];
 
 export const USDPairsTable = () => {
   return (
-    <Table aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          <TableCell sx={{ color: '#777E90' }}>Pair</TableCell>
-          <TableCell sx={{ color: '#777E90' }}>Current Price</TableCell>
-          <TableCell align="center" sx={{ color: '#777E90' }}>
-            24h
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((row, index) => (
-          <CustomTableRow key={index}>
-            <TableCell>{row.pair}</TableCell>
-            <TableCell align="center">{row.price}</TableCell>
-            <TableCell align="center">{row.profit}</TableCell>
-          </CustomTableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: '#777E90', width: '150px' }}>Pair</TableCell>
+            <TableCell sx={{ color: '#777E90', width: '125px' }}>Current Price</TableCell>
+            <TableCell align="center" sx={{ color: '#777E90' }}>
+              24h
+            </TableCell>
+          </TableRow>
+        </TableHead>
+      </Table>
+      <TbodyContainer>
+        <Table sx={{ tableLayout: 'fixed' }}>
+          <TableBody>
+            {rows.map((row, index) => (
+              <CustomTableRow key={index}>
+                <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
+                <TableCell align="center" sx={{ width: '125px' }}>
+                  {row.price}
+                </TableCell>
+                <TableCell align="center">{row.profit}</TableCell>
+              </CustomTableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TbodyContainer>
+    </>
   );
 };
 
@@ -147,3 +160,8 @@ const BenefitContainer = styled(Box)({
 const CustomTableRow = styled(TableRow)({
   '&:hover': { backgroundColor: '#1E1F25' }
 });
+
+const TbodyContainer = styled(Box)(({ theme }) => ({
+  height: '426.5px',
+  overflowY: 'auto'
+}));

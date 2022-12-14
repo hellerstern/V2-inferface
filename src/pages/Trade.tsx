@@ -17,7 +17,6 @@ export const Trade = () => {
         <TradingForm>
           <TradingChartSection>
             <TradingChart asset={cAsset} prices={prices} pendingLine={pendingChartLine} />
-            {/* Trading Chart */}
           </TradingChartSection>
           <TradingDetailsTable />
         </TradingForm>
@@ -41,13 +40,14 @@ const TradingForm = styled(Box)(({ theme }) => ({
   }
 }));
 
-const TradingChartSection = styled(Box)({
+const TradingChartSection = styled(Box)(({ theme }) => ({
   // backgroundColor: 'gray',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   fontSize: '30px',
   width: '100%',
-  minHeight: '560px',
-  height: '560px'
-});
+  [theme.breakpoints.down('lg')]: {
+    height: '580px'
+  }
+}));
