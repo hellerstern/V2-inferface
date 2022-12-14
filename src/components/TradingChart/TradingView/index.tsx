@@ -48,7 +48,7 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 		theme: 'Dark',
 		overrides: {
 			"paneProperties.background": "#17191D",
-			 "paneProperties.backgroundType": "solid",
+			"paneProperties.backgroundType": "solid",
 		},
 		toolbar_bg: '#17191D'
 	};
@@ -59,20 +59,12 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	}, []);
 
 	useEffect(() => {
-		// try {
-		// 	let visibleRange = tvWidget?.activeChart().getVisibleRange();
-		// 	if (visibleRange != null) {
-		// 		let newWidget: IChartingLibraryWidget = new widget(widgetOptions);
-		// 		newWidget.onChartReady(() => {
-		// 			if (visibleRange != null) {
-		// 				newWidget.activeChart().setVisibleRange(visibleRange);
-		// 				setTVWidget(newWidget);
-		// 			}
-		// 		});
-		// 	}			
-		// } catch {
+		try {
+			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => {});
+			tvWidget?.chart().removeAllShapes();
+		} catch {
 			setTVWidget(new widget(widgetOptions));
-		//}
+		}
 
 	}, [asset]);
 
@@ -81,9 +73,8 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 			tvWidget?.chart().removeAllShapes();
 			return;
 		}
-
-		tvWidget?.chart().createShape({price: pendingLine, time: 0}, {shape: "horizontal_line", text: "Opening price"});
-    }, [pendingLine]);
+		tvWidget?.chart().createShape({price: pendingLine, time: 0}, {shape: "horizontal_line", text: "Opening price"});	
+	}, [pendingLine]);
 
 	return (
 		<div
@@ -93,4 +84,4 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	);
 	
 }
-
+export default TVChartContainer;
