@@ -66,16 +66,11 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
 				});			
 			}
-			_widget.subscribe("drawing_event", () => {
+			setInterval(() => {
 				_widget.save((data) => {
 					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});
-			})
-			_widget.subscribe("study_event", () => {
-				_widget.save((data) => {
-					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});
-			})
+				});	
+			}, 5000);
 		});
 	}, []);
 
