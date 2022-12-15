@@ -2,7 +2,7 @@ import { ErrorOutline, Visibility } from '@mui/icons-material';
 import { Box, Button, Slider } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
-import { TigrisInput } from '../Input';
+import { TigrisInput, TigrisSlider } from '../Input';
 
 export const TradingOrderForm = () => {
   const [isLong, setLong] = useState(true);
@@ -12,51 +12,6 @@ export const TradingOrderForm = () => {
   const [leverage, setLeverage] = useState(2);
   const [margin, setMargin] = useState(500);
   const [profit, setProfit] = useState(500);
-
-  const TigrisSlider = styled(Slider)(({ theme }) => ({
-    color: theme.palette.mode === 'dark' ? '#6513E2' : '#6513E2',
-    height: 2,
-    padding: '15px 0',
-    '& .MuiSlider-thumb': {
-      height: 16,
-      width: 16,
-      backgroundColor: '#fff'
-    },
-    '& .MuiSlider-valueLabel': {
-      fontSize: 14,
-      fontWeight: 'normal',
-      top: -6,
-      backgroundColor: 'rgba(0,0,0,0.3)',
-      color: theme.palette.text.primary,
-      '&:before': {
-        display: 'none'
-      },
-      '& *': {
-        background: 'transparent',
-        color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-      }
-    },
-    '& .MuiSlider-markLabel': {
-      fontSize: '11px'
-    },
-    '& .MuiSlider-track': {
-      border: 'none',
-      backgroundImage: "linear-gradient(.25turn, #910ABC, #0249DD)"
-    },
-    '& .MuiSlider-rail': {
-      opacity: 1,
-      backgroundColor: '#353945'
-    },
-    '& .MuiSlider-mark': {
-      backgroundColor: '#bfbfbf',
-      height: 8,
-      width: 1,
-      '&.MuiSlider-markActive': {
-        opacity: 1,
-        backgroundColor: '#bfbfbf'
-      }
-    }
-  }));
 
   return (
     <Container>
@@ -113,7 +68,7 @@ export const TradingOrderForm = () => {
                 }
               ]
           } min={2} max={100} />
-          <TigrisSlider defaultValue={5} aria-label="Default" valueLabelDisplay="auto" marks={[{value: 5, label: "5"},{value: 100, label: "10000"}]} min={5} step={0.01} max={100}
+          <TigrisSlider defaultValue={Math.sqrt(5)} aria-label="Default" valueLabelDisplay="auto" marks={[{value: Math.sqrt(5), label: "5"},{value: 100, label: "10000"}]} min={Math.sqrt(5)} step={0.01} max={100}
             scale={(value) => Math.round(
               parseInt((Math.ceil(value**2 / 100) * 100).toString()) % 1000 === 0 ? parseInt((Math.ceil(value**2 / 100) * 100).toString()) : value**2
             )}

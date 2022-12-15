@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Slider } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState, useEffect, useRef } from 'react';
 
@@ -12,6 +12,51 @@ interface InputProps {
 interface containerProps {
   visited: boolean;
 }
+
+export const TigrisSlider = styled(Slider)(({ theme }) => ({
+  color: theme.palette.mode === 'dark' ? '#6513E2' : '#6513E2',
+  height: 2,
+  padding: '15px 0',
+  '& .MuiSlider-thumb': {
+    height: 16,
+    width: 16,
+    backgroundColor: '#fff'
+  },
+  '& .MuiSlider-valueLabel': {
+    fontSize: 14,
+    fontWeight: 'normal',
+    top: -6,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    color: theme.palette.text.primary,
+    '&:before': {
+      display: 'none'
+    },
+    '& *': {
+      background: 'transparent',
+      color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+    }
+  },
+  '& .MuiSlider-markLabel': {
+    fontSize: '11px'
+  },
+  '& .MuiSlider-track': {
+    border: 'none',
+    backgroundImage: "linear-gradient(.25turn, #910ABC, #0249DD)"
+  },
+  '& .MuiSlider-rail': {
+    opacity: 1,
+    backgroundColor: '#353945'
+  },
+  '& .MuiSlider-mark': {
+    backgroundColor: '#bfbfbf',
+    height: 8,
+    width: 1,
+    '&.MuiSlider-markActive': {
+      opacity: 1,
+      backgroundColor: '#bfbfbf'
+    }
+  }
+}));
 
 export const TigrisInput = (props: InputProps) => {
   const { label, value, unit, setValue } = props;
