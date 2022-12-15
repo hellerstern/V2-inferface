@@ -6,12 +6,58 @@ import { TigrisInput } from '../Input';
 
 export const TradingOrderForm = () => {
   const [isLong, setLong] = useState(true);
-  const [posSize, setPosSize] = useState(700);
+  const [posSize, setPosSize] = useState(1000);
   const [stopLoss, setStopLoss] = useState(150);
-  const [price, setPrice] = useState(19.594825);
-  const [leverage, setLeverage] = useState(20);
-  const [margin, setMargin] = useState(5);
-  const [profit, setProfit] = useState(54738942);
+  const [price, setPrice] = useState(18312.43);
+  const [leverage, setLeverage] = useState(2);
+  const [margin, setMargin] = useState(500);
+  const [profit, setProfit] = useState(500);
+
+  const TigrisSlider = styled(Slider)(({ theme }) => ({
+    color: theme.palette.mode === 'dark' ? '#6513E2' : '#6513E2',
+    height: 2,
+    padding: '15px 0',
+    '& .MuiSlider-thumb': {
+      height: 16,
+      width: 16,
+      backgroundColor: '#fff'
+    },
+    '& .MuiSlider-valueLabel': {
+      fontSize: 14,
+      fontWeight: 'normal',
+      top: -6,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      color: theme.palette.text.primary,
+      '&:before': {
+        display: 'none'
+      },
+      '& *': {
+        background: 'transparent',
+        color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+      }
+    },
+    '& .MuiSlider-markLabel': {
+      fontSize: '11px'
+    },
+    '& .MuiSlider-track': {
+      border: 'none',
+      backgroundImage: "linear-gradient(.25turn, #910ABC, #0249DD)"
+    },
+    '& .MuiSlider-rail': {
+      opacity: 1,
+      backgroundColor: '#353945'
+    },
+    '& .MuiSlider-mark': {
+      backgroundColor: '#bfbfbf',
+      height: 8,
+      width: 1,
+      '&.MuiSlider-markActive': {
+        opacity: 1,
+        backgroundColor: '#bfbfbf'
+      }
+    }
+  }));
+
   return (
     <Container>
       <FormLabel>Order Form</FormLabel>
@@ -39,16 +85,53 @@ export const TradingOrderForm = () => {
           </ShortButton>
         </FormAction>
         <FormArea>
-          <TigrisInput label="Position Size" value={posSize} setValue={setPosSize} />
-          <TigrisInput label="Liq price ($)" value={price} setValue={setPrice} />
+          <TigrisInput label="Trade size" value={posSize} setValue={setPosSize} />
+          <TigrisInput label="Liq price" value={price} setValue={setPrice} />
           <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
-          <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
-          <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
-          <TigrisInput label="Stop Loss" value={stopLoss} setValue={setStopLoss} unit="%" />
+          <TigrisSlider defaultValue={2} aria-label="Default" valueLabelDisplay="auto" marks={
+              [
+                {
+                  value: 2,
+                  label: "2"
+                },
+                {
+                  value: 25,
+                  label: "25"
+                },
+                {
+                  value: 50,
+                  label: "50"
+                },
+                {
+                  value: 75,
+                  label: "75"
+                },
+                {
+                  value: 100,
+                  label: "100"
+                }
+              ]
+          } min={2} max={100} />
+          <TigrisSlider defaultValue={5} aria-label="Default" valueLabelDisplay="auto" marks={[{value: 5, label: "5"},{value: 100, label: "10000"}]} min={5} step={0.01} max={100}
+            scale={(value) => Math.round(
+              parseInt((Math.ceil(value**2 / 100) * 100).toString()) % 1000 === 0 ? parseInt((Math.ceil(value**2 / 100) * 100).toString()) : value**2
+            )}
+          />
+          <TigrisInput label="Stop Loss" value={stopLoss} setValue={setStopLoss} />
           <TigrisInput label="Take profit" value={profit} setValue={setProfit} />
-          <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
-          <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
+          <TigrisSlider defaultValue={0} aria-label="Default" valueLabelDisplay="auto" min={0} step={1} max={90} scale={(value) => -value} marks={
+            [
+              {value: 0, label: "0"},
+              {value: 90, label: "-90"}
+            ]
+          }/>
+          <TigrisSlider defaultValue={500} aria-label="Default" valueLabelDisplay="auto" min={0} step={1} max={500} marks={
+            [
+              {value: 0, label: "0"},
+              {value: 500, label: "500"}
+            ]
+          }/>
           <AssetBalance>
             Asset balance <Visibility fontSize="small" />{' '}
           </AssetBalance>
@@ -97,7 +180,7 @@ const FormContainer = styled(Box)(({ theme }) => ({
   height: '100%',
   backgroundColor: '#18191D',
   marginTop: '7px',
-  padding: '20px 13px'
+  padding: '20px 20px'
 }));
 
 const FormAction = styled(Box)(({ theme }) => ({
