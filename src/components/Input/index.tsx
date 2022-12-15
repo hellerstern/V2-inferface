@@ -43,13 +43,13 @@ export const TigrisInput = (props: InputProps) => {
           ref={valueRef}
           onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value)}
         />
-        <InputUnit>{unit}</InputUnit>
+        <Box>{unit}</Box>
       </InputArea>
     </InputContainer>
   );
 };
 
-const InputContainer = styled(Box)<containerProps>(({ visited }) => ({
+const InputContainer = styled(Box)<containerProps>(({ visited, theme }) => ({
   width: '100%',
   height: '36px',
   backgroundColor: '#222630',
@@ -58,19 +58,16 @@ const InputContainer = styled(Box)<containerProps>(({ visited }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  border: visited ? '1px solid #3772FF' : '1px solid #222630'
+  border: visited ? '1px solid #3772FF' : '1px solid #222630',
+  [theme.breakpoints.down('xs')]: {
+    padding: '8px'
+  }
 }));
 
 const InputLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   color: '#777E90',
-  fontWeight: 400,
-  [theme.breakpoints.down('xs')]: {
-    fontSize: '10px'
-  },
-  [theme.breakpoints.down(390)]: {
-    fontSize: '8px'
-  }
+  fontWeight: 400
 }));
 
 const InputArea = styled(Box)(({ theme }) => ({
@@ -90,20 +87,11 @@ const InputValue = styled('input')<containerProps>(({ visited, theme }) => ({
   border: 'none',
   color: visited ? '#FFFFFF' : 'rgba(255, 255, 255, 0.16)',
   letterSpacing: '0.05em',
-  [theme.breakpoints.down('xs')]: {
-    fontSize: '10px'
-  },
-  [theme.breakpoints.down(390)]: {
-    fontSize: '8px',
-    width: '40px'
-  }
-}));
 
-const InputUnit = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('xs')]: {
-    fontSize: '10px'
-  },
   [theme.breakpoints.down(390)]: {
-    fontSize: '8px'
+    width: '50px'
+  },
+  [theme.breakpoints.down(350)]: {
+    width: '40px'
   }
 }));
