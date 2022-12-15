@@ -12,7 +12,7 @@ type Props = {
 
 const TradingChart = ({ asset, prices, pendingLine }: Props) => {
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '560px' }}>
       <TVChartContainer asset={asset} pendingLine={pendingLine} />
     </div>
   );

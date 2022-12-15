@@ -55,6 +55,9 @@ const TradingDetailContainer = styled(Box)(({ theme }) => ({
   height: '100%',
   minHeight: '560px',
   backgroundColor: '#18191D',
+  [theme.breakpoints.down('desktop')]: {
+    order: 2
+  },
   [theme.breakpoints.down('md')]: {
     display: 'none'
   }

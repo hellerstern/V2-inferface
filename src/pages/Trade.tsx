@@ -5,6 +5,8 @@ import { Container } from 'src/components/Container';
 import { TokenDetails } from 'src/components/page-elements/TokenDetails';
 import { TradingDetailsTable } from 'src/components/TradingDetailsTable';
 import TradingChart from 'src/components/TradingChart/TradingChart';
+import { TradingOrderForm } from 'src/components/TradingOrderForm';
+import { TradingPositionTable } from 'src/components/TradingPositionTable';
 
 export const Trade = () => {
   const [cAsset, setAsset] = React.useState(0);
@@ -15,10 +17,12 @@ export const Trade = () => {
       <TokenDetails />
       <Container>
         <TradingForm>
-          <TradingChartSection>
+          <TradingSection>
             <TradingChart asset={cAsset} prices={prices} pendingLine={pendingChartLine} />
-          </TradingChartSection>
+          </TradingSection>
           <TradingDetailsTable />
+          <TradingPositionTable />
+          <TradingOrderForm />
         </TradingForm>
       </Container>
     </TradeContainer>
@@ -33,21 +37,19 @@ const TradeContainer = styled(Box)({
 const TradingForm = styled(Box)(({ theme }) => ({
   width: '100%',
   marginTop: '14px',
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: '3fr 1fr',
   gap: '5px',
-  [theme.breakpoints.down('lg')]: {
-    flexDirection: 'column'
+  [theme.breakpoints.down('desktop')]: {
+    gridTemplateColumns: '1fr 3fr'
   }
 }));
 
-const TradingChartSection = styled(Box)(({ theme }) => ({
+const TradingSection = styled(Box)(({ theme }) => ({
   // backgroundColor: 'gray',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  fontSize: '30px',
   width: '100%',
-  [theme.breakpoints.down('lg')]: {
-    height: '580px'
+  [theme.breakpoints.down('desktop')]: {
+    gridColumn: '1 / 3',
+    order: 1
   }
 }));

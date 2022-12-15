@@ -61,7 +61,10 @@ export const TokenDetails = () => {
               {INFOS.map((item: any, index: number) => (
                 <Box className="index-info" key={index}>
                   <p className="title">{item.name}</p>
-                  <p className="value" style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}>
+                  <p
+                    className="value"
+                    style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
+                  >
                     {item.value}
                     <span>{item.label}</span>
                   </p>
@@ -73,7 +76,10 @@ export const TokenDetails = () => {
             {INFOS.map((item: any, index: number) => (
               <Box className="index-info" key={index}>
                 <p className="title">{item.name}</p>
-                <p className="value" style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}>
+                <p
+                  className="value"
+                  style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
+                >
                   {item.value}
                   <span>{item.label}</span>
                 </p>
@@ -99,7 +105,6 @@ const TradeWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  width: '1440px',
   maxWidth: '1440px',
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',

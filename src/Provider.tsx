@@ -118,7 +118,8 @@ const DARK_THEME: any = {
       md: 840,
       lg: 1024,
       xl: 1480,
-      tablet: 920
+      tablet: 920,
+      desktop: 1280
     }
   },
   palette: {

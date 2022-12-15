@@ -162,6 +162,6 @@ const CustomTableRow = styled(TableRow)({
 });
 
 const TbodyContainer = styled(Box)(({ theme }) => ({
-  height: '426.5px',
+  height: '400px',
   overflowY: 'auto'
 }));
