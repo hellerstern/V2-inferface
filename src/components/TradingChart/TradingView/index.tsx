@@ -16,8 +16,8 @@ import { getNetwork } from '../../../constants/networks/index';
 
 
 export interface ChartContainerProps {
-	asset:any;
-	pendingLine:any;
+	asset: any;
+	pendingLine: any;
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -26,7 +26,7 @@ function getLanguageFromURL(): LanguageCode | null {
 	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode;
 }
 
-export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
+export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) => {
 
 	const widgetOptions: ChartingLibraryWidgetOptions = {
 		symbol: getNetwork(0).assets[asset].name as string,
@@ -37,7 +37,7 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 		library_path: '/charting_library/' as string,
 
 		locale: getLanguageFromURL() || 'en',
-		disabled_features: ['use_localstorage_for_settings','header_symbol_search','header_compare'],
+		disabled_features: ['use_localstorage_for_settings', 'header_symbol_search', 'header_compare'],
 		enabled_features: ['study_template'],
 		charts_storage_api_version: '1.1',
 		client_id: 'tradingview.com',
@@ -52,10 +52,10 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 		},
 		custom_css_url: "css/style.css",
 		toolbar_bg: '#17191D',
-		loading_screen: { backgroundColor: "#000000" }
+		loading_screen: { backgroundColor: "#17191D" }
 	};
 	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
-	
+
 	useEffect(() => {
 		localStorage.setItem("LastPairSelected", asset);
 		let _widget = new widget(widgetOptions);
@@ -66,12 +66,12 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 			} else {
 				_widget.save((data) => {
 					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});			
+				});
 			}
 			setInterval(() => {
 				_widget.save((data) => {
 					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});	
+				});
 			}, 5000);
 		});
 	}, []);
@@ -79,7 +79,7 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	useEffect(() => {
 		localStorage.setItem("LastPairSelected", asset);
 		try {
-			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => {});
+			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => { });
 			tvWidget?.chart().removeAllShapes();
 			tvWidget?.save((data) => {
 				localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
@@ -91,19 +91,19 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	}, [asset]);
 
 	useEffect(() => {
-		if(pendingLine == 0) {
+		if (pendingLine == 0) {
 			tvWidget?.chart().removeAllShapes();
 			return;
 		}
-		tvWidget?.chart().createShape({price: pendingLine, time: 0}, {shape: "horizontal_line", text: "Opening price"});	
+		tvWidget?.chart().createShape({ price: pendingLine, time: 0 }, { shape: "horizontal_line", text: "Opening price" });
 	}, [pendingLine]);
 
 	return (
 		<div
-			className={ 'TVChartContainer' }
+			className={'TVChartContainer'}
 			id={'tv_chart_container'}
 		/>
 	);
-	
+
 }
 export default TVChartContainer;
