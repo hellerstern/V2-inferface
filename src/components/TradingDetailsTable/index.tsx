@@ -5,6 +5,9 @@ import { SearchBar } from '../SearchBar';
 import { a11yProps, TabPanel } from '../TabPanel';
 import { Star } from '@mui/icons-material';
 import { USDPairsTable } from './USDPairsTable';
+import { BTCPairsTable } from './BTCPairsTable';
+import { ForexPairsTable } from './ForexPairsTable';
+import { CommodityPairsTable } from './CommodityPairsTable';
 
 export const TradingDetailsTable = () => {
   const [value, setValue] = React.useState(0);
@@ -29,20 +32,20 @@ export const TradingDetailsTable = () => {
             <CustomTab label="USD Pairs" {...a11yProps(0)} />
             <CustomTab label="BTC pairs" {...a11yProps(1)} />
             <CustomTab label="Forex" {...a11yProps(2)} />
-            <CustomTab label="commodities" {...a11yProps(3)} />
+            <CustomTab label="Commodities" {...a11yProps(3)} />
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
           <USDPairsTable />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          BTC pairs
+          <BTCPairsTable />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Forex
+          <ForexPairsTable />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          Commodities
+          <CommodityPairsTable />
         </TabPanel>
       </SearchContainer>
     </TradingDetailContainer>

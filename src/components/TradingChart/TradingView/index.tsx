@@ -48,31 +48,43 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 		theme: 'Dark',
 		overrides: {
 			"paneProperties.background": "#17191D",
-			 "paneProperties.backgroundType": "solid",
+			"paneProperties.backgroundType": "solid",
 		},
 		toolbar_bg: '#17191D'
 	};
 	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
 	
 	useEffect(() => {
-		setTVWidget(new widget(widgetOptions));
+		localStorage.setItem("LastPairSelected", asset);
+		let _widget = new widget(widgetOptions);
+		setTVWidget(_widget);
+		_widget.onChartReady(() => {
+			if (localStorage.getItem("StoredChart" + asset)) {
+				_widget.load(JSON.parse(localStorage.getItem("StoredChart" + asset) as string));
+			} else {
+				_widget.save((data) => {
+					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+				});			
+			}
+			setInterval(() => {
+				_widget.save((data) => {
+					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+				});	
+			}, 5000);
+		});
 	}, []);
 
 	useEffect(() => {
-		// try {
-		// 	let visibleRange = tvWidget?.activeChart().getVisibleRange();
-		// 	if (visibleRange != null) {
-		// 		let newWidget: IChartingLibraryWidget = new widget(widgetOptions);
-		// 		newWidget.onChartReady(() => {
-		// 			if (visibleRange != null) {
-		// 				newWidget.activeChart().setVisibleRange(visibleRange);
-		// 				setTVWidget(newWidget);
-		// 			}
-		// 		});
-		// 	}			
-		// } catch {
+		localStorage.setItem("LastPairSelected", asset);
+		try {
+			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => {});
+			tvWidget?.chart().removeAllShapes();
+			tvWidget?.save((data) => {
+				localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
+			});
+		} catch {
 			setTVWidget(new widget(widgetOptions));
-		//}
+		}
 
 	}, [asset]);
 
@@ -81,9 +93,8 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 			tvWidget?.chart().removeAllShapes();
 			return;
 		}
-
-		tvWidget?.chart().createShape({price: pendingLine, time: 0}, {shape: "horizontal_line", text: "Opening price"});
-    }, [pendingLine]);
+		tvWidget?.chart().createShape({price: pendingLine, time: 0}, {shape: "horizontal_line", text: "Opening price"});	
+	}, [pendingLine]);
 
 	return (
 		<div
@@ -93,4 +104,4 @@ export const TVChartContainer = ({asset, pendingLine}:ChartContainerProps) => {
 	);
 	
 }
-
+export default TVChartContainer;

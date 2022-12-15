@@ -9,7 +9,7 @@ import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
 
 export const Trade = () => {
-  const [cAsset, setAsset] = React.useState(0);
+  const [cAsset, setAsset] = React.useState(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as unknown as number : 0);
   const [pendingChartLine, setPendingChartLine] = React.useState(0);
   const [prices, setPrices] = React.useState([]);
   return (

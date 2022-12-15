@@ -48,53 +48,28 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 
 const rows = [
   createData(
-    <PairField favor={true} icon={BitcoinSvg} name={'BTC/USD'} />,
+    <PairField favor={true} icon={BitcoinSvg} name={'BTC/BTC'} />,
     17810,
     <Benefit percent={0.63} value={110} />
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USD'} />,
+    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/BTC'} />,
     846,
     <Benefit percent={-6.62} value={-60.0} />
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USDT'} />,
+    <PairField favor={false} icon={EtherLogoSvg} name={'LINK/BTC'} />,
     71729000,
     <Benefit percent={-1.95} value={-1421000} />
   ),
   createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'XRP/USDT'} />,
+    <PairField favor={false} icon={XrpLogoSvg} name={'XRP/BTC'} />,
     180,
     <Benefit percent={-12.08} value={-25} />
-  ),
-  createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />
-  ),
-  createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USDT'} />,
-    71729000,
-    <Benefit percent={-1.95} value={-1421000} />
-  ),
-  createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'XRP/USDT'} />,
-    180,
-    <Benefit percent={-12.08} value={-25.0} />
-  ),
-  createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />
-  ),
-  createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />
   )
 ];
 
-export const USDPairsTable = () => {
+export const BTCPairsTable = () => {
   return (
     <>
       <Table aria-label="simple table">
@@ -162,6 +137,6 @@ const CustomTableRow = styled(TableRow)({
 });
 
 const TbodyContainer = styled(Box)(({ theme }) => ({
-  height: '400px',
+  height: '426.5px',
   overflowY: 'auto'
 }));

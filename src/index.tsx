@@ -31,11 +31,12 @@ const wagmiClient = createClient({
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-
+const connectTheme = darkTheme();
+connectTheme.colors.accentColor = "#23262F";
 root.render(
   <React.StrictMode>
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={darkTheme()}>
+      <RainbowKitProvider chains={chains} theme={connectTheme}>
         <App />
       </RainbowKitProvider>
     </WagmiConfig>
