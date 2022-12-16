@@ -9,7 +9,8 @@
 	--tv-color-toolbar-button-text-hover: #000000;
 	--tv-color-toolbar-button-text-active: #DADADA;
 	--tv-color-toolbar-button-text-active-hover:#000000;
-	--tv-color-item-active-text: rgb(6, 255, 6);
+	--tv-color-item-active-text: rgb(181, 138, 254);
 	--tv-color-toolbar-toggle-button-background-active: rgb(0, 0, 0);
 	--tv-color-toolbar-toggle-button-background-active-hover: rgb(0, 0, 0);
+	--tv-toolbar-explicit-hover-border-radius: 0px;
 }
