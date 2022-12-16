@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 
-import { BtcImg } from 'src/config/images';
+import { BitcoinSvg } from 'src/config/images';
 
 import { AiFillStar } from 'react-icons/ai';
 import { Container } from 'src/components/Container';
@@ -48,7 +48,7 @@ export const TokenDetails = () => {
         <TradeWrapper>
           <KindOfToken>
             <Tokens>
-              <img src={BtcImg} alt="btc-img" />
+              <img src={BitcoinSvg} alt="btc-img" style={{height: '28px'}} />
               <span className="token-name">BTC/USDT</span>
               <Box className="multi-value">
                 <span>100X</span>

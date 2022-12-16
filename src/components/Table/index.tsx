@@ -36,6 +36,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
   '&:hover': {
     backgroundColor: '#777E90',
+    '.MuiTableCell-root': {
+      color: '#17191D'
+    },
     '.ActionField': {
       visibility: 'visible'
     }
@@ -43,25 +46,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const rows = [
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804),
-  createData('10-02 10:36:42', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934804)
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('trader.eth', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('trader.eth', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('trader.eth', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('longnametrader.eth', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934),
+  createData('0x1234', 'C98/BUSD', 27, 2.59, 7632, 40.0, 2.509458, 305.28, 0.3840934)
 ];
 
 export const PositionTable = () => {
@@ -77,7 +80,7 @@ export const PositionTable = () => {
             <TableCell>Price</TableCell>
             <TableCell>Pnl</TableCell>
             <TableCell>Take Profit</TableCell>
-            <TableCell>Stop loss</TableCell>
+            <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
@@ -99,7 +102,7 @@ export const PositionTable = () => {
               <TableCell>{row.price}</TableCell>
               <TableCell>{row.pnl}</TableCell>
               <TableCell>{row.profit}</TableCell>
-              <TableCell>{row.loss} BUSD</TableCell>
+              <TableCell>{row.loss}</TableCell>
               <TableCell>{row.liq}</TableCell>
               <TableCell>
                 <ActionField id={index} />
