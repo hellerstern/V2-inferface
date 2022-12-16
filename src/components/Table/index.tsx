@@ -36,9 +36,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
   '&:hover': {
     backgroundColor: '#777E90',
-    '.MuiTableCell-root': {
-      color: '#17191D'
-    },
+    // '.MuiTableCell-root': {
+    //   color: '#17191D'
+    // },
     '.ActionField': {
       visibility: 'visible'
     }
@@ -79,8 +79,8 @@ export const PositionTable = () => {
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Pnl</TableCell>
-            <TableCell>Take Profit</TableCell>
-            <TableCell>Stop Loss</TableCell>
+            <TableCell sx={{ minWidth: '110px' }}>Take Profit</TableCell>
+            <TableCell sx={{ minWidth: '110px' }}>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
@@ -117,12 +117,10 @@ export const PositionTable = () => {
 
 const TableContainer = styled(Box)(({ theme }) => ({
   fontSize: '12px',
+  overflowX: 'auto',
   '.MuiTableCell-root': {
     fontSize: '12px',
-    padding: '2.5px 10px !important',
-    [theme.breakpoints.down(1300)]: {
-      padding: '2.5px !important'
-    }
+    padding: '2.5px 10px !important'
   }
 }));
 

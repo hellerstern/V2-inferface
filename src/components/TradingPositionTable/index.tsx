@@ -43,8 +43,6 @@ export const TradingPositionTable = () => {
 };
 
 const TableContainer = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   gap: '12px',
@@ -63,7 +61,11 @@ const TableAction = styled(Box)(({ theme }) => ({
   padding: '19px 17px',
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center'
+  alignItems: 'center',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  }
 }));
 
 const TableTab = styled(Box)(({ theme }) => ({

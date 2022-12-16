@@ -1,5 +1,5 @@
 import { ErrorOutline, Visibility } from '@mui/icons-material';
-import { Box, Button, Slider } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
@@ -44,49 +44,81 @@ export const TradingOrderForm = () => {
           <TigrisInput label="Liq price" value={price} setValue={setPrice} />
           <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
-          <TigrisSlider defaultValue={2} aria-label="Default" valueLabelDisplay="auto" marks={
-            [
+          <TigrisSlider
+            defaultValue={2}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            marks={[
               {
                 value: 2,
-                label: "2"
+                label: '2'
               },
               {
                 value: 25,
-                label: "25"
+                label: '25'
               },
               {
                 value: 50,
-                label: "50"
+                label: '50'
               },
               {
                 value: 75,
-                label: "75"
+                label: '75'
               },
               {
                 value: 100,
-                label: "100"
+                label: '100'
               }
-            ]
-          } min={2} max={100} />
-          <TigrisSlider defaultValue={Math.sqrt(5)} aria-label="Default" valueLabelDisplay="auto" marks={[{ value: Math.sqrt(5), label: "5" }, { value: 100, label: "10000" }]} min={Math.sqrt(5)} step={0.01} max={100}
-            scale={(value) => Math.round(
-              parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0 ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) : value ** 2
-            )}
+            ]}
+            min={2}
+            max={100}
+          />
+          <TigrisSlider
+            defaultValue={Math.sqrt(5)}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            marks={[
+              { value: Math.sqrt(5), label: '5' },
+              { value: 100, label: '10000' }
+            ]}
+            min={Math.sqrt(5)}
+            step={0.01}
+            max={100}
+            scale={(value) =>
+              Math.round(
+                parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
+                  ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
+                  : value ** 2
+              )
+            }
           />
           <TigrisInput label="Stop Loss" value={stopLoss} setValue={setStopLoss} />
           <TigrisInput label="Take profit" value={profit} setValue={setProfit} />
-          <TigrisSlider defaultValue={0} aria-label="Default" valueLabelDisplay="auto" min={0} step={1} max={90} scale={(value) => -value} marks={
-            [
-              { value: 0, label: "0" },
-              { value: 90, label: "-90" }
-            ]
-          } />
-          <TigrisSlider defaultValue={500} aria-label="Default" valueLabelDisplay="auto" min={0} step={1} max={500} marks={
-            [
-              { value: 0, label: "0" },
-              { value: 500, label: "500" }
-            ]
-          } />
+          <TigrisSlider
+            defaultValue={0}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            min={0}
+            step={1}
+            max={90}
+            scale={(value) => -value}
+            marks={[
+              { value: 0, label: '0' },
+              { value: 90, label: '-90' }
+            ]}
+          />
+          <TigrisSlider
+            defaultValue={500}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            min={0}
+            step={1}
+            max={500}
+            marks={[
+              { value: 0, label: '0' },
+              { value: 500, label: '500' }
+            ]}
+          />
           <AssetBalance>
             Asset balance <Visibility fontSize="small" />{' '}
           </AssetBalance>
