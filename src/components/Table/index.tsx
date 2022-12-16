@@ -116,7 +116,10 @@ const TableContainer = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   '.MuiTableCell-root': {
     fontSize: '12px',
-    padding: '2.5px 20px !important'
+    padding: '2.5px 10px !important',
+    [theme.breakpoints.down(1300)]: {
+      padding: '2.5px !important'
+    }
   }
 }));
 
@@ -135,7 +138,7 @@ const ActionField = (props: ActionFieldProps) => {
   return (
     <ActionCotainer className="ActionField">
       <EditButton onClick={() => console.log('Edit', id)}>
-        Edit
+        <SmallText>Edit</SmallText>
         <Edit sx={{ fontSize: '18px' }} />
       </EditButton>
       <DeleteButton onClick={() => console.log('Delete', id)}>
@@ -159,6 +162,12 @@ const EditButton = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '6px',
   alignItems: 'center'
+}));
+
+const SmallText = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  }
 }));
 
 const DeleteButton = styled(Box)(({ theme }) => ({

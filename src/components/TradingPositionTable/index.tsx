@@ -49,7 +49,6 @@ const TableContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   gap: '12px',
   [theme.breakpoints.down('desktop')]: {
-    height: '500px',
     order: 4,
     gridColumn: '1 / 3'
   }
@@ -63,7 +62,8 @@ const TableWrapper = styled(Box)(({ theme }) => ({
 const TableAction = styled(Box)(({ theme }) => ({
   padding: '19px 17px',
   display: 'flex',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  alignItems: 'center'
 }));
 
 const TableTab = styled(Box)(({ theme }) => ({
