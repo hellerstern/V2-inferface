@@ -105,6 +105,7 @@ const Dropdown = styled(Button)({
   background: 'none',
   fontSize: '12px',
   color: '#FFFFFF',
+  textTransform: 'none',
   '&:hover': {
     background: 'none'
   }
