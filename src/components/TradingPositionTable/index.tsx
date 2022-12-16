@@ -1,3 +1,4 @@
+import { OpenInNew } from '@mui/icons-material';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
@@ -13,21 +14,30 @@ export const TradingPositionTable = () => {
   const [show, setShow] = useState('Before Closing Fees');
   return (
     <TableContainer>
-      <TableAction>
-        <TableTab>
-          <TabBar active={tab === 0} onClick={() => setTab(0)}>
-            My Open Position(11)
-          </TabBar>
-          <TabBar active={tab === 1} onClick={() => setTab(1)}>
-            My Limit Orders
-          </TabBar>
-        </TableTab>
-        <TableDropDown>
-          <span>Show:</span>
-          <TableDropDownMenu state={show} setState={setShow} />
-        </TableDropDown>
-      </TableAction>
-      <PositionTable />
+      <TableWrapper>
+        <TableAction>
+          <TableTab>
+            <TabBar active={tab === 0} onClick={() => setTab(0)}>
+              My Open Position(11)
+            </TabBar>
+            <TabBar active={tab === 1} onClick={() => setTab(1)}>
+              My Limit Orders
+            </TabBar>
+          </TableTab>
+          <TableDropDown>
+            <span>Show:</span>
+            <TableDropDownMenu state={show} setState={setShow} />
+          </TableDropDown>
+        </TableAction>
+        <PositionTable />
+      </TableWrapper>
+      <TableMedia>
+        <TableMediaLabel>Daily Performance</TableMediaLabel>
+        <TableMediaAction>
+          Advanced Chart
+          <OpenInNew fontSize="small" />
+        </TableMediaAction>
+      </TableMedia>
     </TableContainer>
   );
 };
@@ -35,12 +45,19 @@ export const TradingPositionTable = () => {
 const TableContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
-  backgroundColor: '#18191D',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
   [theme.breakpoints.down('desktop')]: {
     height: '500px',
     order: 4,
     gridColumn: '1 / 3'
   }
+}));
+
+const TableWrapper = styled(Box)(({ theme }) => ({
+  backgroundColor: '#18191D',
+  width: '100%'
 }));
 
 const TableAction = styled(Box)(({ theme }) => ({
@@ -68,4 +85,33 @@ const TableDropDown = styled(Box)(({ theme }) => ({
     color: '#777E90',
     fontSize: '12px'
   }
+}));
+
+const TableMedia = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  width: '100%',
+  height: '100%',
+  backgroundColor: '#18191D',
+  padding: '10px 13px',
+  alignItems: 'center',
+  justifyContent: 'space-between'
+}));
+
+const TableMediaLabel = styled(Box)(({ theme }) => ({
+  fontSize: '12px',
+  fontWeight: 700,
+  lineHeight: '20px',
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase'
+}));
+
+const TableMediaAction = styled(Box)(({ theme }) => ({
+  color: '#3772FF',
+  fontSize: '12px',
+  fontWeight: '400',
+  lineHeight: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '11px',
+  cursor: 'pointer'
 }));
