@@ -36,6 +36,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
   '&:hover': {
     backgroundColor: '#777E90',
+    '.MuiTableCell-root': {
+      color: '#17191D'
+    },
     '.ActionField': {
       visibility: 'visible'
     }
