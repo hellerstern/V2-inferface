@@ -143,7 +143,7 @@ const ActionField = (props: ActionFieldProps) => {
         <Edit sx={{ fontSize: '18px' }} />
       </EditButton>
       <DeleteButton onClick={() => console.log('Delete', id)}>
-        Delete
+        Close
         <Close sx={{ fontSize: '18px' }} />
       </DeleteButton>
     </ActionCotainer>
