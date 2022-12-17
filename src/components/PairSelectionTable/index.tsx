@@ -9,7 +9,11 @@ import { BTCPairsTable } from './BTCPairsTable';
 import { ForexPairsTable } from './ForexPairsTable';
 import { CommodityPairsTable } from './CommodityPairsTable';
 
-export const PairSelectionTable = () => {
+interface PairSelectionTableProps {
+  setPairIndex: any;
+}
+
+export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -36,7 +40,7 @@ export const PairSelectionTable = () => {
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          <USDPairsTable />
+          <USDPairsTable setPairIndex={setPairIndex} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <BTCPairsTable />

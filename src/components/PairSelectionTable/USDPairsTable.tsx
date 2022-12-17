@@ -1,6 +1,7 @@
 import { Star, StarBorder } from '@mui/icons-material';
-import { Avatar, Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Avatar, Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
+import React from 'react';
 import { BitcoinSvg, EtherLogoSvg, LunaLogoSvg, MinexLogo, XrpLogoSvg } from '../../config/images';
 
 interface PairFieldProps {
@@ -9,11 +10,12 @@ interface PairFieldProps {
   name: string;
 }
 
-function createData(pair: React.ReactElement, price: number, profit: React.ReactElement) {
+function createData(pair: React.ReactElement, price: number, profit: React.ReactElement, pairIndex: number) {
   return {
     pair,
     price,
-    profit
+    profit,
+    pairIndex
   };
 }
 
@@ -21,9 +23,13 @@ const PairField = ({ favor, icon, name }: PairFieldProps) => {
   return (
     <PairFieldContainer>
       {favor ? (
-        <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
+        <IconButton onClick={() => null} sx={{padding: '0px'}}>
+          <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }}/>
+        </IconButton>
       ) : (
-        <StarBorder sx={{ width: '20px', height: '20px' }} />
+        <IconButton onClick={() => null} sx={{padding: '0px'}}>
+          <StarBorder sx={{ width: '20px', height: '20px' }}/>
+        </IconButton>
       )}
       <IconBox>
         <Avatar src={icon} sx={{ width: 20, height: 20 }} />
@@ -50,51 +56,64 @@ const rows = [
   createData(
     <PairField favor={true} icon={BitcoinSvg} name={'BTC/USD'} />,
     17810,
-    <Benefit percent={0.63} value={110} />
+    <Benefit percent={0.63} value={110} />,
+    0
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USD'} />,
+    <PairField favor={true} icon={EtherLogoSvg} name={'ETH/USD'} />,
     846,
-    <Benefit percent={-6.62} value={-60.0} />
+    <Benefit percent={-6.62} value={-60.0} />,
+    1
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USDT'} />,
+    <PairField favor={false} icon={EtherLogoSvg} name={'ADA/USD'} />,
     71729000,
-    <Benefit percent={-1.95} value={-1421000} />
+    <Benefit percent={-1.95} value={-1421000} />,
+    14
   ),
   createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'XRP/USDT'} />,
+    <PairField favor={false} icon={XrpLogoSvg} name={'ALGO/USD'} />,
     180,
-    <Benefit percent={-12.08} value={-25} />
+    <Benefit percent={-12.08} value={-25} />,
+    30
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
+    <PairField favor={false} icon={LunaLogoSvg} name={'ATOM/USD'} />,
     3465,
-    <Benefit percent={6.62} value={60.0} />
+    <Benefit percent={6.62} value={60.0} />,
+    15
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ETH/USDT'} />,
+    <PairField favor={false} icon={EtherLogoSvg} name={'AVAX/USD'} />,
     71729000,
-    <Benefit percent={-1.95} value={-1421000} />
+    <Benefit percent={-1.95} value={-1421000} />,
+    26
   ),
   createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'XRP/USDT'} />,
+    <PairField favor={false} icon={XrpLogoSvg} name={'BCH/USD'} />,
     180,
-    <Benefit percent={-12.08} value={-25.0} />
+    <Benefit percent={-12.08} value={-25.0} />,
+    21
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
+    <PairField favor={false} icon={LunaLogoSvg} name={'BNB/USD'} />,
     3465,
-    <Benefit percent={6.62} value={60.0} />
+    <Benefit percent={6.62} value={60.0} />,
+    13
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'LUNA/BNB'} />,
+    <PairField favor={false} icon={LunaLogoSvg} name={'DOGE/USD'} />,
     3465,
-    <Benefit percent={6.62} value={60.0} />
+    <Benefit percent={6.62} value={60.0} />,
+    19
   )
 ];
 
-export const USDPairsTable = () => {
+interface Props {
+  setPairIndex: any;
+}
+
+export const USDPairsTable = ({setPairIndex}: Props) => {
   return (
     <>
       <Table aria-label="simple table">
@@ -113,11 +132,11 @@ export const USDPairsTable = () => {
           <TableBody>
             {rows.map((row, index) => (
               <CustomTableRow key={index}>
-                <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
-                <TableCell align="center" sx={{ width: '125px' }}>
+                <TableCell sx={{ width: '150px' }} onClick={() => setPairIndex(row.pairIndex)}>{row.pair}</TableCell>
+                <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(row.pairIndex)}>
                   {row.price}
                 </TableCell>
-                <TableCell align="center">{row.profit}</TableCell>
+                <TableCell align="center" onClick={() => setPairIndex(row.pairIndex)}>{row.profit}</TableCell>
               </CustomTableRow>
             ))}
           </TableBody>
@@ -134,6 +153,7 @@ const PairFieldContainer = styled(Box)({
 });
 
 const IconBox = styled(Box)({
+  padding: '10px',
   width: '24px',
   height: '24px',
   borderRadius: '100px',
@@ -158,7 +178,7 @@ const BenefitContainer = styled(Box)({
 });
 
 const CustomTableRow = styled(TableRow)({
-  '&:hover': { backgroundColor: '#1E1F25' }
+  '&:hover': { backgroundColor: '#1E1F25', cursor: 'pointer' }
 });
 
 const TbodyContainer = styled(Box)(({ theme }) => ({
