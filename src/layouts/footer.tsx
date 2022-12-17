@@ -12,12 +12,12 @@ export const Footer = () => {
           <FooterInfo>
             <TextCoin>
               <BsFillCheckCircleFill color={'#58BD7D'} />
-              <Text>Oracle Connection</Text>
+              <Text>Oracle</Text>
             </TextCoin>
-            <SmallText>Server time: 10-02 10:36:42 UTC</SmallText>
+            <SmallText>Server Time: 10-02 10:36:42 UTC</SmallText>
             <GasFee>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '12px', height: '12px' }} />
-              <SmallText>Gas fee: 0.1 Gwei</SmallText>
+              <SmallText>Gas Price: 0.1 Gwei</SmallText>
             </GasFee>
           </FooterInfo>
           <Line />
@@ -25,7 +25,6 @@ export const Footer = () => {
             <NavLinks>
               <SmallText>Discord</SmallText>
               <SmallText>Twitter</SmallText>
-              <SmallText>Telegram</SmallText>
             </NavLinks>
             <SmallText>© 2022. All rights reserved</SmallText>
           </FooterNav>
