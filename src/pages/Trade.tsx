@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { TokenDetails } from 'src/components/page-elements/TokenDetails';
-import { TradingDetailsTable } from 'src/components/TradingDetailsTable';
+import { PairSelectionTable } from 'src/components/PairSelectionTable';
 import TradingChart from 'src/components/TradingChart/TradingChart';
 import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
@@ -20,7 +20,7 @@ export const Trade = () => {
           <TradingSection>
             <TradingChart asset={cAsset} prices={prices} pendingLine={pendingChartLine} />
           </TradingSection>
-          <TradingDetailsTable />
+          <PairSelectionTable />
           <TradingPositionTable />
           <TradingOrderForm />
         </TradingForm>

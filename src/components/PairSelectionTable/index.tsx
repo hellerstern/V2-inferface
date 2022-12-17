@@ -9,7 +9,7 @@ import { BTCPairsTable } from './BTCPairsTable';
 import { ForexPairsTable } from './ForexPairsTable';
 import { CommodityPairsTable } from './CommodityPairsTable';
 
-export const TradingDetailsTable = () => {
+export const PairSelectionTable = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
