@@ -43,13 +43,7 @@ const StyledMenu = styled((props: MenuProps) => (
   }
 }));
 
-interface TableDropProps {
-  state: string;
-  setState: (value: string) => void;
-}
-
-export const TableDropDownMenu = (props: TableDropProps) => {
-  const { state, setState } = props;
+export const CustomizedMenus = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isOpen = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -57,11 +51,6 @@ export const TableDropDownMenu = (props: TableDropProps) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleMenuClicked = (e: React.MouseEvent<HTMLElement>) => {
-    handleClose();
-    setState(e.currentTarget.innerText);
   };
 
   //   const handleMenu = (func: () => void) => {
@@ -81,7 +70,7 @@ export const TableDropDownMenu = (props: TableDropProps) => {
         onClick={handleClick}
         endIcon={isOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       >
-        {state}
+        EN/USD
       </Dropdown>
       <StyledMenu
         id="demo-customized-menu"
@@ -92,10 +81,10 @@ export const TableDropDownMenu = (props: TableDropProps) => {
         open={isOpen}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleMenuClicked}>Before Closing Fees</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>Duplicate</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>Archive</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>More</MenuItem>
+        <MenuItem onClick={() => handleClose()}>Edit</MenuItem>
+        <MenuItem onClick={() => handleClose()}>Duplicate</MenuItem>
+        <MenuItem onClick={() => handleClose()}>Archive</MenuItem>
+        <MenuItem onClick={() => handleClose()}>More</MenuItem>
       </StyledMenu>
     </>
   );
@@ -103,9 +92,7 @@ export const TableDropDownMenu = (props: TableDropProps) => {
 
 const Dropdown = styled(Button)({
   background: 'none',
-  fontSize: '12px',
   color: '#FFFFFF',
-  textTransform: 'none',
   '&:hover': {
     background: 'none'
   }

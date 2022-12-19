@@ -43,7 +43,13 @@ const StyledMenu = styled((props: MenuProps) => (
   }
 }));
 
-export default function CustomizedMenus() {
+interface TokenDropProps {
+  state: string;
+  setState: (value: string) => void;
+}
+
+export const TokenDropMenu = (props: TokenDropProps) => {
+  const { state, setState } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isOpen = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,6 +57,11 @@ export default function CustomizedMenus() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleMenuClicked = (e: React.MouseEvent<HTMLElement>) => {
+    handleClose();
+    setState(e.currentTarget.innerText);
   };
 
   //   const handleMenu = (func: () => void) => {
@@ -70,7 +81,7 @@ export default function CustomizedMenus() {
         onClick={handleClick}
         endIcon={isOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       >
-        EN/USD
+        {state}
       </Dropdown>
       <StyledMenu
         id="demo-customized-menu"
@@ -80,20 +91,34 @@ export default function CustomizedMenus() {
         anchorEl={anchorEl}
         open={isOpen}
         onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        <MenuItem onClick={() => handleClose()}>Edit</MenuItem>
-        <MenuItem onClick={() => handleClose()}>Duplicate</MenuItem>
-        <MenuItem onClick={() => handleClose()}>Archive</MenuItem>
-        <MenuItem onClick={() => handleClose()}>More</MenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ETH/USDT</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ADA/USDT</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ALGO/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ATOM/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>AVAX/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>BCH/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>BNB/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>BNB/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>DOGE/USD</CustomMenuItem>
       </StyledMenu>
     </>
   );
-}
+};
 
 const Dropdown = styled(Button)({
   background: 'none',
+  fontSize: '12px',
   color: '#FFFFFF',
+  textTransform: 'none',
+  paddingLeft: '0',
   '&:hover': {
     background: 'none'
   }
 });
+
+const CustomMenuItem = styled(MenuItem)(({ theme }) => ({
+  fontSize: '12px'
+}));

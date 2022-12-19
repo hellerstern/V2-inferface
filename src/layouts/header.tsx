@@ -7,7 +7,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { a11yProps } from 'src/components/TabPanel';
 import { useStore } from 'src/context/StoreContext';
-import CustomizedMenus from 'src/components/Dropdown';
+import { CustomizedMenus } from 'src/components/Dropdown/CurrencyDrop';
 import { NotificationsNone, Person, Dehaze, Search, Close } from '@mui/icons-material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useDisconnect } from 'wagmi';

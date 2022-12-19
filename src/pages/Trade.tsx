@@ -2,14 +2,17 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
-import { TokenDetails } from 'src/components/page-elements/TokenDetails';
+import { TokenDetails } from 'src/components/TokenDetails';
 import { PairSelectionTable } from 'src/components/PairSelectionTable';
 import TradingChart from 'src/components/TradingChart/TradingChart';
 import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
+import { DailyPerformanceChart } from 'src/components/DailyChart';
 
 export const Trade = () => {
-  const [pairIndex, setPairIndex] = React.useState(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as unknown as number : 0);
+  const [pairIndex, setPairIndex] = React.useState(
+    localStorage.getItem('LastPairSelected') ? (localStorage.getItem('LastPairSelected') as unknown as number) : 0
+  );
   const [pendingChartLine, setPendingChartLine] = React.useState(0);
   const [prices, setPrices] = React.useState([]);
   return (
@@ -20,9 +23,10 @@ export const Trade = () => {
           <TradingSection>
             <TradingChart asset={pairIndex} prices={prices} pendingLine={pendingChartLine} />
           </TradingSection>
-          <PairSelectionTable setPairIndex={setPairIndex}/>
+          <PairSelectionTable setPairIndex={setPairIndex} />
           <TradingPositionTable />
           <TradingOrderForm />
+          <DailyPerformanceChart />
         </TradingForm>
       </Container>
     </TradeContainer>
