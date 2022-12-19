@@ -2,7 +2,7 @@ import { OpenInNew } from '@mui/icons-material';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
-import { TableDropDownMenu } from '../Dropdown/TableDrop';
+import { TableDropDownMenu } from '../Dropdown/tableDrop';
 import { PositionTable } from '../Table';
 
 interface TabBarProps {
