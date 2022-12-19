@@ -1,6 +1,5 @@
 /* eslint-disable */
 
-import { makeApiRequest, generateSymbol, parseFullSymbol } from './src/helpers.js';
 import { subscribeOnStream, unsubscribeFromStream } from './src/streaming.js';
 import { getNetwork } from '../../../constants/networks/index.tsx';
 
@@ -93,9 +92,9 @@ export default {
     console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
 
     try {
-      const data = await makeApiRequest(`c/${symbolInfo.id}/1/${from}/${to}`);
+      const data = await (await fetch(`http://188.166.167.123:8080/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`)).json();
       console.log(data);
-      if ((data.Response && data.Response === 'Error') || data.prices.length === 0) {
+      if ((data.s && data.s != 'ok') || data.time.length === 0) {
         // "noData" should be set if there is no data in the requested period.
         onHistoryCallback([], {
           noData: true
@@ -103,22 +102,15 @@ export default {
         return;
       }
       let bars = [];
-      data.prices.forEach((bar) => {
-        //console.log("hi");
-        //console.log(bar.time);
-        //if (bar.time >= from && bar.time < to) {
-        bars = [
-          ...bars,
-          {
-            time: bar.time * 1000,
-            low: bar.low,
-            high: bar.high,
-            open: bar.open,
-            close: bar.close
-          }
-        ];
-        //}
-      });
+      for(var i=0; i<data.time.length; i++) {
+        bars.push({
+          time: data.time[i] * 1000,
+          low: data.low[i],
+          high: data.high[i],
+          open: data.open[i],
+          close: data.close[i]          
+        })
+      }
       if (firstDataRequest) {
         lastBarsCache.set(symbolInfo.full_name, {
           ...bars[bars.length - 1]
