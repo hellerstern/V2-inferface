@@ -6,7 +6,7 @@ import { getNetwork } from '../../../constants/networks/index.tsx';
 const lastBarsCache = new Map();
 
 const configurationData = {
-  supported_resolutions: ['1', '5', '15', '60', '240', 'D'],
+  supported_resolutions: ["1","3","5","15","30","60","120","240","360","480","720","960","D"],
   exchanges: [],
   symbols_types: []
 };
