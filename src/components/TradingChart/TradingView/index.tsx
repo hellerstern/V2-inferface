@@ -49,6 +49,7 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		overrides: {
 			"paneProperties.background": "#17191D",
 			"paneProperties.backgroundType": "solid",
+			"scalesProperties.showSymbolLabels": true
 		},
 		custom_css_url: "css/style.css",
 		toolbar_bg: '#17191D',
