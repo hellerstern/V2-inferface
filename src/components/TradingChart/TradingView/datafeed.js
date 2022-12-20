@@ -6,7 +6,7 @@ import { getNetwork } from '../../../constants/networks/index.tsx';
 const lastBarsCache = new Map();
 
 const configurationData = {
-  supported_resolutions: ['1', '15', '60', '240'],
+  supported_resolutions: ['1', '5', '15', '60', '240', 'D'],
   exchanges: [],
   symbols_types: []
 };
@@ -90,10 +90,9 @@ export default {
   getBars: async (symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) => {
     const { from, to, firstDataRequest } = periodParams;
     console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
-
     try {
-      const data = await (await fetch(`http://188.166.167.123:8080/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`)).json();
-      console.log(data);
+      resolution === "1D" ? resolution = "D" : null;
+      const data = await (await fetch(`https://tigrischarts.net:8080/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`)).json();
       if ((data.s && data.s != 'ok') || data.time.length === 0) {
         // "noData" should be set if there is no data in the requested period.
         onHistoryCallback([], {
