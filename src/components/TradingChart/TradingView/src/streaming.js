@@ -1,27 +1,12 @@
 /* eslint-disable */
 
-import socketio from 'socket.io-client';
-
-const socket = socketio.connect('https://frontend-prices-795bp.ondigitalocean.app/', { transports: ['websocket'] });
-const channelToSubscription = new Map();
-
-socket.on('connect', () => {
-  console.log('[socket] Connected');
-});
-
-socket.on('disconnect', (reason) => {
-  console.log('[socket] Disconnected:', reason);
-});
-
-socket.on('error', (error) => {
-  console.log('[socket] Error:', error);
-});
+import { priceStreamSocket } from "src/context/socket";
 
 var lastDailyBar;
 var callback;
 var cAsset = 0;
 
-socket.on('Prices', (data) => {
+priceStreamSocket.on('Prices', (data) => {
   const tradePrice = parseFloat(data.prices[cAsset]);
   var tNow = new Date().getTime();
   const tradeTime = tNow - (tNow % 60000);

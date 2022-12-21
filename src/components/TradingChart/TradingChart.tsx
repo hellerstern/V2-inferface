@@ -6,11 +6,10 @@ import { TVChartContainer } from './TradingView/index';
 
 type Props = {
   asset: any;
-  prices: any;
   pendingLine: any;
 };
 
-const TradingChart = ({ asset, prices, pendingLine }: Props) => {
+const TradingChart = ({ asset, pendingLine }: Props) => {
   return (
     <div style={{ width: '100%', height: '560px' }}>
       <TVChartContainer asset={asset} pendingLine={pendingLine} />

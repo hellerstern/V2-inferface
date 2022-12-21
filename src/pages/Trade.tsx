@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
@@ -8,20 +8,32 @@ import TradingChart from 'src/components/TradingChart/TradingChart';
 import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
 import { DailyPerformanceChart } from 'src/components/DailyChart';
+import { oracleSocket } from 'src/context/socket';
 
 export const Trade = () => {
   const [pairIndex, setPairIndex] = React.useState(
     localStorage.getItem('LastPairSelected') ? (localStorage.getItem('LastPairSelected') as unknown as number) : 0
-  );
+  ); 
   const [pendingChartLine, setPendingChartLine] = React.useState(0);
-  const [prices, setPrices] = React.useState([]);
+  const [priceData, setPriceData] = React.useState<any[]>([]);
+  useEffect(() => {
+    oracleSocket.on("data", (data: []) => {
+      setPriceData(data);
+      console.log(data);
+    });
+  }, []);
+
   return (
     <TradeContainer>
-      <TokenDetails />
+      <TokenDetails
+        pairIndex={pairIndex}
+        tokenPrice={(priceData.length > 0 && priceData[pairIndex] != null) ? priceData[pairIndex].price : 0}
+        spread={priceData.length > 0 && priceData[pairIndex] != null ? priceData[pairIndex].spread : 0}
+      />
       <Container>
         <TradingForm>
           <TradingSection>
-            <TradingChart asset={pairIndex} prices={prices} pendingLine={pendingChartLine} />
+            <TradingChart asset={pairIndex} pendingLine={pendingChartLine} />
           </TradingSection>
           <PairSelectionTable setPairIndex={setPairIndex} />
           <TradingPositionTable />

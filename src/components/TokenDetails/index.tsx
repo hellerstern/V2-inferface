@@ -9,27 +9,35 @@ import { Container } from 'src/components/Container';
 import usePreventBodyScroll from 'src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
+import { getNetwork } from "src/constants/networks"
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
-const INFOS: any = [
-  { name: 'Price', value: '$17139.02', label: '' },
-  { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
-  { name: '24h Volume', value: '$230,050.00', label: '' },
-  { name: 'Long Open interest', value: '0/ ', label: 'Unlimited' },
-  { name: 'Short Open interest', value: '0/ ', label: 'Unlimited' },
-  { name: 'Opening Fee', value: '0.10%', label: ' ($0.50)' },
-  { name: 'Closing Fee', value: '0.10%', label: '' },
-  { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
-  { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
-  { name: 'Price spread', value: '0.04%', label: '' }
-];
+interface ITokenDetails {
+  pairIndex: any,
+  tokenPrice: any,
+  spread: any
+}
 
-export const TokenDetails = () => {
+export const TokenDetails = ({ pairIndex, tokenPrice, spread }: ITokenDetails) => {
+
+  const INFOS: any = [
+    { name: 'Oracle Price', value: (parseInt(tokenPrice)/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals), label: '' },
+    { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
+    { name: '24h Volume', value: '$230,050.00', label: '' },
+    { name: 'Long Open Interest', value: '0/ ', label: 'Unlimited' },
+    { name: 'Short Open Interest', value: '0/ ', label: 'Unlimited' },
+    { name: 'Opening Fee', value: '0.10%', label: ' ($0.50)' },
+    { name: 'Closing Fee', value: '0.10%', label: '' },
+    { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
+    { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
+    { name: 'Price Spread', value: (spread/1e8).toFixed(5) + "%", label: '' }
+  ];
+
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {
-    const isThouchpad = Math.abs(ev.deltaX) !== 0 || Math.abs(ev.deltaY) < 15;
+    const isTouchpad = Math.abs(ev.deltaX) !== 0 || Math.abs(ev.deltaY) < 15;
 
-    if (isThouchpad) {
+    if (isTouchpad) {
       ev.stopPropagation();
       return;
     }
