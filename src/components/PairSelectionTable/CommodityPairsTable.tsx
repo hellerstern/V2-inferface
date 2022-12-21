@@ -1,7 +1,7 @@
 import { Star, StarBorder } from '@mui/icons-material';
-import { Avatar, Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/system';
-import { BitcoinSvg, EtherLogoSvg, LunaLogoSvg, MinexLogo, XrpLogoSvg } from '../../config/images';
+import { btcLogo } from '../../config/images';
 
 interface PairFieldProps {
   favor: boolean;
@@ -26,7 +26,7 @@ const PairField = ({ favor, icon, name }: PairFieldProps) => {
         <StarBorder sx={{ width: '20px', height: '20px' }} />
       )}
       <IconBox>
-        <Avatar src={icon} sx={{ width: 20, height: 20 }} />
+        <img src={icon} style={{maxHeight: '20px'}} />
       </IconBox>
       <CoinName>{name}</CoinName>
     </PairFieldContainer>
@@ -48,12 +48,12 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 
 const rows = [
   createData(
-    <PairField favor={true} icon={MinexLogo} name={'BTC/USDT'} />,
+    <PairField favor={true} icon={btcLogo} name={'XAG/USD'} />,
     17810,
     <Benefit percent={0.63} value={110} />
   ),
   createData(
-    <PairField favor={false} icon={BitcoinSvg} name={'BTC/USDT'} />,
+    <PairField favor={false} icon={btcLogo} name={'XAU/USD'} />,
     846,
     <Benefit percent={-6.62} value={-60.0} />
   )
@@ -99,8 +99,9 @@ const PairFieldContainer = styled(Box)({
 });
 
 const IconBox = styled(Box)({
-  width: '24px',
-  height: '24px',
+  padding: '5px',
+  minWidth: '30px',
+  minHeight: '30px',
   borderRadius: '100px',
   backgroundColor: '#FFFFFF',
   display: 'flex',

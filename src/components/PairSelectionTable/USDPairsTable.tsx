@@ -1,8 +1,9 @@
 import { Star, StarBorder } from '@mui/icons-material';
-import { Avatar, Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
-import { BitcoinSvg, EtherLogoSvg, LunaLogoSvg, MinexLogo, XrpLogoSvg } from '../../config/images';
+import { adaLogo, algoLogo, atomLogo, avaxLogo, bchLogo, btcLogo, bnbLogo, dogeLogo, dotLogo,
+  ethLogo, linkLogo, ltcLogo, maticLogo, solLogo, uniLogo, xmrLogo } from '../../config/images';
 
 interface PairFieldProps {
   favor: boolean;
@@ -32,7 +33,7 @@ const PairField = ({ favor, icon, name }: PairFieldProps) => {
         </IconButton>
       )}
       <IconBox>
-        <Avatar src={icon} sx={{ width: 20, height: 20 }} />
+        <img src={icon} style={{maxHeight: '20px'}} />
       </IconBox>
       <CoinName>{name}</CoinName>
     </PairFieldContainer>
@@ -54,58 +55,100 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 
 const rows = [
   createData(
-    <PairField favor={true} icon={BitcoinSvg} name={'BTC/USD'} />,
+    <PairField favor={true} icon={btcLogo} name={'BTC/USD'} />,
     17810,
     <Benefit percent={0.63} value={110} />,
     0
   ),
   createData(
-    <PairField favor={true} icon={EtherLogoSvg} name={'ETH/USD'} />,
+    <PairField favor={true} icon={ethLogo} name={'ETH/USD'} />,
     846,
     <Benefit percent={-6.62} value={-60.0} />,
     1
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'ADA/USD'} />,
+    <PairField favor={false} icon={adaLogo} name={'ADA/USD'} />,
     71729000,
     <Benefit percent={-1.95} value={-1421000} />,
     14
   ),
   createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'ALGO/USD'} />,
+    <PairField favor={false} icon={algoLogo} name={'ALGO/USD'} />,
     180,
     <Benefit percent={-12.08} value={-25} />,
     30
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'ATOM/USD'} />,
+    <PairField favor={false} icon={atomLogo} name={'ATOM/USD'} />,
     3465,
     <Benefit percent={6.62} value={60.0} />,
     15
   ),
   createData(
-    <PairField favor={false} icon={EtherLogoSvg} name={'AVAX/USD'} />,
+    <PairField favor={false} icon={avaxLogo} name={'AVAX/USD'} />,
     71729000,
     <Benefit percent={-1.95} value={-1421000} />,
     26
   ),
   createData(
-    <PairField favor={false} icon={XrpLogoSvg} name={'BCH/USD'} />,
+    <PairField favor={false} icon={bchLogo} name={'BCH/USD'} />,
     180,
     <Benefit percent={-12.08} value={-25.0} />,
     21
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'BNB/USD'} />,
+    <PairField favor={false} icon={bnbLogo} name={'BNB/USD'} />,
     3465,
     <Benefit percent={6.62} value={60.0} />,
     13
   ),
   createData(
-    <PairField favor={false} icon={LunaLogoSvg} name={'DOGE/USD'} />,
+    <PairField favor={false} icon={dogeLogo} name={'DOGE/USD'} />,
     3465,
     <Benefit percent={6.62} value={60.0} />,
     19
+  ),
+  createData(
+    <PairField favor={false} icon={dotLogo} name={'DOT/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    23
+  ),
+  createData(
+    <PairField favor={false} icon={linkLogo} name={'LINK/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    4
+  ),
+  createData(
+    <PairField favor={false} icon={ltcLogo} name={'LTC/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    20
+  ),
+  createData(
+    <PairField favor={false} icon={maticLogo} name={'MATIC/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    3
+  ),
+  createData(
+    <PairField favor={false} icon={solLogo} name={'SOL/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    18
+  ),
+  createData(
+    <PairField favor={false} icon={uniLogo} name={'UNI/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    27
+  ),
+  createData(
+    <PairField favor={false} icon={xmrLogo} name={'XMR/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    24
   )
 ];
 
@@ -153,9 +196,9 @@ const PairFieldContainer = styled(Box)({
 });
 
 const IconBox = styled(Box)({
-  padding: '10px',
-  width: '24px',
-  height: '24px',
+  padding: '5px',
+  minWidth: '30px',
+  minHeight: '30px',
   borderRadius: '100px',
   backgroundColor: '#FFFFFF',
   display: 'flex',

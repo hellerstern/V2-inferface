@@ -6,7 +6,7 @@ import { getNetwork } from '../../../constants/networks/index.tsx';
 const lastBarsCache = new Map();
 
 const configurationData = {
-  supported_resolutions: ['1', '5', '15', '60', '240', 'D'],
+  supported_resolutions: ["1","3","5","15","30","60","120","240","360","480","720","960","D"],
   exchanges: [],
   symbols_types: []
 };
@@ -101,12 +101,19 @@ export default {
         return;
       }
       let bars = [];
-      for(var i=0; i<data.time.length; i++) {
+      bars.push({
+        time: data.time[0] * 1000,
+        low: data.low[0],
+        high: data.high[0],
+        open: data.open[0],
+        close: data.close[0]          
+      })
+      for(var i=1; i<data.time.length; i++) {
         bars.push({
           time: data.time[i] * 1000,
           low: data.low[i],
           high: data.high[i],
-          open: data.open[i],
+          open: data.close[i-1],
           close: data.close[i]          
         })
       }
