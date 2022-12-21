@@ -3,7 +3,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } fro
 import { styled } from '@mui/system';
 import React from 'react';
 import { adaLogo, algoLogo, atomLogo, avaxLogo, bchLogo, btcLogo, bnbLogo, dogeLogo, dotLogo,
-  ethLogo, linkLogo, ltcLogo, maticLogo, solLogo, uniLogo, xmrLogo } from '../../config/images';
+  ethLogo, linkLogo, ltcLogo, maticLogo, nearLogo, solLogo, uniLogo, xmrLogo } from '../../config/images';
 
 interface PairFieldProps {
   favor: boolean;
@@ -131,6 +131,12 @@ const rows = [
     3465,
     <Benefit percent={6.62} value={60.0} />,
     3
+  ),
+  createData(
+    <PairField favor={false} icon={nearLogo} name={'NEAR/USD'} />,
+    3465,
+    <Benefit percent={6.62} value={60.0} />,
+    29
   ),
   createData(
     <PairField favor={false} icon={solLogo} name={'SOL/USD'} />,
