@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { Close, Edit } from '@mui/icons-material';
 import { AiFillEye } from 'react-icons/ai';
+import { EditModal } from '../Modal/EditModal';
 
 function createData(
   user: string,
@@ -68,6 +69,11 @@ const rows = [
 ];
 
 export const PositionTable = () => {
+  const [isEditModalOpen, setEditModalOpen] = React.useState(false);
+  const handleClickEditOpen = (id: number) => {
+    console.log('id: ', id);
+    setEditModalOpen(true);
+  };
   return (
     <TableContainer>
       <Table size="small" aria-label="a dense table">
@@ -105,12 +111,13 @@ export const PositionTable = () => {
               <TableCell>{row.loss}</TableCell>
               <TableCell>{row.liq}</TableCell>
               <TableCell>
-                <ActionField id={index} />
+                <ActionField id={index} editClick={handleClickEditOpen} />
               </TableCell>
             </StyledTableRow>
           ))}
         </CustomTableBody>
       </Table>
+      <EditModal isState={isEditModalOpen} setState={setEditModalOpen} />
     </TableContainer>
   );
 };
@@ -132,13 +139,14 @@ const CustomTableBody = styled(TableBody)(({ theme }) => ({
 
 interface ActionFieldProps {
   id: number;
+  editClick: (id: number) => void;
 }
 
 const ActionField = (props: ActionFieldProps) => {
-  const { id } = props;
+  const { id, editClick } = props;
   return (
     <ActionCotainer className="ActionField">
-      <EditButton onClick={() => console.log('Edit', id)}>
+      <EditButton onClick={() => editClick(id)}>
         <SmallText>Edit</SmallText>
         <Edit sx={{ fontSize: '18px' }} />
       </EditButton>
