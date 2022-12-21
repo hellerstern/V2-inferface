@@ -61,20 +61,6 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		localStorage.setItem("LastPairSelected", asset);
 		let _widget = new widget(widgetOptions);
 		setTVWidget(_widget);
-		_widget.onChartReady(() => {
-			if (localStorage.getItem("StoredChart" + asset)) {
-				_widget.load(JSON.parse(localStorage.getItem("StoredChart" + asset) as string));
-			} else {
-				_widget.save((data) => {
-					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});
-			}
-			setInterval(() => {
-				_widget.save((data) => {
-					localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-				});
-			}, 5000);
-		});
 	}, []);
 
 	useEffect(() => {
@@ -82,9 +68,6 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		try {
 			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => { });
 			tvWidget?.chart().removeAllShapes();
-			tvWidget?.save((data) => {
-				localStorage.setItem("StoredChart" + asset, JSON.stringify(data));
-			});
 		} catch {
 			setTVWidget(new widget(widgetOptions));
 		}

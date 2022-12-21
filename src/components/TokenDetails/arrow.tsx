@@ -86,8 +86,6 @@ export function LeftArrow() {
     }
   }, [isFirstItemVisible, visibleElements]);
 
-  console.log('initComplete: ', initComplete);
-
   return (
     <ArrowLeft disabled={isDisabled} onClick={() => scrollPrev()}>
       <NavigateBefore />
@@ -98,7 +96,6 @@ export function LeftArrow() {
 export function RightArrow() {
   const { isLastItemVisible, scrollNext, visibleElements } = React.useContext(VisibilityContext);
 
-  // console.log({ isLastItemVisible });
   const [isDisabled, setDisabled] = React.useState(visibleElements.length === 0 && isLastItemVisible);
   React.useEffect(() => {
     if (visibleElements.length > 0) {
