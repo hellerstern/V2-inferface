@@ -12,6 +12,7 @@ import { InputField } from '../Input';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { OnlyLogo } from 'src/config/images';
 import { CommonDropDown } from '../Dropdown';
+import { useAccount } from 'wagmi';
 
 const partialArr = [
   {
@@ -73,14 +74,14 @@ interface EditModalProps {
 }
 
 export const EditModal = (props: EditModalProps) => {
+  const { isConnected } = useAccount();
   const { isState, setState } = props;
-  //   const [isOpen, setOpen] = React.useState(false);
   const handleClose = () => {
     setState(false);
   };
 
-  const [editState, setEditState] = React.useState({
-    stopLoss: 0,
+  const initialState = {
+    stopLoss: '',
     profit: '',
     partial: {
       icon: OnlyLogo,
@@ -98,7 +99,15 @@ export const EditModal = (props: EditModalProps) => {
       name: 'tigUSD'
     },
     position: ''
-  });
+  };
+
+  const [editState, setEditState] = React.useState(initialState);
+
+  const isChanged = JSON.stringify(editState) === JSON.stringify(initialState);
+
+  React.useEffect(() => {
+    console.log('isChanged: ', isChanged);
+  }, [editState]);
 
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
@@ -124,8 +133,16 @@ export const EditModal = (props: EditModalProps) => {
           <TextLabel>Stop loss</TextLabel>
           <StopLossAction>
             <InputField name="stopLoss" type="number" value={editState.stopLoss} setValue={handleEditState} />
-            <ApplyButton>Apply</ApplyButton>
-            <CancelButton>Cancel</CancelButton>
+            {isConnected ? (
+              <>
+                <ApplyButton disabled={editState.stopLoss === ''} variant="contained">
+                  Apply
+                </ApplyButton>
+                <CancelButton>Cancel</CancelButton>
+              </>
+            ) : (
+              ''
+            )}
           </StopLossAction>
         </EditField>
         <EditField>
@@ -233,7 +250,7 @@ export const EditModal = (props: EditModalProps) => {
         </FieldLabel>
       </EditDialogContent>
       <DialogActions>
-        <SaveChangeButton variant="contained" onClick={handleClose}>
+        <SaveChangeButton disabled={isChanged} variant="contained" onClick={handleClose}>
           Save changes
         </SaveChangeButton>
       </DialogActions>
@@ -334,10 +351,7 @@ const ApplyButton = styled(Button)(({ theme }) => ({
   color: '#FFF',
   height: '36px',
   width: '150px',
-  textTransform: 'none',
-  '&:hover': {
-    backgroundColor: '#3772FF'
-  }
+  textTransform: 'none'
 }));
 
 const CancelButton = styled(Box)(({ theme }) => ({

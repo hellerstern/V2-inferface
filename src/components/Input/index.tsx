@@ -125,7 +125,7 @@ export const InputField = (props: InputLabelProps) => {
     <InputFieldContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
       <InputFieldArea>
         <InputFieldValue
-          value={value}
+          value={value === 0 ? '' : value}
           type={type}
           name={name}
           ref={valueRef}
