@@ -6,7 +6,7 @@ import { TableDropDownMenu } from '../Dropdown/tableDrop';
 import { PositionTable } from '../Table';
 
 interface TabBarProps {
-  active: boolean;
+  active: number;
 }
 
 export const TradingPositionTable = () => {
@@ -17,10 +17,10 @@ export const TradingPositionTable = () => {
       <TableWrapper>
         <TableAction>
           <TableTab>
-            <TabBar active={tab === 0} onClick={() => setTab(0)}>
+            <TabBar active={tab === 0 ? 1 : 0} onClick={() => setTab(0)}>
               My Open Position(11)
             </TabBar>
-            <TabBar active={tab === 1} onClick={() => setTab(1)}>
+            <TabBar active={tab === 1 ? 1 : 0} onClick={() => setTab(1)}>
               My Limit Orders
             </TabBar>
           </TableTab>
@@ -76,7 +76,7 @@ const TableTab = styled(Box)(({ theme }) => ({
 const TabBar = styled(Box)<TabBarProps>(({ theme, active }) => ({
   fontSize: '12px',
   textTransform: 'uppercase',
-  color: active ? '#FFFFFF' : '#777E90',
+  color: active === 1 ? '#FFFFFF' : '#777E90',
   cursor: 'pointer'
 }));
 

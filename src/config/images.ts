@@ -14,6 +14,7 @@ import EtherLogoSvg from '../assets/images/CoinImage/EtherLogo.svg';
 import LunaLogoSvg from '../assets/images/CoinImage/LunaLogo.svg';
 import MinexLogo from '../assets/images/CoinImage/MinexLogo.svg';
 import XrpLogoSvg from '../assets/images/CoinImage/XrpLogo.svg';
+import OnlyLogo from '../assets/icons/logo.svg';
 
 // Coins & Tokens
 import BtcImg from '../assets/images/btc.png';
@@ -35,5 +36,6 @@ export {
   EtherLogoSvg,
   LunaLogoSvg,
   MinexLogo,
-  XrpLogoSvg
+  XrpLogoSvg,
+  OnlyLogo
 };
