@@ -56,7 +56,16 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		},
 		custom_css_url: "css/style.css",
 		toolbar_bg: '#17191D',
-		loading_screen: { backgroundColor: "#17191D" }
+		loading_screen: { backgroundColor: "#17191D" },
+		drawings_access: {
+			type: 'black',
+		    tools: [
+				{
+					name: 'Font Icons',
+					grayed: false
+				}
+			]
+		}
 	};
 	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
 

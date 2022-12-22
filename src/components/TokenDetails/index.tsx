@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 
-import { btcLogo } from 'src/config/images';
+import * as logos from 'src/config/images';
 
 import { AiFillStar } from 'react-icons/ai';
 import { Container } from 'src/components/Container';
@@ -19,6 +19,44 @@ interface ITokenDetails {
 }
 
 export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
+
+  const LogoArray = [
+    logos.btcLogo,
+    logos.ethLogo,
+    logos.btcLogo,
+    logos.maticLogo,
+    logos.linkLogo,
+    logos.btcLogo, // eur
+    logos.btcLogo, // gbp
+    logos.btcLogo, // jpy
+    logos.btcLogo, // rub
+    logos.btcLogo, // chf
+    logos.btcLogo, // cad
+    logos.ethLogo, // eth/btc
+    logos.xrpLogo,
+    logos.bnbLogo,
+    logos.adaLogo,
+    logos.atomLogo,
+    logos.btcLogo, // hbar
+    logos.btcLogo, // tron
+    logos.solLogo, 
+    logos.dogeLogo,
+    logos.ltcLogo,
+    logos.bchLogo,
+    logos.btcLogo, // etc
+    logos.dotLogo,
+    logos.xmrLogo,
+    logos.btcLogo, // shib
+    logos.avaxLogo,
+    logos.uniLogo,
+    logos.btcLogo, // xlm
+    logos.nearLogo,
+    logos.algoLogo,
+    logos.btcLogo, // icp
+    logos.btcLogo, // xag
+    logos.linkLogo, // link/btc
+    logos.xmrLogo // xmr/btc
+  ]
 
   React.useEffect(() => {
 		oracleSocket.on('data', (data: []) => {
@@ -77,8 +115,8 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
         <TradeWrapper>
           <KindOfToken>
             <Tokens>
-              <img src={btcLogo} alt="btc-img" style={{height: '28px'}} />
-              <span className="token-name">BTC/USDT</span>
+              <img src={LogoArray[pairIndex]} style={{height: '28px'}} />
+              <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
               <Box className="multi-value">
                 <span>100X</span>
               </Box>
