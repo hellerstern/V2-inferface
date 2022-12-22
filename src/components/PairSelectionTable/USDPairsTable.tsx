@@ -4,6 +4,8 @@ import { styled } from '@mui/system';
 import React from 'react';
 import { adaLogo, algoLogo, atomLogo, avaxLogo, bchLogo, btcLogo, bnbLogo, dogeLogo, dotLogo,
   ethLogo, linkLogo, ltcLogo, maticLogo, nearLogo, solLogo, uniLogo, xmrLogo } from '../../config/images';
+import { getNetwork } from "src/constants/networks";
+import { oracleSocket } from 'src/context/socket';
 
 interface PairFieldProps {
   favor: boolean;
@@ -51,116 +53,142 @@ const Benefit = ({ percent, value }: BenefitProps) => {
   );
 };
 
-const rows = [
-  createData(
-    <PairField favor={true} icon={btcLogo} name={'BTC/USD'} />,
-    17810,
-    <Benefit percent={0.63} value={110} />,
-    0
-  ),
-  createData(
-    <PairField favor={true} icon={ethLogo} name={'ETH/USD'} />,
-    846,
-    <Benefit percent={-6.62} value={-60.0} />,
-    1
-  ),
-  createData(
-    <PairField favor={false} icon={adaLogo} name={'ADA/USD'} />,
-    71729000,
-    <Benefit percent={-1.95} value={-1421000} />,
-    14
-  ),
-  createData(
-    <PairField favor={false} icon={algoLogo} name={'ALGO/USD'} />,
-    180,
-    <Benefit percent={-12.08} value={-25} />,
-    30
-  ),
-  createData(
-    <PairField favor={false} icon={atomLogo} name={'ATOM/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    15
-  ),
-  createData(
-    <PairField favor={false} icon={avaxLogo} name={'AVAX/USD'} />,
-    71729000,
-    <Benefit percent={-1.95} value={-1421000} />,
-    26
-  ),
-  createData(
-    <PairField favor={false} icon={bchLogo} name={'BCH/USD'} />,
-    180,
-    <Benefit percent={-12.08} value={-25.0} />,
-    21
-  ),
-  createData(
-    <PairField favor={false} icon={bnbLogo} name={'BNB/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    13
-  ),
-  createData(
-    <PairField favor={false} icon={dogeLogo} name={'DOGE/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    19
-  ),
-  createData(
-    <PairField favor={false} icon={dotLogo} name={'DOT/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    23
-  ),
-  createData(
-    <PairField favor={false} icon={linkLogo} name={'LINK/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    4
-  ),
-  createData(
-    <PairField favor={false} icon={ltcLogo} name={'LTC/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    20
-  ),
-  createData(
-    <PairField favor={false} icon={maticLogo} name={'MATIC/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    3
-  ),
-  createData(
-    <PairField favor={false} icon={nearLogo} name={'NEAR/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    29
-  ),
-  createData(
-    <PairField favor={false} icon={solLogo} name={'SOL/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    18
-  ),
-  createData(
-    <PairField favor={false} icon={uniLogo} name={'UNI/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    27
-  ),
-  createData(
-    <PairField favor={false} icon={xmrLogo} name={'XMR/USD'} />,
-    3465,
-    <Benefit percent={6.62} value={60.0} />,
-    24
-  )
-];
-
 interface Props {
   setPairIndex: any;
 }
 
+interface PriceCellProps {
+  setPairIndex: any;
+  pairIndex: any;
+}
+
+export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
+  React.useEffect(() => {
+    oracleSocket.on('data', (data: any) => {
+      if (data[pairIndex].price !== oraclePrice) {
+        setOraclePrice(data[pairIndex].price);
+      }
+    });
+  }, []);
+  
+  const [oraclePrice, setOraclePrice] = React.useState(0);
+
+  return (
+    <>
+    <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
+      {(oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+    </TableCell>
+    </>
+  )
+}
+
 export const USDPairsTable = ({setPairIndex}: Props) => {
+
+  const rows = [
+    createData(
+      <PairField favor={true} icon={btcLogo} name={'BTC/USD'} />,
+      0,
+      <Benefit percent={0.63} value={110} />,
+      0
+    ),
+    createData(
+      <PairField favor={true} icon={ethLogo} name={'ETH/USD'} />,
+      0,
+      <Benefit percent={-6.62} value={-60.0} />,
+      1
+    ),
+    createData(
+      <PairField favor={false} icon={adaLogo} name={'ADA/USD'} />,
+      0,
+      <Benefit percent={-1.95} value={-1421000} />,
+      14
+    ),
+    createData(
+      <PairField favor={false} icon={algoLogo} name={'ALGO/USD'} />,
+      0,
+      <Benefit percent={-12.08} value={-25} />,
+      30
+    ),
+    createData(
+      <PairField favor={false} icon={atomLogo} name={'ATOM/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      15
+    ),
+    createData(
+      <PairField favor={false} icon={avaxLogo} name={'AVAX/USD'} />,
+      0,
+      <Benefit percent={-1.95} value={-1421000} />,
+      26
+    ),
+    createData(
+      <PairField favor={false} icon={bchLogo} name={'BCH/USD'} />,
+      0,
+      <Benefit percent={-12.08} value={-25.0} />,
+      21
+    ),
+    createData(
+      <PairField favor={false} icon={bnbLogo} name={'BNB/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      13
+    ),
+    createData(
+      <PairField favor={false} icon={dogeLogo} name={'DOGE/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      19
+    ),
+    createData(
+      <PairField favor={false} icon={dotLogo} name={'DOT/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      23
+    ),
+    createData(
+      <PairField favor={false} icon={linkLogo} name={'LINK/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      4
+    ),
+    createData(
+      <PairField favor={false} icon={ltcLogo} name={'LTC/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      20
+    ),
+    createData(
+      <PairField favor={false} icon={maticLogo} name={'MATIC/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      3
+    ),
+    createData(
+      <PairField favor={false} icon={nearLogo} name={'NEAR/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      29
+    ),
+    createData(
+      <PairField favor={false} icon={solLogo} name={'SOL/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      18
+    ),
+    createData(
+      <PairField favor={false} icon={uniLogo} name={'UNI/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      27
+    ),
+    createData(
+      <PairField favor={false} icon={xmrLogo} name={'XMR/USD'} />,
+      0,
+      <Benefit percent={6.62} value={60.0} />,
+      24
+    )
+  ];
+
   return (
     <>
       <Table aria-label="simple table">
@@ -180,9 +208,7 @@ export const USDPairsTable = ({setPairIndex}: Props) => {
             {rows.map((row, index) => (
               <CustomTableRow key={index}>
                 <TableCell sx={{ width: '150px' }} onClick={() => setPairIndex(row.pairIndex)}>{row.pair}</TableCell>
-                <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(row.pairIndex)}>
-                  {row.price}
-                </TableCell>
+                <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex}/>
                 <TableCell align="center" onClick={() => setPairIndex(row.pairIndex)}>{row.profit}</TableCell>
               </CustomTableRow>
             ))}
