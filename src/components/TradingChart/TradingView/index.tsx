@@ -117,7 +117,7 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 				tvWidget.activeChart().getShapeById(AskLine)?.setPoints([{price: spreadPrices.ask}] as unknown as ShapePoint[]);
 			} catch {
 				try {
-					tvWidget.activeChart().removeAllShapes();
+					tvWidget.chart().removeAllShapes();
 					setBidLine(tvWidget.activeChart().createShape(
 						{ 
 							time: 0, 
