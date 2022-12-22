@@ -40,7 +40,7 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		library_path: '/charting_library/' as string,
 
 		locale: getLanguageFromURL() || 'en',
-		disabled_features: ['use_localstorage_for_settings', 'header_symbol_search', 'header_compare'],
+		disabled_features: ['header_symbol_search', 'header_compare', 'use_localstorage_for_settings', 'header_settings'],
 		enabled_features: ['study_template'],
 		charts_storage_api_version: '1.1',
 		client_id: 'tradingview.com',
