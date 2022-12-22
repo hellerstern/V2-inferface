@@ -10,7 +10,8 @@ import {
 	TimeFrameType,
 	VisiblePriceRange,
 	PricedPoint,
-	ShapePoint
+	ShapePoint,
+	SetVisibleTimeRange
 } from '../../../charting_library';
 import Datafeed from './datafeed.js';
 import { useEffect, useState } from 'react';
@@ -52,7 +53,9 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		overrides: {
 			"paneProperties.background": "#17191D",
 			"paneProperties.backgroundType": "solid",
-			"scalesProperties.showSymbolLabels": true
+			"scalesProperties.showSymbolLabels": true,
+			"rightOffset": 10
+
 		},
 		custom_css_url: "css/style.css",
 		toolbar_bg: '#17191D',
@@ -93,6 +96,9 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		localStorage.setItem("LastPairSelected", asset);
 		let _widget = new widget(widgetOptions);
 		setTVWidget(_widget);
+		_widget.onChartReady(() => {
+			_widget.chart().setVisibleRange({from: Date.now()/1000 - 7500, to: Date.now()/1000 + 1000});
+		});
 	}, []);
 
 	useEffect(() => {
