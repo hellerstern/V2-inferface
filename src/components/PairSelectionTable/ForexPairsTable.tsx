@@ -25,9 +25,7 @@ const PairField = ({ favor, icon, name }: PairFieldProps) => {
       ) : (
         <StarBorder sx={{ width: '20px', height: '20px' }} />
       )}
-      <IconBox>
-        <img src={icon} style={{maxHeight: '20px'}} />
-      </IconBox>
+      <img src={icon} style={{maxHeight: '24px'}} />
       <CoinName>{name}</CoinName>
     </PairFieldContainer>
   );
@@ -105,17 +103,6 @@ export const ForexPairsTable = () => {
 const PairFieldContainer = styled(Box)({
   display: 'flex',
   gap: '10px',
-  alignItems: 'center'
-});
-
-const IconBox = styled(Box)({
-  padding: '5px',
-  minWidth: '30px',
-  minHeight: '30px',
-  borderRadius: '100px',
-  backgroundColor: '#FFFFFF',
-  display: 'flex',
-  justifyContent: 'center',
   alignItems: 'center'
 });
 
