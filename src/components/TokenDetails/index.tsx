@@ -9,20 +9,34 @@ import { Container } from 'src/components/Container';
 import usePreventBodyScroll from 'src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
-import { getNetwork } from "src/constants/networks"
+import { getNetwork } from "src/constants/networks";
+import { oracleSocket } from 'src/context/socket';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 interface ITokenDetails {
-  pairIndex: any,
-  tokenPrice: any,
-  spread: any
+  pairIndex: number
 }
 
-export const TokenDetails = ({ pairIndex, tokenPrice, spread }: ITokenDetails) => {
+export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
+
+  React.useEffect(() => {
+		oracleSocket.on('data', (data: []) => {
+      setOracleData(data);
+		});
+	}, []);
+	const [oracleData, setOracleData] = React.useState([{price: "0", spread: "0"}]);
 
   const INFOS: any = [
-    { name: 'Oracle Price', value: (parseInt(tokenPrice)/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals), label: '' },
+    { name: 'Oracle Price',
+      value:
+        oracleData[pairIndex] != null
+          ?
+        (parseInt(oracleData[pairIndex].price)/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
+          :
+        0
+      , label: ''
+    },
     { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
     { name: '24h Volume', value: '$230,050.00', label: '' },
     { name: 'Long Open Interest', value: '0/ ', label: 'Unlimited' },
@@ -31,7 +45,14 @@ export const TokenDetails = ({ pairIndex, tokenPrice, spread }: ITokenDetails) =
     { name: 'Closing Fee', value: '0.10%', label: '' },
     { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
     { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
-    { name: 'Price Spread', value: (spread/1e8).toFixed(5) + "%", label: '' }
+    { name: 'Price Spread',
+      value:
+        oracleData[pairIndex] != null
+          ?
+        (oracleData[pairIndex].spread as unknown as number/1e8).toFixed(3) + "%"
+          :
+        "0.000%"
+      , label: '' }
   ];
 
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {

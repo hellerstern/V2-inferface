@@ -1,4 +1,4 @@
-import React from "react";
+import { createContext } from "react";
 import socketio from "socket.io-client";
 
 export const priceStreamSocket = socketio.connect('https://frontend-prices-795bp.ondigitalocean.app/', {transports: ['websocket'] });
@@ -27,4 +27,4 @@ oracleSocket.on('error', (error) => {
     console.log('[oracleSocket] Error:', error);
 });
 
-export const SocketContext = React.createContext();
+export const SocketContext = createContext();
