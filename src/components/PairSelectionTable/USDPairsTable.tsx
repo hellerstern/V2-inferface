@@ -55,6 +55,7 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 
 interface Props {
   setPairIndex: any;
+  searchQuery: any;
 }
 
 interface PriceCellProps {
@@ -82,7 +83,16 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
   )
 }
 
-export const USDPairsTable = ({setPairIndex}: Props) => {
+export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
+
+  console.log(
+    createData(
+      <PairField favor={true} icon={btcLogo} name={'BTC/USD'} />,
+      0,
+      <Benefit percent={0.63} value={110} />,
+      0
+    )
+  );
 
   const rows = [
     createData(
@@ -187,7 +197,7 @@ export const USDPairsTable = ({setPairIndex}: Props) => {
       <Benefit percent={6.62} value={60.0} />,
       24
     )
-  ];
+  ].filter(pair => (pair.pair.props.name).includes(searchQuery));
 
   return (
     <>

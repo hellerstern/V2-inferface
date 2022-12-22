@@ -2,11 +2,14 @@ import { Search } from '@mui/icons-material';
 import { Box, InputBase } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const SearchBar = () => {
+interface SearchProps {
+  onChange: any;
+}
+export const SearchBar = ({onChange}: SearchProps) => {
   return (
     <SearchBarContainer component={'form'}>
       <Search sx={{ color: '#777E90' }} />
-      <InputBox placeholder="Search a specific pairs..." />
+      <InputBox placeholder="Search a specific pairs..." onChange={onChange}/>
     </SearchBarContainer>
   );
 };

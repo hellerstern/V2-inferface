@@ -16,13 +16,21 @@ interface PairSelectionTableProps {
 export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSearchQuery('');
     setValue(newValue);
   };
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const handleSearch = (event: any) => {
+    setSearchQuery((event.target.value).toUpperCase());
+  };
+
   return (
     <TradingDetailContainer>
       <SearchContainer>
         <Box sx={{ padding: '15px 9px 0 9px' }}>
-          <SearchBar />
+          <SearchBar onChange={handleSearch}/>
         </Box>
         <TabsContainer sx={{ borderColor: 'divider' }}>
           <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
@@ -40,7 +48,7 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          <USDPairsTable setPairIndex={setPairIndex} />
+          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
           <BTCPairsTable />
