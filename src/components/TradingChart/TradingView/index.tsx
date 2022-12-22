@@ -89,7 +89,6 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 	useEffect(() => {
 		localStorage.setItem("LastPairSelected", asset);
 		try {
-			tvWidget?.activeChart().removeAllShapes();
 			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => { });
 		} catch {
 			setTVWidget(new widget(widgetOptions));
@@ -108,16 +107,17 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 		tvWidget?.chart().createShape({ price: pendingLine, time: 0 }, { shape: "horizontal_line", text: "Opening price" });
 	}, [pendingLine]);
 
-	const [BidLine, setBidLine] = useState<any>(Object());
-	const [AskLine, setAskLine] = useState<any>(Object());
+	const [BidLine, setBidLine] = useState<any>(null);
+	const [AskLine, setAskLine] = useState<any>(null);
 
 	useEffect(() => {
 		if (tvWidget != undefined) {
 			try {
-				tvWidget?.activeChart().getShapeById(BidLine)?.setPoints([{price: spreadPrices.bid}] as unknown as ShapePoint[]);
-				tvWidget?.activeChart().getShapeById(AskLine)?.setPoints([{price: spreadPrices.ask}] as unknown as ShapePoint[]);
+				tvWidget.activeChart().getShapeById(BidLine)?.setPoints([{price: spreadPrices.bid}] as unknown as ShapePoint[]);
+				tvWidget.activeChart().getShapeById(AskLine)?.setPoints([{price: spreadPrices.ask}] as unknown as ShapePoint[]);
 			} catch {
 				try {
+					tvWidget.activeChart().removeAllShapes();
 					setBidLine(tvWidget.activeChart().createShape(
 						{ 
 							time: 0, 
