@@ -47,7 +47,7 @@ interface BenefitProps {
 
 const Benefit = ({ percent, value }: BenefitProps) => {
   return (
-    <BenefitContainer sx={{ color: percent > 0 ? '#58BD7D' : '#D33535' }}>
+    <BenefitContainer sx={{ color: percent > 0 ? '#26A69A' : '#EF534F' }}>
       {percent > 0 ? `+${percent}` : percent.toFixed(2)}%<p>{value.toFixed(2)}</p>
     </BenefitContainer>
   );
