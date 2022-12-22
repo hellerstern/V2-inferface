@@ -1,13 +1,13 @@
 /* eslint-disable */
 
-import { priceStreamSocket } from "src/context/socket";
+import { oracleSocket } from "src/context/socket";
 
 var lastDailyBar;
 var callback;
 var cAsset = 0;
 
-priceStreamSocket.on('Prices', (data) => {
-  const tradePrice = parseFloat(data.prices[cAsset]);
+oracleSocket.on('data', (data) => {
+  const tradePrice = parseFloat(data[cAsset].price / 1e18);
   var tNow = new Date().getTime();
   const tradeTime = tNow - (tNow % 60000);
 
