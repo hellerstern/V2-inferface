@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -58,12 +58,18 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
     logos.xmrLogo // xmr/btc
   ]
 
-  React.useEffect(() => {
-		oracleSocket.on('data', (data: []) => {
-      setOracleData(data);
-		});
-	}, []);
-	const [oracleData, setOracleData] = React.useState([{price: "0", spread: "0"}]);
+  useEffect(() => {
+    oracleSocket.on('data', (data: any) => {
+      if (
+        (data[pairIndex].price/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !== (oracleRef.current[pairIndex].price/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
+        || data[pairIndex].spread !== oracleRef.current[pairIndex].spread) {
+        setOracleData(data);
+        oracleRef.current = data;
+      }
+    });
+  }, []);
+	const [oracleData, setOracleData] = React.useState(Array(35).fill({price: "0", spread: "0"}));
+  const oracleRef = useRef(Array(35).fill({price: "0", spread: "0"}));
 
   const INFOS: any = [
     { name: 'Oracle Price',
