@@ -4,6 +4,8 @@ import { localStorageGet, localStorageSet } from '../utils/localStorage';
 interface StoreContextProps {
   page: number;
   setPage: (value: number) => void;
+  miniPage: number;
+  setMiniPage: (value: number) => void;
 }
 
 interface propsType {
@@ -14,14 +16,21 @@ const StoreContext = createContext<StoreContextProps | null>(null);
 
 const StoreProvider = (props: propsType) => {
   const [page, setPage] = useState<number>(localStorageGet('page'));
+  const [miniPage, setMiniPage] = useState<number>(localStorageGet('miniPage'));
 
   const loadPage = () => {
     setPage(localStorageGet('page') === '' ? 0 : localStorageGet('page'));
+    setMiniPage(localStorageGet('miniPage') === '' ? 0 : localStorageGet('miniPage'));
   };
 
   const setPageNumber = (num: number) => {
     setPage(num);
     localStorageSet('page', num);
+  };
+
+  const setMiniPageNumber = (num: number) => {
+    setMiniPage(num);
+    localStorageSet('miniPage', num);
   };
 
   useEffect(() => {
@@ -32,7 +41,9 @@ const StoreProvider = (props: propsType) => {
     <StoreContext.Provider
       value={{
         page,
-        setPage: setPageNumber
+        setPage: setPageNumber,
+        miniPage,
+        setMiniPage: setMiniPageNumber
       }}
     >
       {props.children}
