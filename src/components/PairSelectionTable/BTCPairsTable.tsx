@@ -92,16 +92,6 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
   )
 }
 
-function sortFavorites(a: any, b: any) {
-  if (a.pair.props.favor === b.pair.props.favor) {
-    return 0;
-  }
-  if (a.pair.props.favor) {
-    return -1;
-  }
-  return 1;
-}
-
 export const BTCPairsTable = ({setPairIndex, searchQuery}: Props) => {
 
   const [FavPairs, setFavPairs] = useState<string[]>(
@@ -139,7 +129,6 @@ export const BTCPairsTable = ({setPairIndex, searchQuery}: Props) => {
       34
     )
   ]
-  .sort(sortFavorites)
   .filter(pair => (pair.pair.props.name).includes(searchQuery));
 
   return (
