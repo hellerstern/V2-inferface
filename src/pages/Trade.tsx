@@ -9,7 +9,7 @@ import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
 import { DailyPerformanceChart } from 'src/components/DailyChart';
 import { useStore } from 'src/context/StoreContext';
-import { Cumulative } from './MiniPage/Cumulative';
+import { Cumulative } from './miniPage/Cumulative';
 
 export const Trade = () => {
   const [pairIndex, setPairIndex] = React.useState(
@@ -19,7 +19,7 @@ export const Trade = () => {
   const { miniPage } = useStore();
 
   React.useEffect(() => {
-    if (localStorage.getItem("FavPairs") === null) localStorage.setItem("FavPairs", '["BTC/USD", "ETH/USD"]');
+    if (localStorage.getItem('FavPairs') === null) localStorage.setItem('FavPairs', '["BTC/USD", "ETH/USD"]');
   }, []);
 
   return (
