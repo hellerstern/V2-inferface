@@ -17,8 +17,8 @@ export const TigrisDateRangePicker = (props: RangePickerProps) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateRangePicker
         value={value}
-        onChange={(newValue) => setValue(newValue)}
-        renderInput={(startProps, endProps) => (
+        onChange={(newValue: any) => setValue(newValue)}
+        renderInput={(startProps: any, endProps: any) => (
           <React.Fragment>
             <Input ref={startProps.inputRef as React.Ref<HTMLInputElement>} {...startProps.inputProps} />
             <Box sx={{ mx: 1 }}> - </Box>

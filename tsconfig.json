@@ -17,6 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "./config-overrides.ts"],
+  "include": ["src", "./config-overrides.ts", "Cumulative"],
   "exclude": ["node_modules"]
 }

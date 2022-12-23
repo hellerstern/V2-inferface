@@ -9,7 +9,7 @@ import { TradingOrderForm } from 'src/components/TradingOrderForm';
 import { TradingPositionTable } from 'src/components/TradingPositionTable';
 import { DailyPerformanceChart } from 'src/components/DailyChart';
 import { useStore } from 'src/context/StoreContext';
-import { Cumulative } from './miniPage/Cumulative';
+import { Cumulative } from './MiniPage/Cumulative';
 
 export const Trade = () => {
   const [pairIndex, setPairIndex] = React.useState(
