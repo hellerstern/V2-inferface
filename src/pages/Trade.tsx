@@ -18,6 +18,10 @@ export const Trade = () => {
   const [pendingChartLine, setPendingChartLine] = React.useState(0);
   const { miniPage } = useStore();
 
+  React.useEffect(() => {
+    if (localStorage.getItem("FavPairs") === null) localStorage.setItem("FavPairs", '["BTC/USD", "ETH/USD"]');
+  }, []);
+
   return (
     <TradeContainer>
       {miniPage === 0 && (
