@@ -24,7 +24,7 @@ interface PairFieldProps {
 }
 const PairField = ({ favor, handleFavoriteToggle, icon, name }: PairFieldProps) => {
 
-  const handleChildClick = (event: React.MouseEvent, setFav: boolean) => {
+  const handleStarClick = (event: React.MouseEvent, setFav: boolean) => {
     handleFavoriteToggle(name, setFav);
     event.stopPropagation();
   }
@@ -33,13 +33,13 @@ const PairField = ({ favor, handleFavoriteToggle, icon, name }: PairFieldProps) 
     <PairFieldContainer>
       {favor ? (
         <IconButton onClick={(e) => {
-            handleChildClick(e, false)
+            handleStarClick(e, false)
           }} sx={{padding: '0px'}}>
           <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }}/>
         </IconButton>
       ) : (
         <IconButton onClick={(e) => {
-          handleChildClick(e, true)
+            handleStarClick(e, true)
           }} sx={{padding: '0px'}}>
           <StarBorder sx={{ width: '20px', height: '20px' }}/>
         </IconButton>
