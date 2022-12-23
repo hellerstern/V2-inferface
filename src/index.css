@@ -40,7 +40,7 @@ button {
   border-bottom: none !important;
 }
 
-.MuiPickersPopper-paper {
+.MuiPaper-root {
   background-image: none !important;
   background-color: #18191d !important;
 }
