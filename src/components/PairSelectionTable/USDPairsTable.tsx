@@ -101,7 +101,7 @@ function sortFavorites(a: any, b: any) {
 
 export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
 
-  const [FavPairs, setFavPairs] = React.useState<string[]>(["BTC/USD", "ETH/USD"]);
+  const [FavPairs, setFavPairs] = React.useState<string[]>([]);
   useEffect(() => {
     setFavPairs(JSON.parse(localStorage.getItem("FavPairs") as string) as string[]);
   }, []);
