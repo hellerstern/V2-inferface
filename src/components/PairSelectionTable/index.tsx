@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { SearchBar } from '../SearchBar';
 import { a11yProps, TabPanel } from '../TabPanel';
@@ -8,6 +8,7 @@ import { USDPairsTable } from './USDPairsTable';
 import { BTCPairsTable } from './BTCPairsTable';
 import { ForexPairsTable } from './ForexPairsTable';
 import { CommodityPairsTable } from './CommodityPairsTable';
+import { FavPairsTable } from './FavPairsTable';
 
 interface PairSelectionTableProps {
   setPairIndex: any;
@@ -33,12 +34,14 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
           <SearchBar onChange={handleSearch}/>
         </Box>
         <TabsContainer sx={{ borderColor: 'divider' }}>
-          <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
+          <IconButton onClick={() => setValue(4)} sx={{padding: '0px'}}>
+            <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
+          </IconButton>
           <Tabs
             value={value}
             onChange={handleChange}
             aria-label="basic tabs example"
-            TabIndicatorProps={{ style: { backgroundColor: '#3772ff', height: '2px' } }}
+            TabIndicatorProps={{ style: { backgroundColor: value === 4 ? '#FABE3C' : '#3772ff', height: '2px' } }}
             sx={{ height: '30px' }}
           >
             <CustomTab label="USD Pairs" {...a11yProps(0)} />
@@ -51,13 +54,16 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
           <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BTCPairsTable />
+          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <ForexPairsTable />
+          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <CommodityPairsTable />
+          <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
         </TabPanel>
       </SearchContainer>
     </TradingDetailContainer>

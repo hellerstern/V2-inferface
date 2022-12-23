@@ -76,7 +76,7 @@ interface PriceCellProps {
 export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] != null && data[pairIndex].price !== oraclePrice) {
+      if (data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
     });
@@ -93,17 +93,7 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
   )
 }
 
-function sortFavorites(a: any, b: any) {
-  if (a.pair.props.favor === b.pair.props.favor) {
-    return 0;
-  }
-  if (a.pair.props.favor) {
-    return -1;
-  }
-  return 1;
-}
-
-export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
+export const FavPairsTable = ({setPairIndex, searchQuery}: Props) => {
 
   const [FavPairs, setFavPairs] = useState<string[]>(
     JSON.parse(localStorage.getItem("FavPairs") === null ? '["BTC/USD", "ETH/USD"]' : localStorage.getItem("FavPairs") as string) as string[]
@@ -164,6 +154,12 @@ export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
       0
     ),
     createData(
+      <PairField favor={FavPairs.includes('CAD/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'CAD/USD'} />,
+      0.801324,
+      <Benefit percent={0.63} value={110} />,
+      10
+    ),
+    createData(
       <PairField favor={FavPairs.includes('DOGE/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={dogeLogo} name={'DOGE/USD'} />,
       0,
       <Benefit percent={6.62} value={60.0} />,
@@ -182,10 +178,40 @@ export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
       1
     ),
     createData(
+      <PairField favor={FavPairs.includes('ETH/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/BTC'} />,
+      0,
+      <Benefit percent={0.63} value={110} />,
+      11
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('EUR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'EUR/USD'} />,
+      1.080194,
+      <Benefit percent={0.63} value={110} />,
+      5
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('GBP/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'GBP/USD'} />,
+      1.240194,
+      <Benefit percent={0.63} value={110} />,
+      6
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('JPY/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'JPY/USD'} />,
+      0.00701148,
+      <Benefit percent={0.63} value={110} />,
+      7
+    ),
+    createData(
       <PairField favor={FavPairs.includes('LINK/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/USD'} />,
       0,
       <Benefit percent={6.62} value={60.0} />,
       4
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('LINK/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/BTC'} />,
+      0,
+      <Benefit percent={0.63} value={110} />,
+      33
     ),
     createData(
       <PairField favor={FavPairs.includes('LTC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={ltcLogo} name={'LTC/USD'} />,
@@ -218,13 +244,31 @@ export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
       27
     ),
     createData(
+      <PairField favor={FavPairs.includes('XAG/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAG/USD'} />,
+      23.9691,
+      <Benefit percent={0.63} value={110} />,
+      32
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('XAU/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAU/USD'} />,
+      1797.43,
+      <Benefit percent={0.63} value={110} />,
+      2
+    ),
+    createData(
       <PairField favor={FavPairs.includes('XMR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/USD'} />,
       0,
       <Benefit percent={6.62} value={60.0} />,
       24
+    ),
+    createData(
+      <PairField favor={FavPairs.includes('XMR/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/BTC'} />,
+      0,
+      <Benefit percent={0.63} value={110} />,
+      34
     )
   ]
-  .sort(sortFavorites)
+  .filter(pair => (pair.pair.props.favor))
   .filter(pair => (pair.pair.props.name).includes(searchQuery));
 
   return (
