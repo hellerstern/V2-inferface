@@ -262,7 +262,9 @@ const PairFieldContainer = styled(Box)({
 const CoinName = styled(Box)({
   fontWeight: 700,
   fontSize: '12px',
-  letterSpacing: '1.25px'
+  letterSpacing: '1.25px',
+  border: '10px solid rgba(0, 0, 0, 0)',
+  marginLeft: '-10px'
 });
 
 const BenefitContainer = styled(Box)({

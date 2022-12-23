@@ -1,17 +1,11 @@
 /* eslint-disable */
-import * as React from 'react';
+import { useRef } from 'react';
 import './src/index.css';
 import {
 	widget,
 	ChartingLibraryWidgetOptions,
 	LanguageCode,
-	IChartingLibraryWidget,
 	ResolutionString,
-	TimeFrameType,
-	VisiblePriceRange,
-	PricedPoint,
-	ShapePoint,
-	SetVisibleTimeRange
 } from '../../../charting_library';
 import Datafeed from './datafeed.js';
 import { useEffect, useState } from 'react';
@@ -70,77 +64,62 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 			]
 		}
 	};
-	const [tvWidget, setTVWidget] = useState<IChartingLibraryWidget>();
-
-	const [oracleData, setOracleData] = useState([{}]);
-	const [spreadPrices, setSpreadPrices] = useState({ask: 0, bid: 0});
-	useEffect(() => {
-		oracleSocket.on('data', (data: any) => {
-			setOracleData(data);
-			setSpreadPrices({
-				ask: (data.length > 0 && data[asset] != null)
-						?
-			  		(parseInt(data[asset].price) - parseInt(data[asset].price) * parseInt(data[asset].spread)/1e10)/1e18
-						:
-			  		2,
-				bid: (data.length > 0 && data[asset] != null)
-						?
-			  		(parseInt(data[asset].price) + parseInt(data[asset].price) * parseInt(data[asset].spread)/1e10)/1e18
-						:
-			  		2
-		  	});
-		});
-	}, [asset]);
+	const tvWidget = useRef<any>(null);
 
 	useEffect(() => {
 		localStorage.setItem("LastPairSelected", asset);
 		let _widget = new widget(widgetOptions);
-		setTVWidget(_widget);
+		tvWidget.current = _widget;
 		_widget.onChartReady(() => {
 			_widget.chart().setVisibleRange({from: Date.now()/1000 - 7500, to: Date.now()/1000 + 1000});
 		});
 	}, []);
 
 	useEffect(() => {
+		currentAsset.current = asset;
 		localStorage.setItem("LastPairSelected", asset);
 		try {
-			tvWidget?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget?.symbolInterval().interval as ResolutionString, () => { });
-		} catch {
-			setTVWidget(new widget(widgetOptions));
+			tvWidget.current?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget.current?.symbolInterval().interval as ResolutionString, () => { });
+		} catch(err) {
+			console.log(err);
+			tvWidget.current = new widget(widgetOptions);
 		}
 	}, [asset]);
 
 	useEffect(() => {
 		if (pendingLine == 0) {
 			try {
-			tvWidget?.chart()?.removeAllShapes();
+			tvWidget.current?.chart()?.removeAllShapes();
 				return;
 			} catch {
 				return;
 			}
 		}
-		tvWidget?.chart().createShape({ price: pendingLine, time: 0 }, { shape: "horizontal_line", text: "Opening price" });
+		tvWidget.current?.chart().createShape({ price: pendingLine, time: 0 }, { shape: "horizontal_line", text: "Opening price" });
 	}, [pendingLine]);
 
-	const [BidLine, setBidLine] = useState<any>(null);
-	const [AskLine, setAskLine] = useState<any>(null);
+	const BidLine = useRef<any>(null);
+	const AskLine = useRef<any>(null);
+	const currentAsset = useRef<any>(null);
 
 	useEffect(() => {
-		if (tvWidget != undefined) {
-			try {
-				tvWidget.activeChart().getShapeById(BidLine)?.setPoints([{price: spreadPrices.bid}] as unknown as ShapePoint[]);
-				tvWidget.activeChart().getShapeById(AskLine)?.setPoints([{price: spreadPrices.ask}] as unknown as ShapePoint[]);
-			} catch {
+		tvWidget.current.onChartReady(() => {
+			oracleSocket.on('data', (data: any) => {
+				const spreadPrices = {
+					ask: (parseInt(data[currentAsset.current].price) - parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread)/1e10)/1e18,
+					bid: (parseInt(data[currentAsset.current].price) + parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread)/1e10)/1e18
+				}
 				try {
-					tvWidget.chart().removeAllShapes();
-					setBidLine(tvWidget.activeChart().createShape(
+					tvWidget.current.chart().removeEntity(BidLine.current);
+					tvWidget.current.chart().removeEntity(AskLine.current);
+					BidLine.current = tvWidget.current.chart().createShape(
 						{ 
 							time: 0, 
 							price: spreadPrices.bid
 						}, 
 						{ 
 							shape: 'horizontal_line', 
-							lock: false,
+							lock: true,
 							disableSelection: true,
 							overrides: {
 								showPrice: true,
@@ -155,15 +134,15 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 								fontsize: "12",
 							} 
 						}
-					));
-					setAskLine(tvWidget.activeChart().createShape(
+					);
+					AskLine.current = tvWidget.current.chart().createShape(
 						{ 
-							time: 0, 
+							time: 0,
 							price: spreadPrices.ask
 						}, 
 						{ 
 							shape: 'horizontal_line', 
-							lock: false,
+							lock: true,
 							disableSelection: true,
 							overrides: {
 								showPrice: true,
@@ -178,11 +157,11 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 								fontsize: "12"
 							} 
 						}
-					));
-				} catch {}
-			}
-		}
-	}, [spreadPrices]);
+					);
+				} catch(err) {console.log(err)}
+			});
+		});
+	}, []);
 
 	return (
 		<div
