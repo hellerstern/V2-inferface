@@ -6,10 +6,9 @@ import { btcLogo } from '../../config/images';
 import { getNetwork } from "src/constants/networks";
 import { oracleSocket } from 'src/context/socket';
 
-function createData(pair: React.ReactElement, price: number, profit: React.ReactElement, pairIndex: number) {
+function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
     pair,
-    price,
     profit,
     pairIndex
   };
@@ -81,12 +80,12 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
     });
   }, []);
   
-  const [oraclePrice, setOraclePrice] = useState(0);
+  const [oraclePrice, setOraclePrice] = useState("Loading..." as any);
 
   return (
     <>
     <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
-      {(oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+      {oraclePrice === "Loading..." ? "Loading..." : (oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
     </TableCell>
     </>
   )
@@ -122,13 +121,11 @@ export const CommodityPairsTable = ({setPairIndex, searchQuery}: Props) => {
   const rows = [
     createData(
       <PairField favor={FavPairs.includes('XAG/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAG/USD'} />,
-      23.9691,
       <Benefit percent={0.63} value={110} />,
       32
     ),
     createData(
       <PairField favor={FavPairs.includes('XAU/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAU/USD'} />,
-      1797.43,
       <Benefit percent={0.63} value={110} />,
       2
     )

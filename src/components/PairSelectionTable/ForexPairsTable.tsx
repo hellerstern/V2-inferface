@@ -6,10 +6,9 @@ import { btcLogo } from '../../config/images';
 import { getNetwork } from "src/constants/networks";
 import { oracleSocket } from 'src/context/socket';
 
-function createData(pair: React.ReactElement, price: number, profit: React.ReactElement, pairIndex: number) {
+function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
     pair,
-    price,
     profit,
     pairIndex
   };
@@ -81,12 +80,12 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
     });
   }, []);
   
-  const [oraclePrice, setOraclePrice] = useState(0);
+  const [oraclePrice, setOraclePrice] = useState("Loading..." as any);
 
   return (
     <>
     <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
-      {(oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+      {oraclePrice === "Loading..." ? "Loading..." : (oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
     </TableCell>
     </>
   )
@@ -122,25 +121,21 @@ export const ForexPairsTable = ({setPairIndex, searchQuery}: Props) => {
   const rows = [
     createData(
       <PairField favor={FavPairs.includes('CAD/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'CAD/USD'} />,
-      0.801324,
       <Benefit percent={0.63} value={110} />,
       10
     ),
     createData(
       <PairField favor={FavPairs.includes('EUR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'EUR/USD'} />,
-      1.080194,
       <Benefit percent={0.63} value={110} />,
       5
     ),
     createData(
       <PairField favor={FavPairs.includes('GBP/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'GBP/USD'} />,
-      1.240194,
       <Benefit percent={0.63} value={110} />,
       6
     ),
     createData(
       <PairField favor={FavPairs.includes('JPY/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'JPY/USD'} />,
-      0.00701148,
       <Benefit percent={0.63} value={110} />,
       7
     )

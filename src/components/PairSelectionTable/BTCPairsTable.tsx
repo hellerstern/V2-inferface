@@ -6,10 +6,9 @@ import { ethLogo, linkLogo, xmrLogo } from '../../config/images';
 import { getNetwork } from "src/constants/networks";
 import { oracleSocket } from 'src/context/socket';
 
-function createData(pair: React.ReactElement, price: number, profit: React.ReactElement, pairIndex: number) {
+function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
     pair,
-    price,
     profit,
     pairIndex
   };
@@ -81,12 +80,12 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
     });
   }, []);
   
-  const [oraclePrice, setOraclePrice] = useState(0);
+  const [oraclePrice, setOraclePrice] = useState("Loading..." as any);
 
   return (
     <>
     <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
-      {(oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+      {oraclePrice === "Loading..." ? "Loading..." : (oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
     </TableCell>
     </>
   )
@@ -122,19 +121,16 @@ export const BTCPairsTable = ({setPairIndex, searchQuery}: Props) => {
   const rows = [
     createData(
       <PairField favor={FavPairs.includes('ETH/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/BTC'} />,
-      0,
       <Benefit percent={0.63} value={110} />,
       11
     ),
     createData(
       <PairField favor={FavPairs.includes('LINK/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/BTC'} />,
-      0,
       <Benefit percent={0.63} value={110} />,
       33
     ),
     createData(
       <PairField favor={FavPairs.includes('XMR/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/BTC'} />,
-      0,
       <Benefit percent={0.63} value={110} />,
       34
     )
