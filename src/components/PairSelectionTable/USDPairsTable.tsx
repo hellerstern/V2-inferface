@@ -101,10 +101,9 @@ function sortFavorites(a: any, b: any) {
 
 export const USDPairsTable = ({setPairIndex, searchQuery}: Props) => {
 
-  const [FavPairs, setFavPairs] = React.useState<string[]>(['']);
-  useEffect(() => {
-    setFavPairs(JSON.parse(localStorage.getItem("FavPairs") as string) as string[]);
-  }, []);
+  const [FavPairs, setFavPairs] = React.useState<string[]>(
+    JSON.parse(localStorage.getItem("FavPairs") === null ? '["BTC/USD", "ETH/USD"]' : localStorage.getItem("FavPairs") as string) as string[]
+  );
 
   function handleFavoriteToggle(name: string, setFav: boolean) {
     const favPairs: any = JSON.parse(localStorage.getItem("FavPairs") as string);
