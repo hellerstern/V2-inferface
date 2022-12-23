@@ -2,14 +2,16 @@ import { OpenInNew } from '@mui/icons-material';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
+import { useStore } from 'src/context/StoreContext';
 import { TableDropDownMenu } from '../Dropdown/tableDrop';
-import { PositionTable } from '../Table';
+import { PositionTable } from '../Table/PositionTable';
 
 interface TabBarProps {
   active: number;
 }
 
 export const TradingPositionTable = () => {
+  const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
   const [show, setShow] = useState('Before Closing Fees');
   return (
@@ -33,7 +35,7 @@ export const TradingPositionTable = () => {
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Daily Performance</TableMediaLabel>
-        <TableMediaAction>
+        <TableMediaAction onClick={() => setMiniPage(1)}>
           Advanced Chart
           <OpenInNew fontSize="small" />
         </TableMediaAction>
