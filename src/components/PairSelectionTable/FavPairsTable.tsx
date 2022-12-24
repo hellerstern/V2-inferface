@@ -109,140 +109,142 @@ export const FavPairsTable = ({setPairIndex, searchQuery}: Props) => {
     setFavPairs(favPairs);
   }
 
-  const rows = [
-    createData(
-      <PairField favor={FavPairs.includes('ADA/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={adaLogo} name={'ADA/USD'} />,
-      <Benefit percent={-1.95} value={-1421000} />,
-      14
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('ALGO/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={algoLogo} name={'ALGO/USD'} />,
-      <Benefit percent={-12.08} value={-25} />,
-      30
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('ATOM/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={atomLogo} name={'ATOM/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      15
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('AVAX/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={avaxLogo} name={'AVAX/USD'} />,
-      <Benefit percent={-1.95} value={-1421000} />,
-      26
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('BCH/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={bchLogo} name={'BCH/USD'} />,
-      <Benefit percent={-12.08} value={-25.0} />,
-      21
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('BNB/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={bnbLogo} name={'BNB/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      13
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('BTC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'BTC/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      0
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('CAD/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'CAD/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      10
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('DOGE/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={dogeLogo} name={'DOGE/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      19
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('DOT/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={dotLogo} name={'DOT/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      23
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('ETH/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/USD'} />,
-      <Benefit percent={-6.62} value={-60.0} />,
-      1
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('ETH/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/BTC'} />,
-      <Benefit percent={0.63} value={110} />,
-      11
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('EUR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'EUR/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      5
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('GBP/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'GBP/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      6
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('JPY/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'JPY/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      7
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('LINK/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      4
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('LINK/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/BTC'} />,
-      <Benefit percent={0.63} value={110} />,
-      33
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('LTC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={ltcLogo} name={'LTC/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      20
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('MATIC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={maticLogo} name={'MATIC/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      3
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('NEAR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={nearLogo} name={'NEAR/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      29
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('SOL/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={solLogo} name={'SOL/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      18
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('UNI/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={uniLogo} name={'UNI/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      27
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('XAG/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAG/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      32
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('XAU/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAU/USD'} />,
-      <Benefit percent={0.63} value={110} />,
-      2
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('XMR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/USD'} />,
-      <Benefit percent={6.62} value={60.0} />,
-      24
-    ),
-    createData(
-      <PairField favor={FavPairs.includes('XMR/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/BTC'} />,
-      <Benefit percent={0.63} value={110} />,
-      34
-    )
-  ]
-  .filter(pair => (pair.pair.props.favor))
-  .filter(pair => (pair.pair.props.name).includes(searchQuery));
+  function createRows() {
+    return [
+      createData(
+        <PairField favor={FavPairs.includes('ADA/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={adaLogo} name={'ADA/USD'} />,
+        <Benefit percent={-1.95} value={-1421000} />,
+        14
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('ALGO/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={algoLogo} name={'ALGO/USD'} />,
+        <Benefit percent={-12.08} value={-25} />,
+        30
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('ATOM/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={atomLogo} name={'ATOM/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        15
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('AVAX/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={avaxLogo} name={'AVAX/USD'} />,
+        <Benefit percent={-1.95} value={-1421000} />,
+        26
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('BCH/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={bchLogo} name={'BCH/USD'} />,
+        <Benefit percent={-12.08} value={-25.0} />,
+        21
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('BNB/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={bnbLogo} name={'BNB/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        13
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('BTC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'BTC/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        0
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('CAD/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'CAD/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        10
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('DOGE/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={dogeLogo} name={'DOGE/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        19
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('DOT/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={dotLogo} name={'DOT/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        23
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('ETH/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/USD'} />,
+        <Benefit percent={-6.62} value={-60.0} />,
+        1
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('ETH/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/BTC'} />,
+        <Benefit percent={0.63} value={110} />,
+        11
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('EUR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'EUR/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        5
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('GBP/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'GBP/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        6
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('JPY/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'JPY/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        7
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('LINK/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        4
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('LINK/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/BTC'} />,
+        <Benefit percent={0.63} value={110} />,
+        33
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('LTC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={ltcLogo} name={'LTC/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        20
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('MATIC/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={maticLogo} name={'MATIC/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        3
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('NEAR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={nearLogo} name={'NEAR/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        29
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('SOL/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={solLogo} name={'SOL/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        18
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('UNI/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={uniLogo} name={'UNI/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        27
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('XAG/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAG/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        32
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('XAU/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={btcLogo} name={'XAU/USD'} />,
+        <Benefit percent={0.63} value={110} />,
+        2
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('XMR/USD')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/USD'} />,
+        <Benefit percent={6.62} value={60.0} />,
+        24
+      ),
+      createData(
+        <PairField favor={FavPairs.includes('XMR/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/BTC'} />,
+        <Benefit percent={0.63} value={110} />,
+        34
+      )
+    ]
+    .filter(pair => (pair.pair.props.favor))
+    .filter(pair => (pair.pair.props.name).includes(searchQuery));
+  }
 
   return (
     <>
@@ -259,8 +261,8 @@ export const FavPairsTable = ({setPairIndex, searchQuery}: Props) => {
       </Table>
       <TbodyContainer>
         <Table sx={{ tableLayout: 'fixed' }}>
-          <TableBody>
-            {rows.map((row, index) => (
+          <TableBody key={FavPairs.length}>
+            {createRows().map((row, index) => (
               <CustomTableRow key={index} onClick={() => setPairIndex(row.pairIndex)}>
                 <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
                 <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex}/>
