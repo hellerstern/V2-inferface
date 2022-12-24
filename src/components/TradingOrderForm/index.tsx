@@ -4,21 +4,49 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { oracleData } from 'src/context/socket';
+import { oracleSocket } from 'src/context/socket';
+import { getNetwork } from 'src/constants/networks';
 
 declare const window: any
 const { ethereum } = window;
 
-export const TradingOrderForm = () => {
+interface IOrderForm {
+  pairIndex: number;
+}
+export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
+
+  const decimals = useRef(2);
+
+  useEffect(() => {
+    oracleSocket.on('data', (data: any) => {
+      if (orderTypeRef.current === "Market") {
+        setOpenPrice(parseFloat((data[currentPairIndex.current].price/1e18).toFixed(decimals.current)));
+        setSpread(parseFloat((data[currentPairIndex.current].spread/1e10).toFixed(5)));
+      }
+    });
+  }, []);
+
+  const currentPairIndex = useRef(pairIndex);
+
+  useEffect(() => {
+    currentPairIndex.current = pairIndex;
+    decimals.current = getNetwork(0).assets[currentPairIndex.current].decimals;
+  }, [pairIndex]);
 
   const [isLong, setLong] = useState(true);
-  const [posSize, setPosSize] = useState(1000);
-  const [price, setPrice] = useState(18312.43);
+  const [openPrice, setOpenPrice] = useState(0);
+  const [spread, setSpread] = useState(0.0002);
 
   const [margin, setMargin] = useState(5);
   const [leverage, setLeverage] = useState(2);
   const [stopLoss, setStopLoss] = useState(0);
   const [takeProfit, setTakeProfit] = useState(500);
+
+  const [orderType, setOrderType] = useState("Market");
+  const orderTypeRef = useRef(orderType);
+  useEffect(() => {
+    orderTypeRef.current = orderType;
+  }, [orderType]);
 
   function handleMarginChange(event: any) {
     setMargin(marginScale(event.target.value));
@@ -34,6 +62,13 @@ export const TradingOrderForm = () => {
 
   function handleTakeProfitChange(event: any) {
     setTakeProfit(event.target.value);
+  }
+
+  function handleSetOpenPrice(value: any) {
+    if (orderType === "Market") {
+      setOrderType("Limit");
+    }
+    setOpenPrice(value);
   }
 
   return (
@@ -62,9 +97,47 @@ export const TradingOrderForm = () => {
             Short
           </ShortButton>
         </FormAction>
+        <FormAction sx={{marginTop: '30px'}}>
+          <OrderTypeButton
+            onClick={() => setOrderType("Market")}
+            sx={{
+              backgroundColor: orderType === "Market" ? '#3772ff' : '#222630',
+              color: orderType === "Market" ? '#FFFFFF' : '#777E90',
+              '&:hover': { backgroundColor: orderType === "Market" ? '#3772ff' : '#222630', color: orderType === "Market" ? '#FFFFFF' : '#3772ff' }
+            }}
+          >
+            Market
+          </OrderTypeButton>
+          <OrderTypeButton
+            onClick={() => setOrderType("Limit")}
+            sx={{
+              backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630',
+              color: orderType === "Limit" ? '#FFFFFF' : '#777E90',
+              '&:hover': { backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630', color: orderType === "Limit" ? '#FFFFFF' : '#3772ff' }
+            }}
+          >
+            Limit
+          </OrderTypeButton>
+          <OrderTypeButton
+            onClick={() => setOrderType("Stop")}
+            sx={{
+              backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630',
+              color: orderType === "Stop" ? '#FFFFFF' : '#777E90',
+              '&:hover': { backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630', color: orderType === "Stop" ? '#FFFFFF' : '#3772ff' }
+            }}
+          >
+            Stop
+          </OrderTypeButton>
+        </FormAction>
         <FormArea>
-          <TigrisInput label="Trade size" value={posSize} setValue={setPosSize} />
-          <TigrisInput label="Liq price" value={price} setValue={setPrice} />
+          <TigrisInput label="Open price" value={
+            getOpenPrice()
+          } setValue={
+            handleSetOpenPrice
+            } />
+          <div style={{pointerEvents: 'none'}}>
+          <TigrisInput label="Liq price" value={liqPrice()} setValue={() => null} />
+          </div>
           <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
           <TigrisSlider // Leverage
@@ -149,10 +222,10 @@ export const TradingOrderForm = () => {
           <AssetBalance>
             Asset balance <Visibility fontSize="small" />{' '}
           </AssetBalance>
-          <BitcoinValue>
+          <MarginAssetValue>
             <span>2.5749 BTC</span>
             <span> ≈ 61,075.53 USD</span>
-          </BitcoinValue>
+          </MarginAssetValue>
         </FormArea>
         <ApproveDaiButton>Approve Dai</ApproveDaiButton>
         <Alert>
@@ -164,6 +237,22 @@ export const TradingOrderForm = () => {
       </FormContainer>
     </Container>
   );
+
+  function liqPrice() {
+    if (isLong) {
+      return parseFloat((getOpenPrice() - getOpenPrice()*0.9/leverage).toFixed(decimals.current));
+    } else {
+      return parseFloat((getOpenPrice() + getOpenPrice()*0.9/leverage).toFixed(decimals.current));
+    }
+  }
+
+  function getOpenPrice() {
+    if (isLong) {
+      return parseFloat((openPrice + openPrice * spread).toFixed(decimals.current));
+    } else {
+      return parseFloat((openPrice - openPrice * spread).toFixed(decimals.current));
+    }
+  }
 
   function marginScale(value: number) {
     return Math.round(
@@ -213,15 +302,22 @@ const FormAction = styled(Box)(({ theme }) => ({
 const LongButton = styled(Button)(({ theme }) => ({
   width: '100%',
   height: '100%',
-  borderRadius: '4px',
+  borderRadius: '0px',
   clipPath: ' polygon(0 0, 100% 0, 92% 100%, 0 99%);'
 }));
 
 const ShortButton = styled(Button)(({ theme }) => ({
   width: '100%',
   height: '100%',
-  borderRadius: '4px',
+  borderRadius: '0px',
   clipPath: 'polygon(8% 0, 100% 0, 100% 100%, 0 99%)'
+}));
+
+const OrderTypeButton = styled(Button)(({ theme }) => ({
+  width: '50%',
+  height: '100%',
+  borderRadius: '0px',
+  margin: '2px'
 }));
 
 const FormArea = styled(Box)(({ theme }) => ({
@@ -238,7 +334,7 @@ const AssetBalance = styled(Box)(({ theme }) => ({
   gap: '20%'
 }));
 
-const BitcoinValue = styled(Box)(({ theme }) => ({
+const MarginAssetValue = styled(Box)(({ theme }) => ({
   fontSize: '13px',
   [theme.breakpoints.down('xs')]: {
     fontSize: '10px'
@@ -247,7 +343,7 @@ const BitcoinValue = styled(Box)(({ theme }) => ({
 
 const ApproveDaiButton = styled(Button)(({ theme }) => ({
   marginTop: '17px',
-  borderRadius: '4px',
+  borderRadius: '0px',
   width: '100%',
   textTransform: 'none',
   backgroundColor: '#2F3135',

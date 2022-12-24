@@ -34,7 +34,7 @@ export const Trade = () => {
               </TradingSection>
               <PairSelectionTable setPairIndex={setPairIndex} />
               <TradingPositionTable />
-              <TradingOrderForm />
+              <TradingOrderForm pairIndex={pairIndex}/>
               <DailyPerformanceChart />
             </TradingForm>
           </Container>

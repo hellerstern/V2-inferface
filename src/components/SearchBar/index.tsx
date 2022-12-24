@@ -22,7 +22,7 @@ const SearchBarContainer = styled(Box)({
   gap: 10,
   backgroundColor: '#222630',
   height: '36px',
-  borderRadius: '2px',
+  borderRadius: '0px',
   fontSize: '12px'
 });
 

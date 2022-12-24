@@ -2,13 +2,6 @@ import { Box, Slider } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState, useEffect, useRef } from 'react';
 
-interface InputProps {
-  label: string;
-  value: number;
-  unit?: string;
-  setValue: (value: any) => void;
-}
-
 interface containerProps {
   visited: number;
 }
@@ -58,24 +51,31 @@ export const TigrisSlider = styled(Slider)(({ theme }) => ({
   }
 }));
 
+interface InputProps {
+  label: string;
+  value: number;
+  unit?: string;
+  setValue: (value: any) => void;
+}
+
 export const TigrisInput = (props: InputProps) => {
   const { label, value, unit, setValue } = props;
   const inputRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
   const [isVisit, setVisit] = useState(false);
   const handleClickOutside = (event: React.MouseEvent<HTMLElement>) => {
-    if (inputRef.current && !inputRef.current.contains(event.target as any)) {
-      setVisit(false);
+      if (inputRef.current && !inputRef.current.contains(event.target as any)) {
+        setVisit(false);
     }
   };
 
   const handleClickInside = () => {
-    setVisit(true);
-    valueRef.current?.focus();
+      setVisit(true);
+      valueRef.current?.focus();      
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
+      document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
   }, [inputRef]);
   return (
     <InputContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
@@ -142,7 +142,7 @@ const InputContainer = styled(Box)<containerProps>(({ visited, theme }) => ({
   height: '36px',
   backgroundColor: '#222630',
   padding: '8px 16px',
-  borderRadius: '2px',
+  borderRadius: '0px',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -173,7 +173,7 @@ const InputValue = styled('input')<containerProps>(({ visited, theme }) => ({
   background: 'none',
   textAlign: 'right',
   border: 'none',
-  color: visited ? '#FFFFFF' : 'rgba(255, 255, 255, 0.16)',
+  color: visited ? '#FFFFFF' : 'rgba(255, 255, 255, 0.25)',
   letterSpacing: '0.05em',
 
   [theme.breakpoints.down(390)]: {
