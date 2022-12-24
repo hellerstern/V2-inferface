@@ -45,6 +45,10 @@ button {
   background-color: #18191d !important;
 }
 
+.MuiOutlinedInput-input {
+  -webkit-text-fill-color: rgba(255, 255, 255, 1) !important;
+}
+
 /* chrome and chromium based */
 .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
   display: none;
