@@ -1,17 +1,40 @@
 import { ErrorOutline, Visibility } from '@mui/icons-material';
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
+import { useAccount, useNetwork } from 'wagmi';
+import { oracleData } from 'src/context/socket';
+
+declare const window: any
+const { ethereum } = window;
 
 export const TradingOrderForm = () => {
+
   const [isLong, setLong] = useState(true);
   const [posSize, setPosSize] = useState(1000);
-  const [stopLoss, setStopLoss] = useState(150);
   const [price, setPrice] = useState(18312.43);
+
+  const [margin, setMargin] = useState(5);
   const [leverage, setLeverage] = useState(2);
-  const [margin, setMargin] = useState(500);
-  const [profit, setProfit] = useState(500);
+  const [stopLoss, setStopLoss] = useState(0);
+  const [takeProfit, setTakeProfit] = useState(500);
+
+  function handleMarginChange(event: any) {
+    setMargin(marginScale(event.target.value));
+  }
+
+  function handleLeverageChange(event: any) {
+    setLeverage(event.target.value);
+  }
+
+  function handleStopLossChange(event: any) {
+    setStopLoss(event.target.value);
+  }
+
+  function handleTakeProfitChange(event: any) {
+    setTakeProfit(event.target.value);
+  }
 
   return (
     <Container>
@@ -44,7 +67,7 @@ export const TradingOrderForm = () => {
           <TigrisInput label="Liq price" value={price} setValue={setPrice} />
           <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
-          <TigrisSlider
+          <TigrisSlider // Leverage
             defaultValue={2}
             aria-label="Default"
             valueLabelDisplay="auto"
@@ -72,8 +95,10 @@ export const TradingOrderForm = () => {
             ]}
             min={2}
             max={100}
+            onChange={(event: any) => handleLeverageChange(event)}
+            value={leverage}
           />
-          <TigrisSlider
+          <TigrisSlider // Margin
             defaultValue={Math.sqrt(5)}
             aria-label="Default"
             valueLabelDisplay="auto"
@@ -84,17 +109,15 @@ export const TradingOrderForm = () => {
             min={Math.sqrt(5)}
             step={0.01}
             max={100}
-            scale={(value) =>
-              Math.round(
-                parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
-                  ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
-                  : value ** 2
-              )
+            scale={(value: number) =>
+              marginScale(value)
             }
+            onChange={(event: any) => handleMarginChange(event)}
+            value={Math.sqrt(margin)}
           />
-          <TigrisInput label="Stop Loss" value={stopLoss} setValue={setStopLoss} />
-          <TigrisInput label="Take profit" value={profit} setValue={setProfit} />
-          <TigrisSlider
+          <TigrisInput label="Stop Loss" value={-stopLoss} setValue={setStopLoss} />
+          <TigrisInput label="Take profit" value={takeProfit} setValue={setTakeProfit} />
+          <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
             valueLabelDisplay="auto"
@@ -106,8 +129,10 @@ export const TradingOrderForm = () => {
               { value: 0, label: '0' },
               { value: 90, label: '-90' }
             ]}
+            onChange={(event: any) => handleStopLossChange(event)}
+            value={stopLoss}
           />
-          <TigrisSlider
+          <TigrisSlider // Take profit
             defaultValue={500}
             aria-label="Default"
             valueLabelDisplay="auto"
@@ -118,6 +143,8 @@ export const TradingOrderForm = () => {
               { value: 0, label: '0' },
               { value: 500, label: '500' }
             ]}
+            onChange={(event: any) => handleTakeProfitChange(event)}
+            value={takeProfit}
           />
           <AssetBalance>
             Asset balance <Visibility fontSize="small" />{' '}
@@ -137,6 +164,14 @@ export const TradingOrderForm = () => {
       </FormContainer>
     </Container>
   );
+
+  function marginScale(value: number) {
+    return Math.round(
+      parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
+        ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
+        : value ** 2
+    );
+  }
 };
 
 const Container = styled(Box)(({ theme }) => ({

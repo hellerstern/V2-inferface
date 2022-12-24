@@ -27,4 +27,10 @@ oracleSocket.on('error', (error) => {
     console.log('[oracleSocket] Error:', error);
 });
 
+oracleSocket.on('data', (data) => {
+    oracleData = data;
+});
+
+export let oracleData = "Loading...";
+
 export const SocketContext = createContext();

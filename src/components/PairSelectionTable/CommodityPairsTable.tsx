@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { btcLogo } from '../../config/images';
 import { getNetwork } from "src/constants/networks";
-import { oracleSocket } from 'src/context/socket';
+import { oracleSocket, oracleData } from 'src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
@@ -80,7 +80,7 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
     });
   }, []);
   
-  const [oraclePrice, setOraclePrice] = useState("Loading..." as any);
+  const [oraclePrice, setOraclePrice] = useState(oracleData === "Loading..." ? "Loading..." : oracleData[pairIndex] === null ? "Loading..." : (oracleData[pairIndex] as any).price);
 
   return (
     <>
