@@ -15,12 +15,10 @@ interface IOrderForm {
 }
 export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
-  const decimals = useRef(2);
-
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (orderTypeRef.current === "Market") {
-        setOpenPrice(parseFloat((data[currentPairIndex.current].price/1e18).toFixed(decimals.current)));
+        setOpenPrice(parseFloat((data[currentPairIndex.current].price/1e18).toFixed(decimals)));
         setSpread(parseFloat((data[currentPairIndex.current].spread/1e10).toFixed(5)));
       }
     });
@@ -30,14 +28,16 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
   useEffect(() => {
     currentPairIndex.current = pairIndex;
-    decimals.current = getNetwork(0).assets[currentPairIndex.current].decimals;
+    setDecimals(getNetwork(0).assets[currentPairIndex.current].decimals);
   }, [pairIndex]);
 
-  const [isLong, setLong] = useState(true);
-  const [openPrice, setOpenPrice] = useState(0);
-  const [spread, setSpread] = useState(0.0002);
+  const [decimals, setDecimals] = useState(2);
 
-  const [margin, setMargin] = useState(5);
+  const [isLong, setLong] = useState(true);
+  const [openPrice, setOpenPrice] = useState<number>(0);
+  const [spread, setSpread] = useState<number>(0.0002);
+
+  const [margin, setMargin] = useState<number>(5);
   const [leverage, setLeverage] = useState(2);
   const [stopLoss, setStopLoss] = useState(0);
   const [takeProfit, setTakeProfit] = useState(500);
@@ -67,8 +67,10 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function handleSetOpenPrice(value: any) {
     if (orderType === "Market") {
       setOrderType("Limit");
+      setOpenPrice(parseFloat(value.toFixed(decimals).slice(0, -2)));
+    } else {
+      setOpenPrice(value);
     }
-    setOpenPrice(value);
   }
 
   return (
@@ -131,7 +133,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
         </FormAction>
         <FormArea>
           <TigrisInput label="Open price" value={
-            getOpenPrice()
+            orderType === "Market" ? getOpenPrice() : openPrice
           } setValue={
             handleSetOpenPrice
             } />
@@ -240,17 +242,20 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
   function liqPrice() {
     if (isLong) {
-      return parseFloat((getOpenPrice() - getOpenPrice()*0.9/leverage).toFixed(decimals.current));
+      return getOpenPrice() - getOpenPrice()*0.9/leverage;
     } else {
-      return parseFloat((getOpenPrice() + getOpenPrice()*0.9/leverage).toFixed(decimals.current));
+      return getOpenPrice() + getOpenPrice()*0.9/leverage;
     }
   }
 
   function getOpenPrice() {
+    let _openPrice;
     if (isLong) {
-      return parseFloat((openPrice + openPrice * spread).toFixed(decimals.current));
+      _openPrice = openPrice + openPrice * spread;
+      return _openPrice;
     } else {
-      return parseFloat((openPrice - openPrice * spread).toFixed(decimals.current));
+      _openPrice = openPrice - openPrice * spread;
+      return _openPrice;
     }
   }
 
