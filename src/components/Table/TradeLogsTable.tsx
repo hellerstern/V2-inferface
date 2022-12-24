@@ -66,10 +66,18 @@ const rows = [
   createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM')
 ];
 
-export const TradeLogsTable = () => {
+interface LogsTableProps {
+  setData: any;
+}
+
+export const TradeLogsTable = (props: LogsTableProps) => {
+  const { setData } = props;
+  React.useEffect(() => {
+    setData(rows);
+  }, []);
   return (
     <TableContainer>
-      <Table size="small" aria-label="a dense table" draggable>
+      <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             <TableCell>Position</TableCell>
