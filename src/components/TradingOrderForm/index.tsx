@@ -18,8 +18,8 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (orderTypeRef.current === "Market") {
-        setOpenPrice(parseFloat((data[currentPairIndex.current].price/1e18).toFixed(decimals)));
-        setSpread(parseFloat((data[currentPairIndex.current].spread/1e10).toFixed(5)));
+        setOpenPrice((data[currentPairIndex.current].price/1e18).toFixed(decimals));
+        setSpread((data[currentPairIndex.current].spread/1e10).toFixed(5));
       }
     });
   }, []);
@@ -34,10 +34,10 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   const [decimals, setDecimals] = useState(2);
 
   const [isLong, setLong] = useState(true);
-  const [openPrice, setOpenPrice] = useState<number>(0);
-  const [spread, setSpread] = useState<number>(0.0002);
+  const [openPrice, setOpenPrice] = useState("0");
+  const [spread, setSpread] = useState("0.0002");
 
-  const [margin, setMargin] = useState<number>(5);
+  const [margin, setMargin] = useState("5");
   const [leverage, setLeverage] = useState(2);
   const [stopLoss, setStopLoss] = useState(0);
   const [takeProfit, setTakeProfit] = useState(500);
@@ -49,7 +49,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   }, [orderType]);
 
   function handleMarginChange(event: any) {
-    setMargin(marginScale(event.target.value));
+    setMargin(marginScale(parseFloat(event.target.value)).toString());
   }
 
   function handleLeverageChange(event: any) {
@@ -67,7 +67,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function handleSetOpenPrice(value: any) {
     if (orderType === "Market") {
       setOrderType("Limit");
-      setOpenPrice(parseFloat(value.toFixed(decimals).slice(0, -2)));
+      setOpenPrice(parseFloat(value).toFixed(decimals).slice(0, -1));
     } else {
       setOpenPrice(value);
     }
@@ -140,7 +140,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
           <div style={{pointerEvents: 'none'}}>
           <TigrisInput label="Liq price" value={liqPrice()} setValue={() => null} />
           </div>
-          <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
+          <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
           <TigrisSlider // Leverage
             defaultValue={2}
@@ -188,10 +188,10 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
               marginScale(value)
             }
             onChange={(event: any) => handleMarginChange(event)}
-            value={Math.sqrt(margin)}
+            value={Math.sqrt(parseFloat(margin))}
           />
-          <TigrisInput label="Stop Loss" value={-stopLoss} setValue={setStopLoss} />
-          <TigrisInput label="Take profit" value={takeProfit} setValue={setTakeProfit} />
+          <TigrisInput label="Stop Loss" value={(-stopLoss).toString()} setValue={setStopLoss} />
+          <TigrisInput label="Take profit" value={takeProfit.toString()} setValue={setTakeProfit} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -241,21 +241,26 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   );
 
   function liqPrice() {
+    let _liqPrice;
     if (isLong) {
-      return getOpenPrice() - getOpenPrice()*0.9/leverage;
+       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/leverage).toString();
     } else {
-      return getOpenPrice() + getOpenPrice()*0.9/leverage;
+      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/leverage).toString();
     }
+    if (_liqPrice === "NaN") {
+      return "-";
+    }
+    return _liqPrice;
   }
 
   function getOpenPrice() {
     let _openPrice;
     if (isLong) {
-      _openPrice = openPrice + openPrice * spread;
-      return _openPrice;
+      _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * parseFloat(spread);
+      return _openPrice.toString();
     } else {
-      _openPrice = openPrice - openPrice * spread;
-      return _openPrice;
+      _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * parseFloat(spread);
+      return _openPrice.toString();
     }
   }
 

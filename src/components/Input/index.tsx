@@ -53,7 +53,7 @@ export const TigrisSlider = styled(Slider)(({ theme }) => ({
 
 interface InputProps {
   label: string;
-  value: number;
+  value: string;
   unit?: string;
   setValue: (value: any) => void;
 }
@@ -84,9 +84,9 @@ export const TigrisInput = (props: InputProps) => {
         <InputValue
           visited={isVisit ? 1 : 0}
           value={value}
-          type="number"
+          type="text"
           ref={valueRef}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value)}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'))}
         />
         <Box>{unit}</Box>
       </InputArea>
