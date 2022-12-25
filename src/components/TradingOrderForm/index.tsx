@@ -28,7 +28,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
   useEffect(() => {
     currentPairIndex.current = pairIndex;
-    setDecimals(getNetwork(0).assets[currentPairIndex.current].decimals);
+    setDecimals(getNetwork(0).assets[pairIndex].decimals);
   }, [pairIndex]);
 
   const [decimals, setDecimals] = useState(2);
