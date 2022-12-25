@@ -34,9 +34,15 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   const [spread, setSpread] = useState("0.0002");
 
   const [margin, setMargin] = useState("5");
-  const [leverage, setLeverage] = useState(2);
-  const [stopLoss, setStopLoss] = useState(0);
-  const [takeProfit, setTakeProfit] = useState(500);
+  const [leverage, setLeverage] = useState("2");
+
+  const [stopLossPrice, setStopLossPrice] = useState("0");
+  const [takeProfitPrice, setTakeProfitPrice] = useState("0");
+  const [stopLossPercent, setStopLossPercent] = useState("0");
+  const [takeProfitPercent, setTakeProfitPercent] = useState("500");
+
+  const [isSlFixed, setSlFixed] = useState(false);
+  const [isTpFixed, setTpFixed] = useState(false);
 
   const [orderType, setOrderType] = useState("Market");
   const orderTypeRef = useRef(orderType);
@@ -44,20 +50,74 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
     orderTypeRef.current = orderType;
   }, [orderType]);
 
+  function handleDirectionChange(value: boolean) {
+    setLong(value);
+    handleTakeProfitChange({target: {value: parseFloat(takeProfitPercent)}});
+    handleStopLossChange({target: {value: parseFloat(stopLossPercent)}});
+  }
+
   function handleMarginChange(event: any) {
     setMargin(marginScale(parseFloat(event.target.value)).toString());
   }
 
   function handleLeverageChange(event: any) {
     setLeverage(event.target.value);
+    if (!isTpFixed) {
+      handleTakeProfitChange({target: {value: parseFloat(takeProfitPercent)}});
+    } else {
+      handleTakeProfitPriceChange(takeProfitPrice);
+    }
+    if (!isSlFixed) {
+      handleStopLossChange({target: {value: parseFloat(stopLossPercent)}});
+    } else {
+      handleStopLossPriceChange(stopLossPrice);
+    }
   }
 
+  // Slider
   function handleStopLossChange(event: any) {
-    setStopLoss(event.target.value);
+    setSlFixed(false);
+    if (isLong) {
+      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+    } else {
+      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+    }
+    setStopLossPercent(event.target.value.toString());
   }
 
+  // Slider
   function handleTakeProfitChange(event: any) {
-    setTakeProfit(event.target.value);
+    setTpFixed(false);
+    if (isLong) {
+      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+    } else {
+      let _tpPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100);
+      if (_tpPrice < 0) _tpPrice = 0;
+      setTakeProfitPrice(_tpPrice.toPrecision(6))
+    }
+    setTakeProfitPercent(event.target.value.toString());
+  }
+
+  // Input Field
+  function handleStopLossPriceChange(value: string) {
+    setSlFixed(true);
+    setStopLossPrice(value);
+    if (isLong) {
+      setStopLossPercent(((1-parseFloat(value)/parseFloat(getOpenPrice()))*100*parseFloat(leverage)).toString());
+    } else {
+      setStopLossPercent(((1-parseFloat(getOpenPrice())/parseFloat(value))*100*parseFloat(leverage)).toString());
+    }
+  }
+
+  // Input Field
+  function handleTakeProfitPriceChange(value: string) {
+    setTpFixed(true);
+    setTakeProfitPrice(value);
+    if (isLong) {
+      setTakeProfitPercent(((parseFloat(value)/parseFloat(getOpenPrice())-1)*100*parseFloat(leverage)).toString());
+    } else {
+      setTakeProfitPercent(((parseFloat(getOpenPrice())/parseFloat(value)-1)*100*parseFloat(leverage)).toString());
+    }
   }
 
   function handleSetOpenPrice(value: any) {
@@ -75,7 +135,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
       <FormContainer>
         <FormAction>
           <LongButton
-            onClick={() => setLong(true)}
+            onClick={() => handleDirectionChange(true)}
             sx={{
               backgroundColor: isLong ? '#26a69a' : '#222630',
               color: isLong ? '#FFFFFF' : '#777E90',
@@ -85,7 +145,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             Long
           </LongButton>
           <ShortButton
-            onClick={() => setLong(false)}
+            onClick={() => handleDirectionChange(false)}
             sx={{
               backgroundColor: isLong ? '#222630' : '#EF5350',
               color: isLong ? '#777E90' : '#FFFFFF',
@@ -169,7 +229,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             min={2}
             max={100}
             onChange={(event: any) => handleLeverageChange(event)}
-            value={leverage}
+            value={parseFloat(leverage)}
           />
           <TigrisSlider // Margin
             defaultValue={Math.sqrt(5)}
@@ -188,8 +248,8 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             onChange={(event: any) => handleMarginChange(event)}
             value={Math.sqrt(parseFloat(margin))}
           />
-          <TigrisInput label="Stop Loss" value={(-stopLoss).toString()} setValue={setStopLoss} />
-          <TigrisInput label="Take Profit" value={takeProfit.toString()} setValue={setTakeProfit} />
+          <TigrisInput label="Stop Loss" value={stopLossPercent === "0" ? "-" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
+          <TigrisInput label="Take Profit" value={takeProfitPercent === "0" ? "-" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -203,21 +263,21 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
               { value: 90, label: '-90' }
             ]}
             onChange={(event: any) => handleStopLossChange(event)}
-            value={stopLoss}
+            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4))}
           />
           <TigrisSlider // Take profit
-            defaultValue={500}
+            defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500}
             aria-label="Default"
             valueLabelDisplay="auto"
             min={0}
             step={1}
-            max={500}
+            max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500}
             marks={[
               { value: 0, label: '0' },
-              { value: 500, label: '500' }
+              { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500 }
             ]}
             onChange={(event: any) => handleTakeProfitChange(event)}
-            value={takeProfit}
+            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
           />
           <AssetBalance>
             Asset balance <Visibility fontSize="small" />{' '}
@@ -238,12 +298,28 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
     </Container>
   );
 
+  function getStopLossPrice() {
+    if (isLong) {
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(parseFloat(stopLossPercent)/parseFloat(leverage))/100).toPrecision(6);
+    } else {
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(parseFloat(stopLossPercent)/parseFloat(leverage))/100).toPrecision(6);
+    }
+  }
+
+  function getTakeProfitPrice() {
+    if (isLong) {
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(parseFloat(takeProfitPercent)/parseFloat(leverage))/100).toPrecision(6);
+    } else {
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(parseFloat(takeProfitPercent)/parseFloat(leverage))/100).toPrecision(6);
+    }
+  }
+
   function liqPrice() {
     let _liqPrice;
     if (isLong) {
-       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/leverage).toPrecision(6);
+       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/parseFloat(leverage)).toPrecision(6);
     } else {
-      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/leverage).toPrecision(6);
+      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/parseFloat(leverage)).toPrecision(6);
     }
     if (_liqPrice === "NaN") {
       return "-";
@@ -263,11 +339,12 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   }
 
   function marginScale(value: number) {
-    return Math.round(
+    return Math.round((
       parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
         ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
         : value ** 2
-    );
+      )*100
+    )/100;
   }
 };
 
