@@ -9,7 +9,6 @@ import MetamaskSvg from '../assets/icons/metamask.svg';
 import CopySvg from '../assets/icons/copy.svg';
 import ExpandSvg from '../assets/icons/expand.svg';
 import GasStationSvg from '../assets/icons/gas-station.svg';
-import OnlyLogo from '../assets/icons/logo.svg';
 
 // Coins & Tokens
 import adaLogo from '../assets/images/CoinImage/adaLogo.svg';
@@ -62,6 +61,5 @@ export {
   usdtLogo,
   uniLogo,
   xmrLogo,
-  xrpLogo,
-  OnlyLogo
+  xrpLogo
 };

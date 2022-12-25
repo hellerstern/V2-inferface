@@ -35,6 +35,7 @@ export const getNetwork = (networkId: any) => {
         rpc: '',
         icon: 'assets/images/unsupported.png',
         layerzero: 0,
+        gasLimit: 20_000_000,
         addresses: {
           positions: '',
           trading: '',

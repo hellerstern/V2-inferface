@@ -15,7 +15,6 @@ import { oracleSocket } from 'src/context/socket';
 
 export interface ChartContainerProps {
 	asset: any;
-	pendingLine: any;
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -24,7 +23,7 @@ function getLanguageFromURL(): LanguageCode | null {
 	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode;
 }
 
-export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) => {
+export const TVChartContainer = ({ asset }: ChartContainerProps) => {
 
 	const widgetOptions: ChartingLibraryWidgetOptions = {
 		symbol: getNetwork(0).assets[asset].name as string,
@@ -85,18 +84,6 @@ export const TVChartContainer = ({ asset, pendingLine }: ChartContainerProps) =>
 			tvWidget.current = new widget(widgetOptions);
 		}
 	}, [asset]);
-
-	useEffect(() => {
-		if (pendingLine == 0) {
-			try {
-			tvWidget.current?.chart()?.removeAllShapes();
-				return;
-			} catch {
-				return;
-			}
-		}
-		tvWidget.current?.chart().createShape({ price: pendingLine, time: 0 }, { shape: "horizontal_line", text: "Opening price" });
-	}, [pendingLine]);
 
 	const BidLine = useRef<any>(null);
 	const AskLine = useRef<any>(null);

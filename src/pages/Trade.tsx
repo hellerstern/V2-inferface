@@ -15,7 +15,6 @@ export const Trade = () => {
   const [pairIndex, setPairIndex] = React.useState(
     localStorage.getItem('LastPairSelected') ? (localStorage.getItem('LastPairSelected') as unknown as number) : 0
   );
-  const [pendingChartLine, setPendingChartLine] = React.useState(0);
   const { miniPage } = useStore();
 
   React.useEffect(() => {
@@ -30,7 +29,7 @@ export const Trade = () => {
           <Container>
             <TradingForm>
               <TradingSection>
-                <TradingChart asset={pairIndex} pendingLine={pendingChartLine} />
+                <TradingChart asset={pairIndex} />
               </TradingSection>
               <PairSelectionTable setPairIndex={setPairIndex} />
               <TradingPositionTable />

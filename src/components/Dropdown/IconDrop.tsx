@@ -4,7 +4,6 @@ import { Button, Box } from '@mui/material';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-// import { OnlyLogo } from 'src/config/images';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu

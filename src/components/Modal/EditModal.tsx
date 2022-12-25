@@ -10,25 +10,25 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/system';
 import { InputField } from '../Input';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { OnlyLogo } from 'src/config/images';
+import { LOGO } from 'src/config/images';
 import { CommonDropDown } from '../Dropdown';
 import { useAccount } from 'wagmi';
 
 const partialArr = [
   {
-    icon: OnlyLogo,
+    icon: LOGO,
     name: 'tigUSD'
   },
   {
-    icon: OnlyLogo,
+    icon: LOGO,
     name: 'btcUSD'
   },
   {
-    icon: OnlyLogo,
+    icon: LOGO,
     name: 'bscUSD'
   },
   {
-    icon: OnlyLogo,
+    icon: LOGO,
     name: 'ethUSD'
   }
 ];
@@ -84,18 +84,18 @@ export const EditModal = (props: EditModalProps) => {
     stopLoss: '',
     profit: '',
     partial: {
-      icon: OnlyLogo,
+      icon: LOGO,
       name: 'tigUSD'
     },
     addMenu: {
-      icon: OnlyLogo,
+      icon: LOGO,
       name: 'tigUSD'
     },
     partialPro: '',
     addNum: '',
     addDrop: 'Add',
     posDrop: {
-      icon: OnlyLogo,
+      icon: LOGO,
       name: 'tigUSD'
     },
     position: ''

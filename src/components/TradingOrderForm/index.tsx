@@ -4,9 +4,13 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { oracleSocket } from 'src/context/socket';
+import { oracleSocket, oracleData } from 'src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { OnlyLogo, usdtLogo } from 'src/config/images';
+import { LOGO, usdtLogo } from 'src/config/images';
+import { getNetwork } from "src/constants/networks";
+import { ethers } from 'ethers';
+
+// import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../shell_wallet/index';
 
 const marginAssetArray = [
   {
@@ -14,7 +18,7 @@ const marginAssetArray = [
     name: 'USDT'
   },
   {
-    icon: OnlyLogo,
+    icon: LOGO,
     name: 'tigUSD'
   }
 ];
@@ -25,7 +29,23 @@ const { ethereum } = window;
 interface IOrderForm {
   pairIndex: number;
 }
-export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
+export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
+
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+
+  useEffect(() => {
+    if (address === undefined) return;
+    const x = async () => {
+      await unlockShellWallet();
+    }
+    x();
+  }, [address]);
+
+  const [tradingContract, setTradingContract] = useState<any>(null);
+  useEffect(() => {
+    setTradingContract(getTradingContract);
+  }, [address, chain])
 
   const initialState = {
     marginAssetDrop: {
@@ -42,8 +62,8 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (orderTypeRef.current === "Market") {
-        setOpenPrice((data[currentPairIndex.current].price/1e18).toString());
-        setSpread((data[currentPairIndex.current].spread/1e10).toPrecision(5));
+        setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
+        setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
       }
     });
   }, []);
@@ -80,8 +100,8 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
   function handleDirectionChange(value: boolean) {
     setLong(value);
-    handleTakeProfitChange({target: {value: parseFloat(takeProfitPercent)}});
-    handleStopLossChange({target: {value: parseFloat(stopLossPercent)}});
+    handleTakeProfitChange({ target: { value: parseFloat(takeProfitPercent) } });
+    handleStopLossChange({ target: { value: parseFloat(stopLossPercent) } });
   }
 
   function handleMarginChange(event: any) {
@@ -89,14 +109,14 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   }
 
   function handleLeverageChange(event: any) {
-    setLeverage(event.target.value);
+    setLeverage((event.target.value).toString());
     if (!isTpFixed) {
-      handleTakeProfitChange({target: {value: parseFloat(takeProfitPercent)}});
+      handleTakeProfitChange({ target: { value: parseFloat(takeProfitPercent) } });
     } else {
       handleTakeProfitPriceChange(takeProfitPrice);
     }
     if (!isSlFixed) {
-      handleStopLossChange({target: {value: parseFloat(stopLossPercent)}});
+      handleStopLossChange({ target: { value: parseFloat(stopLossPercent) } });
     } else {
       handleStopLossPriceChange(stopLossPrice);
     }
@@ -106,9 +126,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function handleStopLossChange(event: any) {
     setSlFixed(false);
     if (isLong) {
-      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
     } else {
-      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
     }
     setStopLossPercent(event.target.value.toString());
   }
@@ -117,9 +137,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function handleTakeProfitChange(event: any) {
     setTpFixed(false);
     if (isLong) {
-      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100).toPrecision(6));
+      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
     } else {
-      let _tpPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(event.target.value/parseFloat(leverage))/100);
+      let _tpPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100);
       if (_tpPrice < 0) _tpPrice = 0;
       setTakeProfitPrice(_tpPrice.toPrecision(6))
     }
@@ -131,9 +151,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
     setSlFixed(true);
     setStopLossPrice(value);
     if (isLong) {
-      setStopLossPercent(((1-parseFloat(value)/parseFloat(getOpenPrice()))*100*parseFloat(leverage)).toString());
+      setStopLossPercent(((1 - parseFloat(value) / parseFloat(getOpenPrice())) * 100 * parseFloat(leverage)).toString());
     } else {
-      setStopLossPercent(((1-parseFloat(getOpenPrice())/parseFloat(value))*100*parseFloat(leverage)).toString());
+      setStopLossPercent(((1 - parseFloat(getOpenPrice()) / parseFloat(value)) * 100 * parseFloat(leverage)).toString());
     }
   }
 
@@ -142,9 +162,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
     setTpFixed(true);
     setTakeProfitPrice(value);
     if (isLong) {
-      setTakeProfitPercent(((parseFloat(value)/parseFloat(getOpenPrice())-1)*100*parseFloat(leverage)).toString());
+      setTakeProfitPercent(((parseFloat(value) / parseFloat(getOpenPrice()) - 1) * 100 * parseFloat(leverage)).toString());
     } else {
-      setTakeProfitPercent(((parseFloat(getOpenPrice())/parseFloat(value)-1)*100*parseFloat(leverage)).toString());
+      setTakeProfitPercent(((parseFloat(getOpenPrice()) / parseFloat(value) - 1) * 100 * parseFloat(leverage)).toString());
     }
   }
 
@@ -183,7 +203,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             Short
           </ShortButton>
         </FormAction>
-        <FormAction sx={{marginTop: '30px'}}>
+        <FormAction sx={{ marginTop: '30px' }}>
           <OrderTypeButton
             onClick={() => setOrderType("Market")}
             sx={{
@@ -220,11 +240,11 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             orderType === "Market" ? getOpenPrice() : parseFloat(openPrice).toPrecision(6)
           } setValue={
             handleSetOpenPrice
-            } />
-          <div style={{cursor: 'not-allowed'}}>
-          <div style={{pointerEvents: 'none'}}>
-          <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
-          </div>
+          } />
+          <div style={{ cursor: 'not-allowed' }}>
+            <div style={{ pointerEvents: 'none' }}>
+              <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
+            </div>
           </div>
           <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
@@ -294,15 +314,15 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             value={parseFloat(parseFloat(stopLossPercent).toPrecision(4))}
           />
           <TigrisSlider // Take profit
-            defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500}
+            defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
             aria-label="Default"
             valueLabelDisplay="auto"
             min={0}
             step={1}
-            max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500}
+            max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
             marks={[
               { value: 0, label: '0' },
-              { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage)*100 : 500 }
+              { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500 }
             ]}
             onChange={(event: any) => handleTakeProfitChange(event)}
             value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
@@ -321,7 +341,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             {isBalanceVisible ? '3000.00' : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton>Approve {editState.marginAssetDrop.name}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()}>Approve {editState.marginAssetDrop.name}</ApproveButton>
         <Alert>
           <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
           <AlertContent>
@@ -333,27 +353,29 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   );
 
   function getStopLossPrice() {
+    if (stopLossPercent === "0") return "0";
     if (isLong) {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(parseFloat(stopLossPercent)/parseFloat(leverage))/100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(6);
     } else {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(parseFloat(stopLossPercent)/parseFloat(leverage))/100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(6);
     }
   }
 
   function getTakeProfitPrice() {
+    if (takeProfitPercent === "0") return "0";
     if (isLong) {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*(parseFloat(takeProfitPercent)/parseFloat(leverage))/100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(6);
     } else {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*(parseFloat(takeProfitPercent)/parseFloat(leverage))/100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(6);
     }
   }
 
   function liqPrice() {
     let _liqPrice;
     if (isLong) {
-       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/parseFloat(leverage)).toPrecision(6);
+      _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(6);
     } else {
-      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/parseFloat(leverage)).toPrecision(6);
+      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(6);
     }
     if (_liqPrice === "NaN") {
       return "-";
@@ -377,10 +399,114 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
       parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
         ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
         : value ** 2
-      )*100
-    )/100;
+    ) * 100
+    ) / 100;
   }
 
+  /*
+  =============
+  TRADING LOGIC
+  =============
+  */
+
+  function routeTrade() {
+    initiateMarketOrder();
+  }
+
+  // TODO TOASTS
+
+  function getTradingContract() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    if (ethereum === undefined || !currentNetwork || currentNetwork.network_id === 0) return undefined;
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+  }
+
+  async function initiateMarketOrder() {
+
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+
+    const _margin = ethers.utils.parseEther(margin);
+    const _leverage = ethers.utils.parseEther(leverage);
+
+    const _tp = ethers.utils.parseEther(getTakeProfitPrice());
+    const _sl = ethers.utils.parseEther(getStopLossPrice());
+
+    const _ref = ethers.constants.HashZero;
+
+    const _tradeInfo = [
+      _margin,
+      currentNetwork.marginAssets[0].address,
+      currentNetwork.addresses.tigusdvault,
+      _leverage,
+      pairIndex,
+      isLong,
+      _tp,
+      _sl,
+      _ref
+    ];
+
+    try {
+
+      const _oracleData: any = oracleData[pairIndex];
+
+      const _priceData = [
+        _oracleData.provider,
+        pairIndex,
+        _oracleData.price,
+        _oracleData.spread,
+        _oracleData.timestamp,
+        _oracleData.isClosed
+      ];
+
+      if (isLong && parseInt(_sl.toString()) > parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
+        // toastId = await editToast(toastId, "SL price can't be more than open price.");
+        console.log("SL price can't be more than open price.");
+        return;
+      } else if (!isLong && parseInt(_sl.toString()) < parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
+        // toastId = await editToast(toastId, "SL price can't be less than open price.");
+        console.log("SL price can't be less than open price.");
+        return;
+      }
+
+      // var toastId:any = await addToast("Sending order");
+
+      try {
+        const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+
+        const tx: any = await tradingContract.initiateMarketOrder(
+          _tradeInfo,
+          _priceData,
+          _oracleData.signature,
+          [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
+          address,
+          { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0 }
+        );
+
+        // toastId = await editToast(toastId, "Order sent with price $" + openPrice);
+        await tx.wait();
+
+        // TODO
+        // getMarginBalance();
+
+        // TODO
+        // getFundingRate();
+      } catch (err: any) {
+        console.log(err);
+        if (err.reason == null) {
+          // editToast(toastId, "Transaction was cancelled");
+        } else {
+          // editToast(toastId, "Error: " + err.reason);
+        }
+        // getMarginBalance();
+      }
+
+    } catch (err: any) {
+      console.log(err);
+      // editToast(toastId, "Error: "+ err.reason);
+    }
+  }
 };
 
 const Container = styled(Box)(({ theme }) => ({

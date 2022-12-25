@@ -1183,11 +1183,6 @@ export const TRADING_ABI = [
         "internalType": "address",
         "name": "_pairsContract",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_referrals",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -1210,32 +1205,12 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
-    "name": "BadStopLoss",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "BadWithdraw",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "BelowMinPositionSize",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "GasPriceTooHigh",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IsLimit",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "LimitNotMet",
     "type": "error"
   },
   {
@@ -1260,11 +1235,6 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
-    "name": "NotLimit",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NotLiquidatable",
     "type": "error"
   },
@@ -1275,27 +1245,12 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
-    "name": "NotNativeSupport",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotPositionOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "TradingPaused",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "ValueNotEqualToMargin",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "Wait",
     "type": "error"
   },
   {
@@ -1327,6 +1282,49 @@ export const TRADING_ABI = [
       }
     ],
     "name": "AddToPosition",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_tigAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_daoFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_burnFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_refFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_botFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_referrer",
+        "type": "address"
+      }
+    ],
+    "name": "FeesDistributed",
     "type": "event"
   },
   {
@@ -1606,6 +1604,12 @@ export const TRADING_ABI = [
         "internalType": "address",
         "name": "_trader",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_marginAfterFees",
+        "type": "uint256"
       }
     ],
     "name": "PositionOpened",
@@ -1700,11 +1704,16 @@ export const TRADING_ABI = [
         "internalType": "struct ITrading.ERC20PermitData",
         "name": "_permitData",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "addMargin",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1738,6 +1747,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -1747,14 +1761,14 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -1802,6 +1816,11 @@ export const TRADING_ABI = [
         "internalType": "struct ITrading.ERC20PermitData",
         "name": "_permitData",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "addToPosition",
@@ -1817,7 +1836,7 @@ export const TRADING_ABI = [
         "type": "address"
       }
     ],
-    "name": "allowedMargin",
+    "name": "allowedVault",
     "outputs": [
       {
         "internalType": "bool",
@@ -1826,6 +1845,24 @@ export const TRADING_ABI = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_proxy",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "approveProxy",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1866,37 +1903,16 @@ export const TRADING_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "botFees",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "burnFees",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "cancelLimitOrder",
@@ -1906,24 +1922,26 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
-    "name": "chainlinkEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "daoFees",
+    "name": "closeFees",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "daoFees",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "burnFees",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "referralFees",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "botFees",
         "type": "uint256"
       }
     ],
@@ -1956,6 +1974,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -1965,14 +1988,14 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "name": "executeLimitOrder",
@@ -2011,6 +2034,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2020,14 +2048,14 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -2037,6 +2065,11 @@ export const TRADING_ABI = [
       {
         "internalType": "address",
         "name": "_outputToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
         "type": "address"
       }
     ],
@@ -2145,11 +2178,16 @@ export const TRADING_ABI = [
         "internalType": "struct ITrading.ERC20PermitData",
         "name": "_permitData",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "initiateLimitOrder",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -2225,6 +2263,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2234,14 +2277,14 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       },
       {
         "components": [
@@ -2279,11 +2322,16 @@ export const TRADING_ABI = [
         "internalType": "struct ITrading.ERC20PermitData",
         "name": "_permitData",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "initiateMarketOrder",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -2336,6 +2384,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2345,19 +2398,38 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "name": "limitClose",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "limitDelay",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2399,6 +2471,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2408,32 +2485,19 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "name": "liquidatePosition",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxGasPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2451,30 +2515,26 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
-    "name": "minNodeCount",
+    "name": "openFees",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "daoFees",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "minPositionSize",
-    "outputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "burnFees",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "referralFees",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "botFees",
         "type": "uint256"
       }
     ],
@@ -2495,25 +2555,23 @@ export const TRADING_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "paused",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "bool",
+        "internalType": "address",
         "name": "",
-        "type": "bool"
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "referralFees",
+    "name": "proxyApprovals",
     "outputs": [
       {
+        "internalType": "address",
+        "name": "proxy",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "",
+        "name": "time",
         "type": "uint256"
       }
     ],
@@ -2561,6 +2619,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2570,14 +2633,19 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "removeMargin",
@@ -2596,7 +2664,7 @@ export const TRADING_ABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "_tigAsset",
+        "name": "_stableVault",
         "type": "address"
       },
       {
@@ -2605,7 +2673,7 @@ export const TRADING_ABI = [
         "type": "bool"
       }
     ],
-    "name": "setAllowedMargin",
+    "name": "setAllowedVault",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2627,17 +2695,9 @@ export const TRADING_ABI = [
     "inputs": [
       {
         "internalType": "bool",
-        "name": "_bool",
+        "name": "_open",
         "type": "bool"
-      }
-    ],
-    "name": "setChainlinkEnabled",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
         "name": "_daoFees",
@@ -2686,19 +2746,6 @@ export const TRADING_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_maxGasPrice",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxGasPrice",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "_maxWinPercent",
         "type": "uint256"
       }
@@ -2711,61 +2758,12 @@ export const TRADING_ABI = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_minNodeCount",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMinNodeCount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
-        "name": "_tigAsset",
+        "name": "_ext",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_min",
-        "type": "uint256"
       }
     ],
-    "name": "setMinPositionSize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_node",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "_bool",
-        "type": "bool"
-      }
-    ],
-    "name": "setNode",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_paused",
-        "type": "bool"
-      }
-    ],
-    "name": "setPaused",
+    "name": "setTradingExtension",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2784,19 +2782,6 @@ export const TRADING_ABI = [
       }
     ],
     "name": "setTrustedForwarder",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_validSignatureTimer",
-        "type": "uint256"
-      }
-    ],
-    "name": "setValidSignatureTimer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2850,6 +2835,11 @@ export const TRADING_ABI = [
           },
           {
             "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
           },
@@ -2859,32 +2849,24 @@ export const TRADING_ABI = [
             "type": "bool"
           }
         ],
-        "internalType": "struct PriceData[]",
+        "internalType": "struct PriceData",
         "name": "_priceData",
-        "type": "tuple[]"
+        "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "_signature",
-        "type": "bytes[]"
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "_trader",
+        "type": "address"
       }
     ],
     "name": "updateTpSl",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "validSignatureTimer",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2899,10 +2881,6 @@ export const TRADING_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
   }
 ]
 
@@ -3029,7 +3007,7 @@ export const TRADINGLIBRARY_ABI = [
     "stateMutability": "pure",
     "type": "function"
   }
-]
+];
 
 export const FAUCET_ABI = [
   {
