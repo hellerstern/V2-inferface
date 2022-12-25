@@ -347,7 +347,7 @@ export const NETWORK = {
       isClosed: isClosed(23),
       defaultLev: 100,
       defaultMargin: 5,
-      decimals: 3,
+      decimals: 5,
       spread: 0
     },
     {

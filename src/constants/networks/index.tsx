@@ -340,7 +340,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 3
+            decimals: 5
           },
           {
             name: 'XMR/USD',
