@@ -321,7 +321,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             {isBalanceVisible ? '3000.00' : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveDaiButton>Approve Dai</ApproveDaiButton>
+        <ApproveButton>Approve {editState.marginAssetDrop.name}</ApproveButton>
         <Alert>
           <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
           <AlertContent>
@@ -380,6 +380,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
       )*100
     )/100;
   }
+
 };
 
 const Container = styled(Box)(({ theme }) => ({
@@ -453,7 +454,7 @@ const AssetBalance = styled(Box)(({ theme }) => ({
   gap: '5%'
 }));
 
-const ApproveDaiButton = styled(Button)(({ theme }) => ({
+const ApproveButton = styled(Button)(({ theme }) => ({
   marginTop: '17px',
   borderRadius: '0px',
   width: '100%',
