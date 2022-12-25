@@ -217,7 +217,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
         </FormAction>
         <FormArea>
           <TigrisInput label="Price" value={
-            orderType === "Market" ? getOpenPrice() : openPrice
+            orderType === "Market" ? getOpenPrice() : parseFloat(openPrice).toPrecision(6)
           } setValue={
             handleSetOpenPrice
             } />
