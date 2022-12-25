@@ -169,7 +169,7 @@ const InputArea = styled(Box)(({ theme }) => ({
 const InputValue = styled('input')<containerProps>(({ visited, theme }) => ({
   outline: 'none',
   height: '100%',
-  width: '65px',
+  width: '77px',
   background: 'none',
   textAlign: 'right',
   border: 'none',

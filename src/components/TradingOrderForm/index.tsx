@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
 import { oracleSocket } from 'src/context/socket';
-import { getNetwork } from 'src/constants/networks';
 
 declare const window: any
 const { ethereum } = window;
@@ -18,8 +17,8 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (orderTypeRef.current === "Market") {
-        setOpenPrice((data[currentPairIndex.current].price/1e18).toFixed(decimals));
-        setSpread((data[currentPairIndex.current].spread/1e10).toFixed(5));
+        setOpenPrice((data[currentPairIndex.current].price/1e18).toString());
+        setSpread((data[currentPairIndex.current].spread/1e10).toPrecision(5));
       }
     });
   }, []);
@@ -28,10 +27,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
 
   useEffect(() => {
     currentPairIndex.current = pairIndex;
-    setDecimals(getNetwork(0).assets[pairIndex].decimals);
   }, [pairIndex]);
-
-  const [decimals, setDecimals] = useState(2);
 
   const [isLong, setLong] = useState(true);
   const [openPrice, setOpenPrice] = useState("0");
@@ -67,7 +63,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function handleSetOpenPrice(value: any) {
     if (orderType === "Market") {
       setOrderType("Limit");
-      setOpenPrice(parseFloat(value).toFixed(decimals).slice(0, -1));
+      setOpenPrice(parseFloat(value).toPrecision(5));
     } else {
       setOpenPrice(value);
     }
@@ -132,13 +128,15 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
           </OrderTypeButton>
         </FormAction>
         <FormArea>
-          <TigrisInput label="Open price" value={
+          <TigrisInput label="Price" value={
             orderType === "Market" ? getOpenPrice() : openPrice
           } setValue={
             handleSetOpenPrice
             } />
+          <div style={{cursor: 'not-allowed'}}>
           <div style={{pointerEvents: 'none'}}>
-          <TigrisInput label="Liq price" value={liqPrice()} setValue={() => null} />
+          <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
+          </div>
           </div>
           <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
@@ -191,7 +189,7 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             value={Math.sqrt(parseFloat(margin))}
           />
           <TigrisInput label="Stop Loss" value={(-stopLoss).toString()} setValue={setStopLoss} />
-          <TigrisInput label="Take profit" value={takeProfit.toString()} setValue={setTakeProfit} />
+          <TigrisInput label="Take Profit" value={takeProfit.toString()} setValue={setTakeProfit} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -243,9 +241,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   function liqPrice() {
     let _liqPrice;
     if (isLong) {
-       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/leverage).toString();
+       _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice())*0.9/leverage).toPrecision(6);
     } else {
-      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/leverage).toString();
+      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice())*0.9/leverage).toPrecision(6);
     }
     if (_liqPrice === "NaN") {
       return "-";
@@ -257,10 +255,10 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
     let _openPrice;
     if (isLong) {
       _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * parseFloat(spread);
-      return _openPrice.toString();
+      return _openPrice.toPrecision(6);
     } else {
       _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * parseFloat(spread);
-      return _openPrice.toString();
+      return _openPrice.toPrecision(6);
     }
   }
 
