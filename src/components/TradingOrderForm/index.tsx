@@ -1,10 +1,23 @@
-import { ErrorOutline, Visibility } from '@mui/icons-material';
-import { Box, Button } from '@mui/material';
+import { ErrorOutline, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Box, Button, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
 import { oracleSocket } from 'src/context/socket';
+import { IconDropDownMenu } from '../Dropdown/IconDrop';
+import { OnlyLogo, usdtLogo } from 'src/config/images';
+
+const marginAssetArray = [
+  {
+    icon: usdtLogo,
+    name: 'USDT'
+  },
+  {
+    icon: OnlyLogo,
+    name: 'tigUSD'
+  }
+];
 
 declare const window: any
 const { ethereum } = window;
@@ -13,6 +26,18 @@ interface IOrderForm {
   pairIndex: number;
 }
 export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
+
+  const initialState = {
+    marginAssetDrop: {
+      icon: usdtLogo,
+      name: 'USDT'
+    }
+  };
+
+  const [editState, setEditState] = useState(initialState);
+  const handleEditState = (prop: string, value: string | number | boolean) => {
+    setEditState({ ...editState, [prop]: value });
+  };
 
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
@@ -45,6 +70,9 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
   const [isTpFixed, setTpFixed] = useState(false);
 
   const [orderType, setOrderType] = useState("Market");
+
+  const [isBalanceVisible, setBalanceVisible] = useState(true);
+
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
     orderTypeRef.current = orderType;
@@ -279,13 +307,19 @@ export const TradingOrderForm = ({pairIndex}: IOrderForm) => {
             onChange={(event: any) => handleTakeProfitChange(event)}
             value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
           />
+          <IconDropDownMenu
+            arrayData={marginAssetArray}
+            name="marginAssetDrop"
+            state={editState.marginAssetDrop}
+            setState={handleEditState}
+          />
           <AssetBalance>
-            Asset balance <Visibility fontSize="small" />{' '}
+            Balance
+            <IconButton onClick={() => setBalanceVisible(!isBalanceVisible)}>
+              {isBalanceVisible ? <Visibility fontSize="small" /> : <VisibilityOff fontSize="small" />}
+            </IconButton>
+            {isBalanceVisible ? '3000.00' : '• • • • • • •'}
           </AssetBalance>
-          <MarginAssetValue>
-            <span>2.5749 BTC</span>
-            <span> ≈ 61,075.53 USD</span>
-          </MarginAssetValue>
         </FormArea>
         <ApproveDaiButton>Approve Dai</ApproveDaiButton>
         <Alert>
@@ -416,14 +450,7 @@ const AssetBalance = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   fontSize: '12px',
-  gap: '20%'
-}));
-
-const MarginAssetValue = styled(Box)(({ theme }) => ({
-  fontSize: '13px',
-  [theme.breakpoints.down('xs')]: {
-    fontSize: '10px'
-  }
+  gap: '5%'
 }));
 
 const ApproveDaiButton = styled(Button)(({ theme }) => ({

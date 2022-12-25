@@ -27,6 +27,7 @@ import ltcLogo from '../assets/images/CoinImage/ltcLogo.svg';
 import maticLogo from '../assets/images/CoinImage/maticLogo.svg';
 import nearLogo from '../assets/images/CoinImage/nearLogo.svg';
 import solLogo from '../assets/images/CoinImage/solLogo.svg';
+import usdtLogo from '../assets/images/CoinImage/usdtLogo.svg'
 import uniLogo from '../assets/images/CoinImage/uniLogo.svg';
 import xmrLogo from '../assets/images/CoinImage/xmrLogo.svg';
 import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
@@ -58,6 +59,7 @@ export {
   maticLogo,
   nearLogo,
   solLogo,
+  usdtLogo,
   uniLogo,
   xmrLogo,
   xrpLogo,
