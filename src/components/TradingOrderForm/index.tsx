@@ -34,13 +34,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
 
-  useEffect(() => {
-    if (address === undefined) return;
-    const x = async () => {
-      await unlockShellWallet();
-    }
-    x();
-  }, [address]);
+  // useEffect(() => {
+  //   if (address === undefined) return;
+  //   const x = async () => {
+  //     await unlockShellWallet();
+  //   }
+  //   x();
+  // }, [address]);
 
   const [tradingContract, setTradingContract] = useState<any>(null);
   useEffect(() => {
