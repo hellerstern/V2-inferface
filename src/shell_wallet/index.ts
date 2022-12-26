@@ -25,7 +25,11 @@ let shell_private = '';
 
 const cookies = new Cookies();
 
+let isGenerating = false;
+
 export const generateShellWallet = async () => {
+  if (isGenerating) return;
+  isGenerating = true;
   const provider = new ethers.providers.Web3Provider(ethereum);
   const signer = provider.getSigner();
   const signerAddress = await signer.getAddress();
@@ -37,6 +41,7 @@ export const generateShellWallet = async () => {
   const signature = (
     await signer.signMessage('Sign this message to unlock shell wallet.\nShell Wallet: ' + address)
   ).toString();
+  isGenerating = false;
   cookies.set(signerAddress + '_k', signature, { sameSite: 'strict', expires: new Date(Date.now() + 86400000) });
   const e_privateKey = encrypt(privateKey, signature);
 
@@ -55,11 +60,9 @@ export const unlockShellWallet = async () => {
     return;
   }
 
-  console.log(signerAddress);
-
   if (
-    localStorage.getItem(signerAddress + '_public_key') === undefined ||
-    localStorage.getItem(signerAddress + '_e_private_key') === undefined
+    localStorage.getItem(signerAddress + '_public_key') === null ||
+    localStorage.getItem(signerAddress + '_e_private_key') === null
   ) {
     await generateShellWallet();
   } else {

@@ -10,7 +10,7 @@ import { LOGO, usdtLogo } from '../../../src/config/images';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 
-// import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../shell_wallet/index';
+import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
 const marginAssetArray = [
   {
@@ -35,13 +35,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
 
-  // useEffect(() => {
-  //   if (address === undefined) return;
-  //   const x = async () => {
-  //     await unlockShellWallet();
-  //   }
-  //   x();
-  // }, [address]);
+  useEffect(() => {
+    if (address === undefined) return;
+    const x = async () => {
+      await unlockShellWallet();
+    }
+    x();
+  }, [address]);
 
   const [tradingContract, setTradingContract] = useState<any>(null);
   useEffect(() => {

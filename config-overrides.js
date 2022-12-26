@@ -4,7 +4,7 @@ module.exports = function override(config, env) {
   //do stuff with the webpack config...
 
   config.resolve.fallback = {
-    crypto: require.resolve('crypto-browserify')
+    crypto: false
   };
   config.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx', '.json'];
   entry = '.src/index.tsx',
