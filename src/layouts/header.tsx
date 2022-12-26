@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Box, Button, Divider, IconButton, Modal } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';
-import { GasStationSvg, Indicator, LOGO } from '../../src/config/images';
+import { GasStationSvg, Indicator, FullLogo } from '../../src/config/images';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { a11yProps } from '../../src/components/TabPanel';
@@ -10,7 +10,6 @@ import { useStore } from '../../src/context/StoreContext';
 import { CustomizedMenus } from '../../src/components/Dropdown/CurrencyDrop';
 import { NotificationsNone, Person, Dehaze, Search, Close } from '@mui/icons-material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useDisconnect } from 'wagmi';
 import { CustomConnectButton } from '../../src/components/CustomConnectButton';
 import { LanguageList } from '../../src/components/List/Language';
@@ -52,7 +51,7 @@ export const Header = () => {
         <Container>
           <ContainerWrapper>
             <TigrisLogo onClick={() => navigate('/')}>
-              <Img src={LOGO} alt="tigris-logo" />
+              <Img src={FullLogo} alt="tigris-logo" />
             </TigrisLogo>
             <ActiveBar>
               <TabContainer>

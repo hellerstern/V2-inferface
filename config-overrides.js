@@ -4,7 +4,9 @@ module.exports = function override(config, env) {
   //do stuff with the webpack config...
 
   config.resolve.fallback = {
-    crypto: require.resolve('crypto-browserify')
+    crypto: require.resolve('crypto-browserify'),
+    stream: require.resolve("stream-browserify"),
+    assert: require.resolve("assert/")
   };
   config.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx', '.json'];
   entry = '.src/index.tsx',

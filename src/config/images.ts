@@ -1,4 +1,5 @@
 import LOGO from '../assets/images/logo.svg';
+import FullLogo from '../assets/images/fullLogo.svg';
 import Indicator from '../assets/images/Indicator.svg';
 import DocumentSvg from '../assets/icons/document.svg';
 import ReferralSvg from '../assets/icons/referral.svg';
@@ -33,6 +34,7 @@ import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
 
 export {
   LOGO,
+  FullLogo,
   Indicator,
   DocumentSvg,
   ReferralSvg,
