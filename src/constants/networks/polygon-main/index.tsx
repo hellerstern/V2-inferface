@@ -490,7 +490,7 @@ export const NETWORK = {
       stablevault: '0x3677415Dc23e49B7780ef46976F418F4a9d5031B',
       decimals: 18,
       hasPermit: false,
-      image: 'assets/images/dai.png'
+      icon: 'assets/images/dai.png'
     }
   ],
   nativeSupported: false

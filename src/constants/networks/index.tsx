@@ -2,6 +2,7 @@
 import { NETWORK as POLYGON } from './polygon-main/index';
 import { NETWORK as ARBITRUM } from './arbitrum/index';
 import { NETWORK as ARBGOERLI } from './arbi-test/index';
+import { tigusdLogo, daiLogo, usdtLogo } from '../../config/images';
 
 function isClosed(asset: any) {
   if (asset == 2 || asset == 32 || asset == 5 || asset == 6 || asset == 7 || asset == 8 || asset == 10) {
@@ -483,7 +484,7 @@ export const getNetwork = (networkId: any) => {
             stablevault: '',
             decimals: 18,
             hasPermit: false,
-            image: 'assets/images/tigUSD.svg'
+            icon: '../../assets/images/CoinImage/tigusdLogo.svg'
           },
           {
             name: '',
@@ -491,7 +492,7 @@ export const getNetwork = (networkId: any) => {
             stablevault: '',
             decimals: 18,
             hasPermit: false,
-            image: ''
+            icon: ''
           },
           {
             name: '',
@@ -499,7 +500,7 @@ export const getNetwork = (networkId: any) => {
             stablevault: '',
             decimals: 18,
             hasPermit: false,
-            image: ''
+            icon: ''
           }
         ],
         nativeSupported: false

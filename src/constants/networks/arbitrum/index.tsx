@@ -490,7 +490,7 @@ export const NETWORK = {
       stablevault: '0xe82fcefbDD034500B5862B4827CAE5c117f6b921',
       decimals: 6,
       hasPermit: true,
-      image: 'assets/images/usdt.png'
+      icon: 'assets/images/usdt.png'
     }
   ],
   nativeSupported: false

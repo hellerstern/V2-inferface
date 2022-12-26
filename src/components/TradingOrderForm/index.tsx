@@ -6,22 +6,10 @@ import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
 import { oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { LOGO, usdtLogo } from '../../../src/config/images';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
-
-const marginAssetArray = [
-  {
-    icon: usdtLogo,
-    name: 'USDT'
-  },
-  {
-    icon: LOGO,
-    name: 'tigUSD'
-  }
-];
 
 declare const window: any
 const { ethereum } = window;
@@ -36,6 +24,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { chain } = useNetwork();
 
   useEffect(() => {
+    getProxyApproval();
+}, [chain, address, ethereum]);
+
+  useEffect(() => {
     if (address === undefined) return;
     const x = async () => {
       await unlockShellWallet();
@@ -43,21 +35,17 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     x();
   }, [address]);
 
-  const [tradingContract, setTradingContract] = useState<any>(null);
   useEffect(() => {
-    setTradingContract(getTradingContract);
-  }, [address, chain])
+    console.log(address);
+    console.log(chain);
+    marginAssets.current = {marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets};
+  }, [address, chain]);
 
-  const initialState = {
-    marginAssetDrop: {
-      icon: usdtLogo,
-      name: 'USDT'
-    }
-  };
+  const marginAssets = useRef({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
 
-  const [editState, setEditState] = useState(initialState);
-  const handleEditState = (prop: string, value: string | number | boolean) => {
-    setEditState({ ...editState, [prop]: value });
+  const [currentMargin, setCurrentMargin] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]});
+  const doMarginChange = (prop: string, value: string | number | boolean) => {
+    setCurrentMargin({...currentMargin, [prop]: value });
   };
 
   useEffect(() => {
@@ -93,6 +81,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [orderType, setOrderType] = useState("Market");
 
   const [isBalanceVisible, setBalanceVisible] = useState(true);
+
+  const [isProxyApproved, setIsProxyApproved] = useState(false);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -329,10 +319,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
           />
           <IconDropDownMenu
-            arrayData={marginAssetArray}
+            arrayData={marginAssets.current.marginAssetDrop}
             name="marginAssetDrop"
-            state={editState.marginAssetDrop}
-            setState={handleEditState}
+            state={currentMargin.marginAssetDrop}
+            setState={doMarginChange}
           />
           <AssetBalance>
             Balance
@@ -342,7 +332,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             {isBalanceVisible ? '3000.00' : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => routeTrade()}>Approve {editState.marginAssetDrop.name}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()}>Approve {currentMargin.marginAssetDrop.name}</ApproveButton>
         <Alert>
           <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
           <AlertContent>
@@ -410,18 +400,60 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   =============
   */
 
+  function getTradeStatus() {
+    let status;
+    !isProxyApproved ? status = "Proxy" :
+    status = "Ready";
+    return status;
+  }
+
   function routeTrade() {
-    initiateMarketOrder();
+    const s = getTradeStatus();
+    s === "Proxy" ? approveProxy() :
+    s === "Ready" ? initiateMarketOrder() :
+    console.log("Oops");      
   }
 
   // TODO TOASTS
-
-  function getTradingContract() {
+  async function getTradingContract() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    if (ethereum === undefined || !currentNetwork || currentNetwork.network_id === 0) return undefined;
+    const signer = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+  }
+
+  function getTradingContractForApprove() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer); 
+  }
+
+  async function getProxyApproval() {
+    const tradingContract = await getTradingContract();
+
+    const proxy = await tradingContract.proxyApprovals(address);
+
+    const proxyAddress = proxy.proxy;
+    const proxyTime = proxy.time;
+    const currentTime = Date.now()/1000;
+    const shellBalance = await getShellBalance();
+
+    if((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.001) {
+        setIsProxyApproved(false);
+    } else {
+        setIsProxyApproved(true);
+    }
+  }
+
+  async function approveProxy() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const tradingContract = getTradingContractForApprove();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+
+    const now = Math.floor(Date.now() / 1000);
+    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, {value: ethers.utils.parseEther("0.005")});
+    await tx.wait();
+    getProxyApproval();
   }
 
   async function initiateMarketOrder() {
@@ -434,12 +466,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const _tp = ethers.utils.parseEther(getTakeProfitPrice());
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
+    // TODO referral cookie
     const _ref = ethers.constants.HashZero;
 
     const _tradeInfo = [
       _margin,
-      currentNetwork.marginAssets[0].address,
-      currentNetwork.addresses.tigusdvault,
+      currentMargin.marginAssetDrop.address,
+      currentMargin.marginAssetDrop.stablevault,
       _leverage,
       pairIndex,
       isLong,
@@ -474,6 +507,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       // var toastId:any = await addToast("Sending order");
 
       try {
+        const tradingContract = await getTradingContract();
+        console.log(tradingContract);
         const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
         const tx: any = await tradingContract.initiateMarketOrder(
@@ -488,15 +523,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         // toastId = await editToast(toastId, "Order sent with price $" + openPrice);
         await tx.wait();
 
-        // TODO
-        // getMarginBalance();
-
-        // TODO
-        // getFundingRate();
       } catch (err: any) {
         console.log(err);
         if (err.reason == null) {
-          // editToast(toastId, "Transaction was cancelled");
+          // editToast(toastId, "Transaction got cancelled");
         } else {
           // editToast(toastId, "Error: " + err.reason);
         }
