@@ -8,6 +8,7 @@ import { oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
+import socketio from "socket.io-client";
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -22,6 +23,18 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const { address } = useAccount();
   const { chain } = useNetwork();
+
+  // First render
+  useEffect(() => {
+    oracleSocket.on('data', (data: any) => {
+      if (orderTypeRef.current === "Market") {
+        setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
+        setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
+      }
+    });
+    getTokenApproval();
+    getTokenBalance();
+  }, []);
 
   useEffect(() => {
     getProxyApproval();
@@ -44,18 +57,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const marginAssets = useRef({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
 
   const [currentMargin, setCurrentMargin] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]});
-  const doMarginChange = (prop: string, value: string | number | boolean) => {
-    setCurrentMargin({...currentMargin, [prop]: value });
-  };
-
-  useEffect(() => {
-    oracleSocket.on('data', (data: any) => {
-      if (orderTypeRef.current === "Market") {
-        setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
-        setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
-      }
-    });
-  }, []);
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -80,9 +81,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const [orderType, setOrderType] = useState("Market");
 
+  const [tokenBalance, setTokenBalance] = useState("Loading...");
   const [isBalanceVisible, setBalanceVisible] = useState(true);
 
-  const [isProxyApproved, setIsProxyApproved] = useState(false);
+  const [isProxyApproved, setIsProxyApproved] = useState(true);
+  const [isTokenAllowed, setIsTokenAllowed] = useState(true);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -167,6 +170,63 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       setOpenPrice(value);
     }
   }
+
+  const doMarginChange = (prop: string, value: string | number | boolean) => {
+    const _currentMargin = {...currentMargin, [prop]: value };
+    setCurrentMargin(_currentMargin);
+    setTokenBalance("Loading...");
+    getTokenApproval();
+  };
+
+  useEffect(() => {
+    getTokenBalance();
+  }, [currentMargin]);
+
+  useEffect(() => {
+    if (address !== undefined) {
+      const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', {transports: ['websocket'] });
+  
+      socket.on('PositionOpened', (data: any) => {
+          if (data.trader === address && data.chainId === chain?.id) {
+              getTokenBalance();
+              getProxyApproval();
+          }
+      });
+
+      socket.on('PositionClosed', (data: any) => {
+          if (data.trader === address && data.chainId === chain?.id) {
+            getTokenBalance();
+            getProxyApproval();
+          }
+      });
+
+      socket.on('LimitCancelled', (data: any) => {
+          if (data.trader === address && data.chainId === chain?.id) {
+            getTokenBalance();
+            getProxyApproval();
+          }
+      });
+
+      socket.on('MarginModified', (data: any) => {
+          if (data.trader === address && data.chainId === chain?.id) {
+            getTokenBalance();
+            getProxyApproval();
+          }
+      });
+
+      socket.on('AddToPosition', (data: any) => {
+          if (data.trader === address && data.chainId === chain?.id) {
+              getTokenBalance();
+              getProxyApproval();
+            }
+          }
+      );
+
+      return () => {
+          socket.disconnect();
+      }
+    }
+  }, [address, chain, currentMargin]);
 
   return (
     <Container>
@@ -322,22 +382,29 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             arrayData={marginAssets.current.marginAssetDrop}
             name="marginAssetDrop"
             state={currentMargin.marginAssetDrop}
-            setState={doMarginChange}
+            setState={ doMarginChange }
           />
-          <AssetBalance>
+          <AssetBalance key={tokenBalance}>
             Balance
             <IconButton onClick={() => setBalanceVisible(!isBalanceVisible)}>
               {isBalanceVisible ? <Visibility fontSize="small" /> : <VisibilityOff fontSize="small" />}
             </IconButton>
-            {isBalanceVisible ? '3000.00' : '• • • • • • •'}
+            {isBalanceVisible ? tokenBalance : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => routeTrade()}>Approve {currentMargin.marginAssetDrop.name}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
         <Alert>
-          <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
-          <AlertContent>
-            Wallet is not connected. Connect your wallet to be able approve DAI and use Order form.
-          </AlertContent>
+        { 
+          chain === undefined || address === undefined ? 
+            <Alert>
+              <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
+                  <AlertContent>
+                    Wallet is not connected. Connect your wallet to be able approve and trade.
+                  </AlertContent>
+            </Alert>
+          :
+            <></>
+        }
         </Alert>
       </FormContainer>
     </Container>
@@ -385,6 +452,15 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
+  async function getTokenBalance() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
+    const balance = ((await tokenContract.balanceOf(address))/10**(currentMargin.marginAssetDrop.decimals)).toFixed(2);
+    setTokenBalance(balance);
+    console.log(balance);
+  }
+
   function marginScale(value: number) {
     return Math.round((
       parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
@@ -400,9 +476,35 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   =============
   */
 
+  function getButtonOnline() {
+    const s = getTradeStatus();
+    const isOnline =
+    s === "Approve" ||
+    s === "Proxy" ||
+    s === "Ready"
+    ;
+    return isOnline;
+  }
+
+  function getButtonText() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const s = getTradeStatus();
+    const txt =
+    s === "Approve" ? "Approve " + currentMargin.marginAssetDrop.name :
+    s === "Proxy" ? "Approve Proxy Wallet" :
+    s === "Ready" ? (isLong ? "LONG $" : "SHORT $" )  + (parseFloat(margin)*parseFloat(leverage)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name):
+    s === "NotConnected" ? "Connect Wallet" :
+    "Something broke"
+    ;
+    return txt;
+  }
+
   function getTradeStatus() {
     let status;
+    !isTokenAllowed ? status = "Approve" :
     !isProxyApproved ? status = "Proxy" :
+    parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
+    (chain === undefined || address === undefined) ? status = "NotConnected" :
     status = "Ready";
     return status;
   }
@@ -438,10 +540,22 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentTime = Date.now()/1000;
     const shellBalance = await getShellBalance();
 
-    if((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.001) {
+    if((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.002) {
         setIsProxyApproved(false);
     } else {
         setIsProxyApproved(true);
+    }
+  }
+  
+  async function getTokenApproval() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
+    const allowance = await tokenContract.allowance(address, currentNetwork.addresses.trading);
+    if(allowance !== 0) {
+      setIsTokenAllowed(true);
+    } else {
+      setIsTokenAllowed(false);
     }
   }
 
@@ -610,14 +724,17 @@ const AssetBalance = styled(Box)(({ theme }) => ({
   gap: '5%'
 }));
 
-const ApproveButton = styled(Button)(({ theme }) => ({
+interface IApproveButton {
+  isOnline: boolean
+}
+const ApproveButton = styled(Button)(({ isOnline }: IApproveButton ) => ({
   marginTop: '17px',
   borderRadius: '0px',
   width: '100%',
   textTransform: 'none',
-  backgroundColor: '#2F3135',
+  backgroundColor: (isOnline ? '#3772FF' : '#2F3135'),
   '&:hover': {
-    backgroundColor: '#2F3135'
+    backgroundColor: (isOnline ? '#3772FF' : '#2F3135')
   }
 }));
 
