@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,6 +9,8 @@ import { styled } from '@mui/system';
 import { Close, Edit } from '@mui/icons-material';
 import { AiFillEye } from 'react-icons/ai';
 import { EditModal } from '../Modal/EditModal';
+import socketio from "socket.io-client";
+import { useAccount, useNetwork } from 'wagmi';
 
 function createData(
   user: string,
@@ -69,7 +71,275 @@ const rows = [
 ];
 
 export const PositionTable = () => {
-  const [isEditModalOpen, setEditModalOpen] = React.useState(false);
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+
+  const [openPositions, setOpenPositions] = useState<any[]>([]);
+  const [limitOrders, setLimitOrders] = useState<any[]>([]);
+  const [allPositions, setAllPositions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (address !== undefined) {
+
+        const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', {transports: ['websocket'] });
+
+        socket.on('connect', () => {
+            console.log('Events Socket Connected');
+        });
+    
+        socket.on('error', (error:any) => {
+            console.log('Events Socket Error:', error);
+        });
+
+        socket.on('disconnect', (reason: any) => {
+            // setTimeout(() => {
+            //     socket.connect();
+            // }, 1000);
+            console.log('Events Socket Disconnected:', reason);
+        });
+    
+        socket.on('PositionOpened', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                if (data.orderType === 0) {
+                    const openP: any[] = openPositions;
+                    openP.push(
+                        {
+                            trader: data.trader,
+                            margin: data.marginAfterFees,
+                            leverage: data.tradeInfo.leverage,
+                            price: data.price,
+                            tpPrice: data.tradeInfo.tpPrice,
+                            slPrice: data.tradeInfo.slPrice,
+                            direction: data.tradeInfo.direction,
+                            id: data.id, 
+                            asset: data.tradeInfo.asset,
+                            accInterest: 0
+                        }
+                    );
+                    setOpenPositions(openP);
+                    console.log('EVENT: Market Trade Opened');
+                } else {
+                    const limitO: any[] = limitOrders;
+                    limitO.push(
+                        {
+                            trader: data.trader,
+                            margin: data.tradeInfo.margin,
+                            leverage: data.tradeInfo.leverage,
+                            orderType: data.orderType,
+                            price: data.price,
+                            tpPrice: data.tradeInfo.tpPrice,
+                            slPrice: data.tradeInfo.slPrice,
+                            direction: data.tradeInfo.direction,
+                            id: data.id, 
+                            asset: data.tradeInfo.asset
+                        }
+                    );
+                    setLimitOrders(limitO);
+                    console.log('EVENT: Limit Order Created');
+                }
+            }
+        });
+
+        socket.on('PositionLiquidated', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const openP: any[] = openPositions;
+                for (let i=0; i<openP.length; i++) {
+                    if (openP[i].id === data.id) {
+                        openP.splice(i, 1);
+                        break;
+                    }
+                }
+                // addToast("Position Liquidated");
+                setOpenPositions(openP);
+                console.log('EVENT: Position Liquidated');
+            }
+        });
+
+        socket.on('PositionClosed', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const openP: any[] = openPositions;
+                for (let i=0; i<openP.length; i++) {
+                    if (openP[i].id === data.id) {
+                        if (data.percent === 10000000000) {
+                            openP.splice(i, 1);
+                            break;                                
+                        }
+                        else {
+                            const modP = {
+                                trader: openP[i].trader,
+                                margin: parseInt((openP[i].margin * (10000000000 - data.percent) / 10000000000).toString()).toString(),
+                                leverage: openP[i].leverage,
+                                price: openP[i].price,
+                                tpPrice: openP[i].tpPrice,
+                                slPrice: openP[i].slPrice,
+                                direction: openP[i].direction,
+                                id: data.id, 
+                                asset: openP[i].asset,
+                                accInterest: openP[i].accInterest
+                            }
+                            openP[i] = modP;
+                            break;
+                        }
+                    }
+                }
+                setOpenPositions(openP);
+                if (data.trader === data.executor) {
+                    console.log('EVENT: Position Market Closed');
+                } else {
+                    // addToast("Position Limit Closed");
+                    console.log('EVENT: Position Limit Closed');
+                }
+            }
+        });
+
+        socket.on('LimitOrderExecuted', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const limitO: any[] = limitOrders;
+                const openP: any[] = openPositions;
+                for (let i=0; i<limitO.length; i++) {
+                    if (limitO[i].id === data.id) {
+                        openP.push(
+                            {
+                                trader: data.trader,
+                                margin: data.margin,
+                                leverage: data.lev,
+                                price: data.oPrice,
+                                tpPrice: limitO[i].tpPrice,
+                                slPrice: limitO[i].slPrice,
+                                direction: data.direction,
+                                id: data.id, 
+                                asset: data.asset,
+                                accInterest: 0
+                            }
+                        );
+                        limitO.splice(i, 1);
+                        break;
+                    }
+                }
+                // addToast("Limit Order Executed");
+                setOpenPositions(limitO);
+                setOpenPositions(openP);
+                console.log('EVENT: Limit Order Executed');
+            }
+        });
+
+        socket.on('LimitCancelled', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const limitO: any[] = limitOrders;
+                for (let i=0; i<limitO.length; i++) {
+                    if (limitO[i].id === data.id) {
+                        limitO.splice(i, 1);
+                        break;
+                    }
+                }
+                setLimitOrders(limitO);
+                console.log('EVENT: Limit Order Cancelled');
+            }
+        });
+
+        socket.on('MarginModified', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const openP: any[] = openPositions;
+                for (let i=0; i<openP.length; i++) {
+                    if (openP[i].id === data.id) {
+                        const modP = {
+                            trader: openP[i].trader,
+                            margin: data.newMargin,
+                            leverage: data.newLeverage,
+                            price: openP[i].price,
+                            tpPrice: openP[i].tpPrice,
+                            slPrice: openP[i].slPrice,
+                            direction: openP[i].direction,
+                            id: data.id, 
+                            asset: openP[i].asset,
+                            accInterest: openP[i].accInterest
+                        }
+                        openP[i] = modP;
+                        break;
+                    }
+                }
+                setOpenPositions(openP);
+                console.log('EVENT: Margin Modified');
+            }
+        });
+
+        socket.on('AddToPosition', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const openP: any[] = openPositions;
+                for (let i=0; i<openP.length; i++) {
+                    if (openP[i].id === data.id) {
+                        const modP = {
+                            trader: openP[i].trader,
+                            margin: data.newMargin,
+                            leverage: openP[i].leverage,
+                            price: data.newPrice,
+                            tpPrice: openP[i].tpPrice,
+                            slPrice: openP[i].slPrice,
+                            direction: openP[i].direction,
+                            id: data.id, 
+                            asset: openP[i].asset,
+                            accInterest: openP[i].accInterest
+                        }
+                        openP[i] = modP;
+                        break;
+                    }
+                }
+                setOpenPositions(openP);
+                console.log('EVENT: Added To Position');
+            }
+        });
+
+        socket.on('UpdateTPSL', (data: any) => {
+            if (data.trader === address && data.chainId === chain?.id) {
+                const openP: any[] = openPositions;
+                for (let i=0; i<openP.length; i++) {
+                    if (openP[i].id === data.id) {
+                        console.log(openP[i]);
+                        if (data.isTp) {
+                            const modP = {
+                                trader: openP[i].trader,
+                                margin: openP[i].margin,
+                                leverage: openP[i].leverage,
+                                price: openP[i].price,
+                                tpPrice: data.price,
+                                slPrice: openP[i].slPrice,
+                                direction: openP[i].direction,
+                                id: data.id, 
+                                asset: openP[i].asset,
+                                accInterest: openP[i].accInterest
+                            }
+                            openP[i] = modP;
+                            console.log('EVENT: TP Updated'); 
+                        } else {
+                            const modP = {
+                                trader: openP[i].trader,
+                                margin: openP[i].margin,
+                                leverage: openP[i].leverage,
+                                price: openP[i].price,
+                                tpPrice: openP[i].tpPrice,
+                                slPrice: data.price,
+                                direction: openP[i].direction,
+                                id: data.id,
+                                asset: openP[i].asset,
+                                accInterest: openP[i].accInterest
+                            }
+                            openP[i] = modP;
+                            console.log('EVENT: SL Updated');
+                        }
+                        break;
+                    }
+                }
+                setOpenPositions(openP);
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        }
+    }
+}, []);
+
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
   const handleClickEditOpen = (id: number) => {
     console.log('id: ', id);
     setEditModalOpen(true);
