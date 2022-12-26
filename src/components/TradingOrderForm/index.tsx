@@ -508,7 +508,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
       try {
         const tradingContract = await getTradingContract();
-        console.log(tradingContract);
         const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
         const tx: any = await tradingContract.initiateMarketOrder(

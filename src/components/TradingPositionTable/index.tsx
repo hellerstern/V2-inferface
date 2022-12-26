@@ -20,7 +20,7 @@ export const TradingPositionTable = () => {
         <TableAction>
           <TableTab>
             <TabBar active={tab === 0 ? 1 : 0} onClick={() => setTab(0)}>
-              My Open Position(11)
+              My Open Positions
             </TabBar>
             <TabBar active={tab === 1 ? 1 : 0} onClick={() => setTab(1)}>
               My Limit Orders
@@ -31,7 +31,7 @@ export const TradingPositionTable = () => {
             <TableDropDownMenu state={show} setState={setShow} />
           </TableDropDown>
         </TableAction>
-        <PositionTable />
+        <PositionTable tableType={tab}/>
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Daily Performance</TableMediaLabel>
