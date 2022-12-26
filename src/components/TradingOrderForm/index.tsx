@@ -288,7 +288,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         </FormAction>
         <FormArea>
           <TigrisInput label="Price" value={
-            orderType === "Market" ? getOpenPrice() : parseFloat(openPrice).toPrecision(6)
+            orderType === "Market" ? getOpenPrice() : parseFloat(openPrice).toString()
           } setValue={
             handleSetOpenPrice
           } />
@@ -297,8 +297,25 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
             </div>
           </div>
-          <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
+          <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
+          <TigrisSlider // Margin
+            defaultValue={Math.sqrt(5)}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            marks={[
+              { value: Math.sqrt(5), label: '5' },
+              { value: 100, label: '10k' }
+            ]}
+            min={Math.sqrt(5)}
+            step={0.01}
+            max={100}
+            scale={(value: number) =>
+              marginScale(value)
+            }
+            onChange={(event: any) => handleMarginChange(event)}
+            value={Math.sqrt(parseFloat(margin))}
+          />
           <TigrisSlider // Leverage
             defaultValue={2}
             aria-label="Default"
@@ -329,23 +346,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             max={100}
             onChange={(event: any) => handleLeverageChange(event)}
             value={parseFloat(leverage)}
-          />
-          <TigrisSlider // Margin
-            defaultValue={Math.sqrt(5)}
-            aria-label="Default"
-            valueLabelDisplay="auto"
-            marks={[
-              { value: Math.sqrt(5), label: '5' },
-              { value: 100, label: '10000' }
-            ]}
-            min={Math.sqrt(5)}
-            step={0.01}
-            max={100}
-            scale={(value: number) =>
-              marginScale(value)
-            }
-            onChange={(event: any) => handleMarginChange(event)}
-            value={Math.sqrt(parseFloat(margin))}
           />
           <TigrisInput label="Stop Loss" value={stopLossPercent === "0" ? "-" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
           <TigrisInput label="Take Profit" value={takeProfitPercent === "0" ? "-" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
@@ -492,7 +492,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const txt =
     s === "Approve" ? "Approve " + currentMargin.marginAssetDrop.name :
     s === "Proxy" ? "Approve Proxy Wallet" :
-    s === "Ready" ? (isLong ? "LONG $" : "SHORT $" )  + (parseFloat(margin)*parseFloat(leverage)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name):
+    s === "Ready" ? (isLong ? "LONG $" : "SHORT $" )  + (parseFloat(margin)*parseFloat(leverage)).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name):
     s === "NotConnected" ? "Connect Wallet" :
     "Something broke"
     ;
