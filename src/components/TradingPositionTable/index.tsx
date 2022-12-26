@@ -47,7 +47,7 @@ export const TradingPositionTable = () => {
 const TableContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '12px',
+  gap: '5px',
   [theme.breakpoints.down('desktop')]: {
     order: 4,
     gridColumn: '1 / 3'
@@ -56,7 +56,8 @@ const TableContainer = styled(Box)(({ theme }) => ({
 
 const TableWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: '#18191D',
-  width: '100%'
+  width: '100%',
+  height: '100%'
 }));
 
 const TableAction = styled(Box)(({ theme }) => ({
@@ -94,7 +95,6 @@ const TableDropDown = styled(Box)(({ theme }) => ({
 const TableMedia = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '100%',
-  height: '100%',
   backgroundColor: '#18191D',
   padding: '10px 13px',
   alignItems: 'center',
