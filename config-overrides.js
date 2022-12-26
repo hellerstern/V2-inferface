@@ -24,10 +24,7 @@ module.exports = function override(config, env) {
         {
           test: /\.(css)$/i,
           use: ["style-loader", "css-loader"],
-          include: [/node_modules/, /src/],
-          options: {
-            url: true
-          },
+          include: [/node_modules/, /src/]
         },
         {
           oneOf: [
