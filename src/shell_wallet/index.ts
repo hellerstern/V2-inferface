@@ -38,9 +38,14 @@ export const generateShellWallet = async () => {
   const privateKey = wallet.privateKey;
   const address = wallet.address;
 
-  const signature = (
-    await signer.signMessage('Sign this message to unlock shell wallet.\nShell Wallet: ' + address)
-  ).toString();
+  let signature;
+  try {
+    signature = await signer.signMessage('Sign this message to unlock shell wallet.\nShell Wallet: ' + address)
+  } catch (err) {
+    isGenerating = false;
+    console.log(err);
+    return;
+  }
   isGenerating = false;
   cookies.set(signerAddress + '_k', signature, { sameSite: 'strict', expires: new Date(Date.now() + 86400000) });
   const e_privateKey = encrypt(privateKey, signature);
