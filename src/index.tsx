@@ -10,6 +10,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import './Rainbowkit.css';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.min.css';
+import './toast.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 window.Buffer = require('buffer').Buffer;

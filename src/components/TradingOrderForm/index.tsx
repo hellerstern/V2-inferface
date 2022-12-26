@@ -9,6 +9,7 @@ import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import socketio from "socket.io-client";
+import { toast } from 'react-toastify';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -38,7 +39,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   useEffect(() => {
     getProxyApproval();
-}, [chain, address, ethereum]);
+  }, [chain, address, ethereum]);
 
   useEffect(() => {
     if (address === undefined) return;
@@ -49,14 +50,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }, [address]);
 
   useEffect(() => {
-    setMarginAssets({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
-    const _currentMargin = {marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]};
+    setMarginAssets({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
+    const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
     setCurrentMargin(_currentMargin);
   }, [chain]);
 
-  const [marginAssets, setMarginAssets] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
+  const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
 
-  const [currentMargin, setCurrentMargin] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]});
+  const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] });
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -172,7 +173,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   const doMarginChange = (prop: string, value: string | number | boolean) => {
-    const _currentMargin = {...currentMargin, [prop]: value };
+    const _currentMargin = { ...currentMargin, [prop]: value };
     setCurrentMargin(_currentMargin);
     setTokenBalance("Loading...");
     getTokenApproval();
@@ -184,46 +185,46 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   useEffect(() => {
     if (address !== undefined) {
-      const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', {transports: ['websocket'] });
-  
+      const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', { transports: ['websocket'] });
+
       socket.on('PositionOpened', (data: any) => {
-          if (data.trader === address && data.chainId === chain?.id) {
-              getTokenBalance();
-              getProxyApproval();
-          }
+        if (data.trader === address && data.chainId === chain?.id) {
+          getTokenBalance();
+          getProxyApproval();
+        }
       });
 
       socket.on('PositionClosed', (data: any) => {
-          if (data.trader === address && data.chainId === chain?.id) {
-            getTokenBalance();
-            getProxyApproval();
-          }
+        if (data.trader === address && data.chainId === chain?.id) {
+          getTokenBalance();
+          getProxyApproval();
+        }
       });
 
       socket.on('LimitCancelled', (data: any) => {
-          if (data.trader === address && data.chainId === chain?.id) {
-            getTokenBalance();
-            getProxyApproval();
-          }
+        if (data.trader === address && data.chainId === chain?.id) {
+          getTokenBalance();
+          getProxyApproval();
+        }
       });
 
       socket.on('MarginModified', (data: any) => {
-          if (data.trader === address && data.chainId === chain?.id) {
-            getTokenBalance();
-            getProxyApproval();
-          }
+        if (data.trader === address && data.chainId === chain?.id) {
+          getTokenBalance();
+          getProxyApproval();
+        }
       });
 
       socket.on('AddToPosition', (data: any) => {
-          if (data.trader === address && data.chainId === chain?.id) {
-              getTokenBalance();
-              getProxyApproval();
-            }
-          }
+        if (data.trader === address && data.chainId === chain?.id) {
+          getTokenBalance();
+          getProxyApproval();
+        }
+      }
       );
 
       return () => {
-          socket.disconnect();
+        socket.disconnect();
       }
     }
   }, [address, chain, currentMargin]);
@@ -382,7 +383,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             arrayData={marginAssets.marginAssetDrop}
             name="marginAssetDrop"
             state={currentMargin.marginAssetDrop}
-            setState={ doMarginChange }
+            setState={doMarginChange}
           />
           <AssetBalance key={tokenBalance}>
             Balance
@@ -394,17 +395,17 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         </FormArea>
         <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
         <Alert>
-        { 
-          chain === undefined || address === undefined ? 
-            <Alert>
-              <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
-                  <AlertContent>
-                    Wallet is not connected. Connect your wallet to be able approve and trade.
-                  </AlertContent>
-            </Alert>
-          :
-            <></>
-        }
+          {
+            chain === undefined || address === undefined ?
+              <Alert>
+                <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
+                <AlertContent>
+                  Wallet is not connected. Connect your wallet to be able approve and trade.
+                </AlertContent>
+              </Alert>
+              :
+              <></>
+          }
         </Alert>
       </FormContainer>
     </Container>
@@ -456,7 +457,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
-    const balance = ((await tokenContract.balanceOf(address))/10**(currentMargin.marginAssetDrop.decimals)).toFixed(2);
+    const balance = ((await tokenContract.balanceOf(address)) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2);
     setTokenBalance(balance);
     console.log(balance);
   }
@@ -479,10 +480,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getButtonOnline() {
     const s = getTradeStatus();
     const isOnline =
-    s === "Approve" ||
-    s === "Proxy" ||
-    s === "Ready"
-    ;
+      s === "Approve" ||
+      s === "Proxy" ||
+      s === "Ready"
+      ;
     return isOnline;
   }
 
@@ -490,31 +491,31 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const s = getTradeStatus();
     const txt =
-    s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
-    s === "Proxy" ? "APPROVE PROXY" :
-    s === "Ready" ? (isLong ? "LONG $" : "SHORT $" )  + Math.round(parseFloat(margin)*parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name):
-    s === "NotConnected" ? "CONNECT WALLET" :
-    s === "Balance" ? "NOT ENOUGH BALANCE" :
-    "You found a bug!"
-    ;
+      s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
+        s === "Proxy" ? "APPROVE PROXY" :
+          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
+            s === "NotConnected" ? "CONNECT WALLET" :
+              s === "Balance" ? "NOT ENOUGH BALANCE" :
+                "You found a bug!"
+      ;
     return txt;
   }
 
   function getTradeStatus() {
     let status;
     !isTokenAllowed ? status = "Approve" :
-    !isProxyApproved ? status = "Proxy" :
-    parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-    (chain === undefined || address === undefined) ? status = "NotConnected" :
-    status = "Ready";
+      !isProxyApproved ? status = "Proxy" :
+        parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
+          (chain === undefined || address === undefined) ? status = "NotConnected" :
+            status = "Ready";
     return status;
   }
 
   function routeTrade() {
     const s = getTradeStatus();
     s === "Proxy" ? approveProxy() :
-    s === "Ready" ? initiateMarketOrder() :
-    console.log("Oops");      
+      s === "Ready" ? initiateMarketOrder() :
+        console.log("Oops");
   }
 
   // TODO TOASTS
@@ -528,7 +529,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer); 
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
   }
 
   async function getProxyApproval() {
@@ -538,22 +539,22 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
     const proxyAddress = proxy.proxy;
     const proxyTime = proxy.time;
-    const currentTime = Date.now()/1000;
+    const currentTime = Date.now() / 1000;
     const shellBalance = await getShellBalance();
 
-    if((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.002) {
-        setIsProxyApproved(false);
+    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.002) {
+      setIsProxyApproved(false);
     } else {
-        setIsProxyApproved(true);
+      setIsProxyApproved(true);
     }
   }
-  
+
   async function getTokenApproval() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
     const allowance = await tokenContract.allowance(address, currentNetwork.addresses.trading);
-    if(allowance !== 0) {
+    if (allowance !== 0) {
       setIsTokenAllowed(true);
     } else {
       setIsTokenAllowed(false);
@@ -566,7 +567,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
     const now = Math.floor(Date.now() / 1000);
-    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, {value: ethers.utils.parseEther("0.005")});
+    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { value: ethers.utils.parseEther("0.005") });
     await tx.wait();
     getProxyApproval();
   }
@@ -578,7 +579,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const _margin = ethers.utils.parseEther(margin);
     const _leverage = ethers.utils.parseEther(leverage);
 
-    const _tp = ethers.utils.parseEther(getTakeProfitPrice());
+    let _tp: any = ethers.utils.parseEther(getTakeProfitPrice());
+    if (parseFloat(_tp.toString()) < 0) {
+      _tp = 0;
+    }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
     // TODO referral cookie
@@ -619,13 +623,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         return;
       }
 
-      // var toastId:any = await addToast("Sending order");
-
       try {
         const tradingContract = await getTradingContract();
         const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
-        const tx: any = await tradingContract.initiateMarketOrder(
+        const tx = tradingContract.initiateMarketOrder(
           _tradeInfo,
           _priceData,
           _oracleData.signature,
@@ -633,23 +635,25 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           address,
           { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0 }
         );
-
-        // toastId = await editToast(toastId, "Order sent with price $" + openPrice);
-        await tx.wait();
-
+        const response: any = await toast.promise(
+          tx,
+          {
+            pending: 'Opening market position...',
+            success: undefined,
+            error: 'Opening position failed!'
+          }
+        );
+        if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
+          toast.error(
+            'Opening position failed!'
+          );
+        }
       } catch (err: any) {
         console.log(err);
-        if (err.reason == null) {
-          // editToast(toastId, "Transaction got cancelled");
-        } else {
-          // editToast(toastId, "Error: " + err.reason);
-        }
-        // getMarginBalance();
       }
 
     } catch (err: any) {
       console.log(err);
-      // editToast(toastId, "Error: "+ err.reason);
     }
   }
 };
@@ -728,7 +732,7 @@ const AssetBalance = styled(Box)(({ theme }) => ({
 interface IApproveButton {
   isOnline: boolean
 }
-const ApproveButton = styled(Button)(({ isOnline }: IApproveButton ) => ({
+const ApproveButton = styled(Button)(({ isOnline }: IApproveButton) => ({
   marginTop: '17px',
   borderRadius: '0px',
   width: '100%',
