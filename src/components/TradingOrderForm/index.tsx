@@ -49,12 +49,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }, [address]);
 
   useEffect(() => {
-    console.log(address);
-    console.log(chain);
-    marginAssets.current = {marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets};
-  }, [address, chain]);
+    setMarginAssets({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
+    const _currentMargin = {marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]};
+    setCurrentMargin(_currentMargin);
+  }, [chain]);
 
-  const marginAssets = useRef({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
+  const [marginAssets, setMarginAssets] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets});
 
   const [currentMargin, setCurrentMargin] = useState({marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]});
 
@@ -379,7 +379,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
           />
           <IconDropDownMenu
-            arrayData={marginAssets.current.marginAssetDrop}
+            arrayData={marginAssets.marginAssetDrop}
             name="marginAssetDrop"
             state={currentMargin.marginAssetDrop}
             setState={ doMarginChange }
