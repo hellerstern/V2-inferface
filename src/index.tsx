@@ -8,7 +8,6 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 import './index.css';
-import '@rainbow-me/rainbowkit/styles.css';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
