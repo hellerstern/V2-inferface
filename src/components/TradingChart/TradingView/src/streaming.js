@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { oracleSocket } from "src/context/socket";
+import { oracleSocket } from "../../../../../src/context/socket";
 
 var lastDailyBar;
 var callback;

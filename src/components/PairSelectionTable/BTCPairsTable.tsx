@@ -3,8 +3,8 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } fro
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { ethLogo, linkLogo, xmrLogo } from '../../config/images';
-import { getNetwork } from "src/constants/networks";
-import { oracleSocket, oracleData } from 'src/context/socket';
+import { getNetwork } from "../../../src/constants/networks";
+import { oracleSocket, oracleData } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {

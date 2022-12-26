@@ -4,10 +4,10 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { oracleSocket, oracleData } from 'src/context/socket';
+import { oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { LOGO, usdtLogo } from 'src/config/images';
-import { getNetwork } from "src/constants/networks";
+import { LOGO, usdtLogo } from '../../../src/config/images';
+import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 
 // import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../shell_wallet/index';
@@ -29,6 +29,7 @@ const { ethereum } = window;
 interface IOrderForm {
   pairIndex: number;
 }
+
 export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const { address } = useAccount();

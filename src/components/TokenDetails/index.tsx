@@ -2,15 +2,15 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 
-import * as logos from 'src/config/images';
+import * as logos from '../../../src/config/images';
 
 import { AiFillStar } from 'react-icons/ai';
-import { Container } from 'src/components/Container';
-import usePreventBodyScroll from 'src/hook/usePreventBodyScroll';
+import { Container } from '../../../src/components/Container';
+import usePreventBodyScroll from '../../../src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
-import { getNetwork } from "src/constants/networks";
-import { oracleSocket } from 'src/context/socket';
+import { getNetwork } from "../../../src/constants/networks";
+import { oracleSocket } from '../../../src/context/socket';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 

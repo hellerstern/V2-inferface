@@ -1,23 +1,23 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
-import { Container } from 'src/components/Container';
-import { TokenDetails } from 'src/components/TokenDetails';
-import { PairSelectionTable } from 'src/components/PairSelectionTable';
-import TradingChart from 'src/components/TradingChart/TradingChart';
-import { TradingOrderForm } from 'src/components/TradingOrderForm';
-import { TradingPositionTable } from 'src/components/TradingPositionTable';
-import { DailyPerformanceChart } from 'src/components/DailyChart';
-import { useStore } from 'src/context/StoreContext';
+import { Container } from '../../src/components/Container';
+import { TokenDetails } from '../../src/components/TokenDetails';
+import { PairSelectionTable } from '../../src/components/PairSelectionTable';
+import TradingChart from '../../src/components/TradingChart/TradingChart';
+import { TradingOrderForm } from '../../src/components/TradingOrderForm';
+import { TradingPositionTable } from '../../src/components/TradingPositionTable';
+import { DailyPerformanceChart } from '../../src/components/DailyChart';
+import { useStore } from '../../src/context/StoreContext';
 import { Cumulative } from './MiniPage/Cumulative';
 
 export const Trade = () => {
-  const [pairIndex, setPairIndex] = React.useState(
+  const [pairIndex, setPairIndex] = useState(
     localStorage.getItem('LastPairSelected') ? (localStorage.getItem('LastPairSelected') as unknown as number) : 0
   );
   const { miniPage } = useStore();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (localStorage.getItem('FavPairs') === null) localStorage.setItem('FavPairs', '["BTC/USD", "ETH/USD"]');
   }, []);
 

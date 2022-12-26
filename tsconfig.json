@@ -15,8 +15,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "outDir": "../../dist",
+    "rootDir": "."
   },
-  "include": ["src", "./config-overrides.ts", "Cumulative"],
+  "include": ["src", "./config-overrides.js", "Cumulative"],
   "exclude": ["node_modules"]
 }

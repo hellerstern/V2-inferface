@@ -10,7 +10,7 @@ import {
 import Datafeed from './datafeed.js';
 import { useEffect, useState } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
-import { oracleSocket } from 'src/context/socket';
+import { oracleSocket } from '../../../../src/context/socket';
 
 
 export interface ChartContainerProps {

@@ -1,8 +1,8 @@
 import { Box, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
-import { Container } from 'src/components/Container';
-import { GasStationSvg } from 'src/config/images';
+import { Container } from '../../src/components/Container';
+import { GasStationSvg } from '../../src/config/images';
 
 export const Footer = () => {
   return (

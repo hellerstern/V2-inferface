@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/system';
 import { InputField } from '../Input';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { LOGO } from 'src/config/images';
+import { LOGO } from '../../../src/config/images';
 import { CommonDropDown } from '../Dropdown';
 import { useAccount } from 'wagmi';
 

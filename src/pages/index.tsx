@@ -1,5 +1,5 @@
-import { TabPanel } from 'src/components/TabPanel';
-import { useStore } from 'src/context/StoreContext';
+import { TabPanel } from '../../src/components/TabPanel';
+import { useStore } from '../../src/context/StoreContext';
 import { Trade } from './Trade';
 
 export const Home = () => {

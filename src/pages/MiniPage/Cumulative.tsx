@@ -1,13 +1,13 @@
 import { Box, Divider } from '@mui/material';
 import { styled } from '@mui/system';
-import { Container } from 'src/components/Container';
+import { Container } from '../../../src/components/Container';
 import { NavigateNext } from '@mui/icons-material';
-import { useStore } from 'src/context/StoreContext';
-import { CumulativeChart } from 'src/components/CumulativeChart';
+import { useStore } from '../../../src/context/StoreContext';
+import { CumulativeChart } from '../../../src/components/CumulativeChart';
 import { Dayjs } from 'dayjs';
 import { useState } from 'react';
-import { TigrisDatePicker } from 'src/components/DatePicker';
-import { TradingLogsBoard } from 'src/components/TradeLogsTable';
+import { TigrisDatePicker } from '../../../src/components/DatePicker';
+import { TradingLogsBoard } from '../../../src/components/TradeLogsTable';
 
 export const Cumulative = () => {
   const { setMiniPage } = useStore();

@@ -1,7 +1,7 @@
 import { Box, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
-import { GovernanceSvg, TradeSvg, VaultSvg, ReferralSvg, DocumentSvg, Indicator } from 'src/config/images';
-import { useStore } from 'src/context/StoreContext';
+import { GovernanceSvg, TradeSvg, VaultSvg, ReferralSvg, DocumentSvg, Indicator } from '../../../src/config/images';
+import { useStore } from '../../../src/context/StoreContext';
 
 export const NavList = () => {
   const { setPage } = useStore();
