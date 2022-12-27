@@ -81,6 +81,7 @@ export const Header = () => {
                   <GasAmount>0.000 ETH</GasAmount>
                 </ShellButton>
                 <ConnectButton
+                  accountStatus="address"
                   showBalance={{
                     smallScreen: false,
                     largeScreen: true
@@ -240,7 +241,7 @@ const MobileActiveBar = styled(Box)(({ theme }) => ({
 
 const ShellButton = styled(Button)(({ theme }) => ({
   border: '1px solid #FFFFFF',
-  borderRadius: '10px',
+  borderRadius: '0px',
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
@@ -250,7 +251,7 @@ const ShellButton = styled(Button)(({ theme }) => ({
 
 const MobileShellButton = styled(Button)(({ theme }) => ({
   border: '1px solid #FFFFFF',
-  borderRadius: '10px',
+  borderRadius: '0px',
   display: 'flex',
   alignItems: 'center',
   gap: '8px'
@@ -268,7 +269,7 @@ const WalletButtons = styled(Box)(({ theme }) => ({
 }));
 
 const ContAddy = styled(Button)(({ theme }) => ({
-  borderRadius: '10px',
+  borderRadius: '0px',
   border: '1px solid #3772FF',
   backgroundColor: 'none',
   textTransform: 'none',
@@ -277,7 +278,7 @@ const ContAddy = styled(Button)(({ theme }) => ({
 
 const Disconnect = styled(Button)(({ theme }) => ({
   border: '1px solid #EB5757',
-  borderRadius: '10px',
+  borderRadius: '0px',
   color: '#EB5757',
   textTransform: 'none',
   padding: '5px 20px 5px 20px'

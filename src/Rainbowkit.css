@@ -1,6 +1,6 @@
 /* vanilla-extract-css-ns:src/css/reset.css.ts.vanilla.css?source=Lmlla2JjYzAgewogIGJvcmRlcjogMDsKICBib3gtc2l6aW5nOiBib3JkZXItYm94OwogIGZvbnQtc2l6ZTogMTAwJTsKICBsaW5lLWhlaWdodDogbm9ybWFsOwogIG1hcmdpbjogMDsKICBwYWRkaW5nOiAwOwogIHRleHQtYWxpZ246IGxlZnQ7CiAgdmVydGljYWwtYWxpZ246IGJhc2VsaW5lOwogIC13ZWJraXQtdGFwLWhpZ2hsaWdodC1jb2xvcjogdHJhbnNwYXJlbnQ7Cn0KLmlla2JjYzEgewogIGxpc3Qtc3R5bGU6IG5vbmU7Cn0KLmlla2JjYzIgewogIHF1b3Rlczogbm9uZTsKfQouaWVrYmNjMjpiZWZvcmUsIC5pZWtiY2MyOmFmdGVyIHsKICBjb250ZW50OiAnJzsKfQouaWVrYmNjMyB7CiAgYm9yZGVyLWNvbGxhcHNlOiBjb2xsYXBzZTsKICBib3JkZXItc3BhY2luZzogMDsKfQouaWVrYmNjNCB7CiAgYXBwZWFyYW5jZTogbm9uZTsKfQouaWVrYmNjNSB7CiAgb3V0bGluZTogbm9uZTsKfQouaWVrYmNjNTo6cGxhY2Vob2xkZXIgewogIG9wYWNpdHk6IDE7Cn0KLmlla2JjYzYgewogIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50OwogIGNvbG9yOiBpbmhlcml0Owp9Ci5pZWtiY2M3OmRpc2FibGVkIHsKICBvcGFjaXR5OiAxOwp9Ci5pZWtiY2M3OjotbXMtZXhwYW5kIHsKICBkaXNwbGF5OiBub25lOwp9Ci5pZWtiY2M4OjotbXMtY2xlYXIgewogIGRpc3BsYXk6IG5vbmU7Cn0KLmlla2JjYzg6Oi13ZWJraXQtc2VhcmNoLWNhbmNlbC1idXR0b24gewogIC13ZWJraXQtYXBwZWFyYW5jZTogbm9uZTsKfQouaWVrYmNjOSB7CiAgYmFja2dyb3VuZDogbm9uZTsKICBjdXJzb3I6IHBvaW50ZXI7CiAgdGV4dC1hbGlnbjogbGVmdDsKfQouaWVrYmNjYSB7CiAgY29sb3I6IGluaGVyaXQ7CiAgdGV4dC1kZWNvcmF0aW9uOiBub25lOwp9 */
 [data-rk] .iekbcc0 {
-  border: 0;
+  border: 1px;
   box-sizing: border-box;
   font-size: 100%;
   line-height: normal;
@@ -102,34 +102,34 @@
   background-size: cover;
 }
 [data-rk] .ju367vi {
-  border-radius: 1px;
+  border-radius: 0px;
 }
 [data-rk] .ju367vj {
-  border-radius: 6px;
+  border-radius: 0px;
 }
 [data-rk] .ju367vk {
-  border-radius: 10px;
+  border-radius: 0px;
 }
 [data-rk] .ju367vl {
-  border-radius: 13px;
+  border-radius: 0px;
 }
 [data-rk] .ju367vm {
-  border-radius: var(--rk-radii-actionButton);
+  border-radius: 0px;
 }
 [data-rk] .ju367vn {
-  border-radius: var(--rk-radii-connectButton);
+  border-radius: 0px;
 }
 [data-rk] .ju367vo {
-  border-radius: var(--rk-radii-menuButton);
+  border-radius: 0px;
 }
 [data-rk] .ju367vp {
-  border-radius: var(--rk-radii-modal);
+  border-radius: 0px;
 }
 [data-rk] .ju367vq {
-  border-radius: var(--rk-radii-modalMobile);
+  border-radius: 0px;
 }
 [data-rk] .ju367vr {
-  border-radius: 25%;
+  border-radius: 0px;
 }
 [data-rk] .ju367vs {
   border-radius: 9999px;
@@ -144,7 +144,7 @@
   border-width: 1px;
 }
 [data-rk] .ju367vw {
-  border-width: 2px;
+  border-width: 1px;
 }
 [data-rk] .ju367vx {
   border-width: 4px;
@@ -193,16 +193,16 @@
   font-weight: 400;
 }
 [data-rk] .ju367v1a {
-  font-weight: 500;
+  font-weight: 400;
 }
 [data-rk] .ju367v1b {
-  font-weight: 600;
+  font-weight: 400;
 }
 [data-rk] .ju367v1c {
-  font-weight: 700;
+  font-weight: 400;
 }
 [data-rk] .ju367v1d {
-  font-weight: 800;
+  font-weight: 400;
 }
 [data-rk] .ju367v1e {
   gap: 0;
@@ -1156,7 +1156,7 @@
   background: var(--rk-colors-connectButtonBackgroundError);
 }
 [data-rk] .ju367va3 {
-  background: var(--rk-colors-connectButtonInnerBackground);
+  background: #191B1F;
 }
 [data-rk] .ju367va4:hover {
   background: var(--rk-colors-connectButtonInnerBackground);
@@ -1408,13 +1408,13 @@
   border-color: var(--rk-colors-closeButtonBackground);
 }
 [data-rk] .ju367vcf {
-  border-color: var(--rk-colors-connectButtonBackground);
+  border-color: white;
 }
 [data-rk] .ju367vcg:hover {
-  border-color: var(--rk-colors-connectButtonBackground);
+  border-color: white;
 }
 [data-rk] .ju367vch:active {
-  border-color: var(--rk-colors-connectButtonBackground);
+  border-color: white;
 }
 [data-rk] .ju367vci {
   border-color: var(--rk-colors-connectButtonBackgroundError);
@@ -1534,13 +1534,13 @@
   border-color: var(--rk-colors-modalBackground);
 }
 [data-rk] .ju367vdl {
-  border-color: var(--rk-colors-modalBorder);
+  border-color: white;
 }
 [data-rk] .ju367vdm:hover {
-  border-color: var(--rk-colors-modalBorder);
+  border-color: white;
 }
 [data-rk] .ju367vdn:active {
-  border-color: var(--rk-colors-modalBorder);
+  border-color: white;
 }
 [data-rk] .ju367vdo {
   border-color: var(--rk-colors-modalText);

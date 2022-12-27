@@ -83,7 +83,7 @@ export const CustomConnectButton = () => {
 
 const CustomButton = styled(Button)(({ theme }) => ({
   border: '1px solid #3898FF',
-  borderRadius: '10px',
+  borderRadius: '0px',
   color: '#3898FF',
   textTransform: 'none',
   padding: '5px 20px 5px 20px'
