@@ -76,7 +76,7 @@ export const Header = () => {
                 <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
                   <NotificationsNone />
                 </IconButton>
-                <ShellButton>
+                <ShellButton onClick={() => navigate('/proxy')}>
                   <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
                   <GasAmount>0.000 ETH</GasAmount>
                 </ShellButton>
@@ -130,7 +130,7 @@ export const Header = () => {
                 <CustomConnectButton />
               )}
             </WalletButtons>
-            <MobileShellButton>
+            <MobileShellButton onClick={() => navigate('/proxy')}>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
               <GasAmount>0.000 ETH</GasAmount>
             </MobileShellButton>
