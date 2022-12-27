@@ -32,7 +32,7 @@ export const Trade = () => {
                 <TradingChart asset={pairIndex} />
               </TradingSection>
               <PairSelectionTable setPairIndex={setPairIndex} />
-              <TradingPositionTable />
+              <TradingPositionTable setPairIndex={setPairIndex}/>
               <TradingOrderForm pairIndex={pairIndex}/>
               <DailyPerformanceChart />
             </TradingForm>
@@ -51,7 +51,7 @@ const TradeContainer = styled(Box)({
 
 const TradingForm = styled(Box)(({ theme }) => ({
   width: '100%',
-  marginTop: '14px',
+  marginTop: '5px',
   display: 'grid',
   gridTemplateColumns: '3fr 1fr',
   gap: '5px',

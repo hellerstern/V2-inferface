@@ -12,6 +12,8 @@ import {
   REF_ABI
 } from '../../abis';
 
+import { tigusdLogo, daiLogo, usdtLogo } from '../../../config/images';
+
 function isClosed(asset: any) {
   if (asset == 2 || asset == 32 || asset == 5 || asset == 6 || asset == 7 || asset == 8 || asset == 10) {
     const d = new Date();
@@ -490,7 +492,7 @@ export const NETWORK = {
       stablevault: '0xe82fcefbDD034500B5862B4827CAE5c117f6b921',
       decimals: 6,
       hasPermit: true,
-      icon: 'assets/images/usdt.png'
+      icon: usdtLogo
     }
   ],
   nativeSupported: false

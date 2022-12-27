@@ -484,23 +484,7 @@ export const getNetwork = (networkId: any) => {
             stablevault: '',
             decimals: 18,
             hasPermit: false,
-            icon: '../../assets/images/CoinImage/tigusdLogo.svg'
-          },
-          {
-            name: '',
-            address: '',
-            stablevault: '',
-            decimals: 18,
-            hasPermit: false,
-            icon: ''
-          },
-          {
-            name: '',
-            address: '',
-            stablevault: '',
-            decimals: 18,
-            hasPermit: false,
-            icon: ''
+            icon: tigusdLogo
           }
         ],
         nativeSupported: false

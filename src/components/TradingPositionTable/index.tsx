@@ -10,7 +10,11 @@ interface TabBarProps {
   active: number;
 }
 
-export const TradingPositionTable = () => {
+interface IPositionTable {
+  setPairIndex: any;
+}
+
+export const TradingPositionTable = ({setPairIndex}: IPositionTable) => {
   const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
   const [show, setShow] = useState('Before Closing Fees');
@@ -20,7 +24,7 @@ export const TradingPositionTable = () => {
         <TableAction>
           <TableTab>
             <TabBar active={tab === 0 ? 1 : 0} onClick={() => setTab(0)}>
-              My Open Position(11)
+              My Open Positions
             </TabBar>
             <TabBar active={tab === 1 ? 1 : 0} onClick={() => setTab(1)}>
               My Limit Orders
@@ -31,12 +35,15 @@ export const TradingPositionTable = () => {
             <TableDropDownMenu state={show} setState={setShow} />
           </TableDropDown>
         </TableAction>
-        <PositionTable />
+        <PositionTable tableType={tab} setPairIndex={setPairIndex}/>
       </TableWrapper>
       <TableMedia>
-        <TableMediaLabel>Daily Performance</TableMediaLabel>
-        <TableMediaAction onClick={() => setMiniPage(1)}>
-          Advanced Chart
+        <TableMediaLabel>Performance Chart</TableMediaLabel>
+        <TableMediaAction onClick={() => {
+          setMiniPage(1);
+          window.scrollTo(0, 0);
+          }}>
+          Advanced Stats
           <OpenInNew fontSize="small" />
         </TableMediaAction>
       </TableMedia>
