@@ -182,7 +182,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   useEffect(() => {
     getTokenBalance();
-  }, [currentMargin]);
+  }, [currentMargin, address, chain]);
 
   useEffect(() => {
     if (address !== undefined) {
@@ -221,8 +221,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           getTokenBalance();
           getProxyApproval();
         }
-      }
-      );
+      });
 
       return () => {
         socket.disconnect();
@@ -394,7 +393,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             {isBalanceVisible ? tokenBalance : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
+        <ApproveButton onClick={() => getButtonOnline() ? routeTrade() : null} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
         <Alert>
           {
             chain === undefined || address === undefined ?
@@ -496,8 +495,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Balance" ? "NOT ENOUGH BALANCE" :
-                "You found a bug!"
-      ;
+                s === "PosSize" ? "POSITION SIZE TOO LOW" :
+                  "You found a bug!"
+    ;
     return txt;
   }
 
@@ -506,16 +506,18 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     !isTokenAllowed ? status = "Approve" :
       !isProxyApproved ? status = "Proxy" :
         parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-          (chain === undefined || address === undefined) ? status = "NotConnected" :
-            status = "Ready";
+          parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
+            (chain === undefined || address === undefined) ? status = "NotConnected" :
+              status = "Ready";
     return status;
   }
 
   function routeTrade() {
     const s = getTradeStatus();
-    s === "Proxy" ? approveProxy() :
-      s === "Ready" ? initiateMarketOrder() :
-        console.log("Oops");
+    s === "Approve" ? approveToken() :
+      s === "Proxy" ? approveProxy() :
+        s === "Ready" ? initiateMarketOrder() :
+          console.log("Oops");
   }
 
   // TODO TOASTS
@@ -549,6 +551,37 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
+  async function approveProxy() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const tradingContract = getTradingContractForApprove();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+
+    const now = Math.floor(Date.now() / 1000);
+    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { value: ethers.utils.parseEther("0.005") });
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Proxy approval pending...',
+        success: undefined,
+        error: 'Proxy approval failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Proxy approval failed!'
+        );
+      } else if(receipt.status === 1) {
+        toast.success(
+          'Successfully approved proxy!'
+        );    
+      }
+      getProxyApproval();
+    }, 1000);
+  }
+
   async function getTokenApproval() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -561,15 +594,33 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  async function approveProxy() {
+  async function approveToken() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const tradingContract = getTradingContractForApprove();
-    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-
-    const now = Math.floor(Date.now() / 1000);
-    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { value: ethers.utils.parseEther("0.005") });
-    await tx.wait();
-    getProxyApproval();
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
+    const tx = tokenContract.approve(currentNetwork.addresses.trading, ethers.constants.MaxUint256);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Approval pending...',
+        success: undefined,
+        error: 'Approval failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tokenContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Approval failed!'
+        );
+      } else if(receipt.status === 1) {
+        toast.success(
+          'Successfully approved!'
+        );    
+      }
+      getTokenApproval();
+    }, 1000);
   }
 
   async function initiateMarketOrder() {
@@ -601,7 +652,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     ];
 
     try {
-
       const _oracleData: any = oracleData[pairIndex];
 
       const _priceData = [
@@ -614,12 +664,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       ];
 
       if (isLong && parseInt(_sl.toString()) > parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
-        // toastId = await editToast(toastId, "SL price can't be more than open price.");
-        console.log("SL price can't be more than open price.");
+        toast.warn(
+          "Stop loss too high"
+        );
         return;
       } else if (!isLong && parseInt(_sl.toString()) < parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
-        // toastId = await editToast(toastId, "SL price can't be less than open price.");
-        console.log("SL price can't be less than open price.");
+        toast.warn(
+          "Stop loss too low"
+        );
         return;
       }
 
@@ -650,7 +702,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             toast.error(
               'Opening position failed!'
             );
-          }          
+          }
         }, 1000);
 
       } catch (err: any) {

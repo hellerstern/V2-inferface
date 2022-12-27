@@ -241,6 +241,7 @@ const MobileActiveBar = styled(Box)(({ theme }) => ({
 
 const ShellButton = styled(Button)(({ theme }) => ({
   border: '1px solid #FFFFFF',
+  background: '#191B1F',
   borderRadius: '0px',
   display: 'flex',
   alignItems: 'center',
