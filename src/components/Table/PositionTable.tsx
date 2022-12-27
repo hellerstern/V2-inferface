@@ -703,6 +703,7 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
       sx={{fontSize: '12px', color: '#B1B5C3', width: '60px'}}
       type="text"
       disableUnderline={true}
+      placeholder={"None"}
       value={parseFloat(tpsl) === 0 ? "" : tpsl}
       onChange={(e: any) => {
         setTpsl(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'));
