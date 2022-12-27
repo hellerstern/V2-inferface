@@ -231,7 +231,6 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
           if (data.trader === data.executor) {
             console.log('EVENT: Position Market Closed');
           } else {
-            // addToast("Position Limit Closed");
             console.log('EVENT: Position Limit Closed');
           }
         }
@@ -269,7 +268,6 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
               break;
             }
           }
-          // addToast("Limit Order Executed");
           setOpenPositions(limitO);
           setOpenPositions(openP);
           console.log('EVENT: Limit Order Executed');
@@ -413,7 +411,7 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   "Successfully set " +
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                   currentNetwork.assets[openP[i].asset].name +
-                  (openP[i].direction ? " long SL to" : " short SL to") +
+                  (openP[i].direction ? " long SL to " : " short SL to ") +
                   (parseFloat(data.price) / 1e18).toPrecision(7)
                 ));
                 openP[i] = modP;
@@ -474,11 +472,15 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
           error: 'Closing position failed!'
         }
       );
-      if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
-        toast.error(
-          'Closing position failed!'
-        );
-      }
+      // eslint-disable-next-line
+      setTimeout(async () => {
+        const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+        if (receipt.status === 0) {
+          toast.error(
+            'Closing position failed!'
+          );
+        }          
+      }, 1000);
     } catch (err) {
       console.log(err);
     }
@@ -506,11 +508,15 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
           error: 'Cancelling limit order failed!'
         }
       );
-      if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
-        toast.error(
-          'Cancelling limit order failed!'
-        );
-      }
+      // eslint-disable-next-line
+      setTimeout(async () => {
+        const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+        if (receipt.status === 0) {
+          toast.error(
+            'Cancelling limit order failed!'
+          );
+        }          
+      }, 1000);
     } catch (err) {
       console.log(err);
     }
@@ -526,6 +532,36 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
       const price = ethers.utils.parseEther(parseFloat(limitPrice).toString());
+
+      if (isTP) {
+        if (position.direction) {
+          if (price < _oracleData.price) {
+            toast.warning("Take profit too low");
+            setForceRerender(Math.random());
+            return;
+          }
+        } else {
+          if (price > _oracleData.price) {
+            toast.warning("Take profit too high");
+            setForceRerender(Math.random());
+            return;
+          }
+        }
+      } else {
+        if (position.direction) {
+          if (price > _oracleData.price) {
+            toast.warning("Stop loss too high");
+            setForceRerender(Math.random());
+            return;
+          }
+        } else {
+          if (price < _oracleData.price) {
+            toast.warning("Stop loss too low");
+            setForceRerender(Math.random());
+            return;
+          }
+        }
+      }
 
       const tx = tradingContract.updateTpSl(
         isTP,
@@ -544,11 +580,15 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
           error: isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
         }
       );
-      if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
-        toast.error(
-          isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
-        );
-      }
+      // eslint-disable-next-line
+      setTimeout(async () => {
+        const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+        if (receipt.status === 0) {
+          toast.error(
+            isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
+          );
+        }          
+      }, 1000);
     } catch (err) {
       console.log(err);
     }

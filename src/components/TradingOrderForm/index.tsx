@@ -643,11 +643,16 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             error: 'Opening position failed!'
           }
         );
-        if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
-          toast.error(
-            'Opening position failed!'
-          );
-        }
+        // eslint-disable-next-line
+        setTimeout(async () => {
+          const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+          if (receipt.status === 0) {
+            toast.error(
+              'Opening position failed!'
+            );
+          }          
+        }, 1000);
+
       } catch (err: any) {
         console.log(err);
       }
