@@ -195,7 +195,7 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                   currentNetwork.assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
-                  "fully closed @ " +
+                  "closed @ " +
                   (parseFloat(data.price) / 1e18).toPrecision(6)
                 ));
                 openP.splice(i, 1);

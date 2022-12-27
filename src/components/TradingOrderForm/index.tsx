@@ -582,7 +582,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         );    
       }
       getProxyApproval();
-    }, 1000);
+    }, 2000);
   }
 
   async function getTokenApproval() {
@@ -628,7 +628,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         );    
       }
       getTokenApproval();
-    }, 1000);
+    }, 2000);
   }
 
   async function initiateMarketOrder() {
