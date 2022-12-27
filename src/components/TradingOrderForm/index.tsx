@@ -313,7 +313,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: 100, label: '10k' }
             ]}
             min={Math.sqrt(5)}
-            step={0.01}
+            step={0.001}
             max={100}
             scale={(value: number) =>
               marginScale(value)
@@ -470,8 +470,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
         ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
         : value ** 2
-    ) * 100
-    ) / 100;
+    ) / 10
+    ) * 10;
   }
 
   /*
