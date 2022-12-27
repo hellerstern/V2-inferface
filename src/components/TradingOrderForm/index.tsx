@@ -592,7 +592,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       return;
     }
     const provider = new ethers.providers.Web3Provider(ethereum);
-    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
+    const tokenContract = new ethers.Contract(currentMarginRef.current.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
     const allowance = await tokenContract.allowance(address, currentNetwork.addresses.trading);
     if ((allowance.toString()) !== "0") {
       setIsTokenAllowed(true);
