@@ -53,6 +53,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setMarginAssets({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
     const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
     setCurrentMargin(_currentMargin);
+    currentMarginRef.current = _currentMargin;
   }, [chain]);
 
   const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
@@ -173,9 +174,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
+  const currentMarginRef = useRef<any>(null);
+
   const doMarginChange = (prop: string, value: string | number | boolean) => {
     const _currentMargin = { ...currentMargin, [prop]: value };
     setCurrentMargin(_currentMargin);
+    currentMarginRef.current = _currentMargin;
     setTokenBalance("Loading...");
     getTokenApproval();
   };
@@ -552,12 +556,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function approveProxy() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const tradingContract = getTradingContractForApprove();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
     const now = Math.floor(Date.now() / 1000);
-    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { value: ethers.utils.parseEther("0.005") });
+    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
     const response: any = await toast.promise(
       tx,
       {
@@ -584,10 +587,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   async function getTokenApproval() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    if (currentMarginRef.current !== null && currentMarginRef.current.marginAssetDrop.address === currentNetwork.addresses.tigusd) {
+      setIsTokenAllowed(true);
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(ethereum);
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
     const allowance = await tokenContract.allowance(address, currentNetwork.addresses.trading);
-    if (allowance !== 0) {
+    if ((allowance.toString()) !== "0") {
       setIsTokenAllowed(true);
     } else {
       setIsTokenAllowed(false);
@@ -597,7 +604,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   async function approveToken() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
-    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
+    const signer = provider.getSigner();
+    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, signer);
     const tx = tokenContract.approve(currentNetwork.addresses.trading, ethers.constants.MaxUint256);
     const response: any = await toast.promise(
       tx,
