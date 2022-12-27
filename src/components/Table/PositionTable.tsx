@@ -4,6 +4,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { Close, Edit } from '@mui/icons-material';
@@ -390,8 +391,8 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   "Successfully set " +
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                   currentNetwork.assets[openP[i].asset].name +
-                  (openP[i].direction ? " long TP to" : " short TP to") +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (openP[i].direction ? " long TP to " : " short TP to ") +
+                  (parseFloat(data.price) / 1e18).toPrecision(7)
                 ));
                 openP[i] = modP;
                 console.log('EVENT: TP Updated');
@@ -413,7 +414,7 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                   currentNetwork.assets[openP[i].asset].name +
                   (openP[i].direction ? " long SL to" : " short SL to") +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (parseFloat(data.price) / 1e18).toPrecision(7)
                 ));
                 openP[i] = modP;
                 console.log('EVENT: SL Updated');
@@ -427,9 +428,12 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
 
       return () => {
         socket.disconnect();
+        setForceRerender(Math.random());
       }
     }
   }, [address, chain, openPositions, limitOrders]);
+
+  const [forceRerender, setForceRerender] = useState(Math.random())
 
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const handleClickEditOpen = (position: any) => {
@@ -445,7 +449,6 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
   function handleClosePositionClick(position: any) {
     closePosition(position);
   }
-  // TODO toasts
   async function closePosition(position: any) {
     try {
       const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
@@ -484,7 +487,6 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
   function handleCancelOrderClick(id: number) {
     cancelOrder(id);
   }
-  // TODO toasts
   async function cancelOrder(id: number) {
     try {
       const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
@@ -514,6 +516,44 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
     }
   }
 
+  function handleUpdateTPSLChange(position: any, isTP: boolean, limitPrice: string) {
+    updateTPSL(position, isTP, limitPrice);
+  }
+  async function updateTPSL(position: any, isTP: boolean, limitPrice: string) {
+    try {
+      const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+      const _oracleData: any = oracleData[position.asset];
+      const tradingContract = await getTradingContract();
+      const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+      const price = ethers.utils.parseEther(parseFloat(limitPrice).toString());
+
+      const tx = tradingContract.updateTpSl(
+        isTP,
+        position.id,
+        price,
+        [_oracleData.provider, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp, _oracleData.isClosed],
+        _oracleData.signature,
+        address,
+        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
+      );
+      const response: any = await toast.promise(
+        tx,
+        {
+          pending: isTP ? 'Updating take profit...' : 'Updating stop loss...',
+          success: undefined,
+          error: isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
+        }
+      );
+      if ((await tradingContract.provider.getTransactionReceipt(response.hash)).status === 0) {
+        toast.error(
+          isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <TableContainer>
       <Table size="small" aria-label="a dense table">
@@ -526,13 +566,13 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Pnl</TableCell>
-            <TableCell sx={{ minWidth: '110px' }}>Take Profit</TableCell>
-            <TableCell sx={{ minWidth: '110px' }}>Stop Loss</TableCell>
+            <TableCell>Take Profit</TableCell>
+            <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
         </TableHead>
-        <CustomTableBody>
+        <CustomTableBody key={forceRerender}>
           {(tableType === 0 ? openPositions : limitOrders).map((position) => (
             <StyledTableRow key={position.id} onClick={() => setPairIndex(position.asset)}>
               <TableCell>
@@ -549,8 +589,20 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
               <TableCell>{"0%"}</TableCell>
-              <TableCell>{(position.tpPrice / 1e18).toPrecision(6)}</TableCell>
-              <TableCell>{(position.slPrice / 1e18).toPrecision(6)}</TableCell>
+              <TableCell>
+                <InputStore
+                  handleUpdateTPSLChange={handleUpdateTPSLChange}
+                  position={position}
+                  isTP={true}
+                />
+              </TableCell>
+              <TableCell>
+                <InputStore
+                    handleUpdateTPSLChange={handleUpdateTPSLChange}
+                    position={position}
+                    isTP={false}
+                  />
+              </TableCell>
               <TableCell>{"0.000"}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
@@ -577,6 +629,34 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
       <EditModal isState={isEditModalOpen} setState={setEditModalOpen} />
     </TableContainer>
   );
+};
+
+interface IInputStore {
+  handleUpdateTPSLChange: any;
+  position: any;
+  isTP: boolean;
+}
+const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => {
+
+  const [tpsl, setTpsl] = useState(((isTP ? position.tpPrice : position.slPrice) / 1e18).toPrecision(7));
+
+  return (
+    <Input
+      sx={{fontSize: '12px', color: '#B1B5C3', width: '60px'}}
+      type="text"
+      disableUnderline={true}
+      value={tpsl}
+      onChange={(e: any) => {
+        setTpsl(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'));
+      }}
+      onKeyDown={(key) => {
+        if(key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
+          handleUpdateTPSLChange(position, isTP, tpsl);
+        }
+      }}
+    />
+  );
+
 };
 
 const TableContainer = styled(Box)(({ theme }) => ({
