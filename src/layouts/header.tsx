@@ -61,11 +61,11 @@ export const Header = () => {
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <CustomTab label="Trade" {...a11yProps(0)} />
-                  <CustomTab label="Vault" {...a11yProps(1)} />
-                  <CustomTab label="Governance" {...a11yProps(2)} />
-                  <CustomTab label="Referral" {...a11yProps(3)} />
-                  <CustomTab label={<Discord />} {...a11yProps(3)} />
+                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => navigate('/')} />
+                  <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} />
+                  <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} />
+                  <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} />
+                  <CustomTab label={<Discord />} {...a11yProps(3)} onClick={() => navigate('/')} />
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
