@@ -39,7 +39,10 @@ export const TradingPositionTable = ({setPairIndex}: IPositionTable) => {
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Performance Chart</TableMediaLabel>
-        <TableMediaAction onClick={() => setMiniPage(1)}>
+        <TableMediaAction onClick={() => {
+          setMiniPage(1);
+          window.scrollTo(0, 0);
+          }}>
           Advanced Stats
           <OpenInNew fontSize="small" />
         </TableMediaAction>
