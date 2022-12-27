@@ -385,13 +385,22 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   asset: openP[i].asset,
                   accInterest: openP[i].accInterest
                 }
-                toast.success((
-                  "Successfully set " +
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
-                  (openP[i].direction ? " long TP to " : " short TP to ") +
-                  (parseFloat(data.price) / 1e18).toPrecision(7)
-                ));
+                if (parseFloat(data.price) === 0) {
+                  toast.success((
+                    "Successfully removed TP from " +
+                    (openP[i].direction ? "long " : "short ") +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                    currentNetwork.assets[openP[i].asset].name
+                  ));                  
+                } else {
+                  toast.success((
+                    "Successfully set " +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                    currentNetwork.assets[openP[i].asset].name +
+                    (openP[i].direction ? " long TP to " : " short TP to ") +
+                    (parseFloat(data.price) / 1e18).toPrecision(7)
+                  ));
+                }
                 openP[i] = modP;
                 console.log('EVENT: TP Updated');
               } else {
@@ -407,13 +416,22 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   asset: openP[i].asset,
                   accInterest: openP[i].accInterest
                 }
-                toast.success((
-                  "Successfully set " +
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
-                  (openP[i].direction ? " long SL to " : " short SL to ") +
-                  (parseFloat(data.price) / 1e18).toPrecision(7)
-                ));
+                if (parseFloat(data.price) === 0) {
+                  toast.success((
+                    "Successfully removed SL from " +
+                    (openP[i].direction ? "long " : "short ") +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                    currentNetwork.assets[openP[i].asset].name
+                  ));
+                } else {
+                  toast.success((
+                    "Successfully set " +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                    currentNetwork.assets[openP[i].asset].name +
+                    (openP[i].direction ? " long SL to " : " short SL to ") +
+                    (parseFloat(data.price) / 1e18).toPrecision(7)
+                  ));
+                }
                 openP[i] = modP;
                 console.log('EVENT: SL Updated');
               }
@@ -685,13 +703,13 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
       sx={{fontSize: '12px', color: '#B1B5C3', width: '60px'}}
       type="text"
       disableUnderline={true}
-      value={tpsl}
+      value={parseFloat(tpsl) === 0 ? "" : tpsl}
       onChange={(e: any) => {
         setTpsl(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'));
       }}
       onKeyDown={(key) => {
         if(key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
-          handleUpdateTPSLChange(position, isTP, tpsl);
+          handleUpdateTPSLChange(position, isTP, tpsl === "" ? "0" : tpsl);
         }
       }}
     />
