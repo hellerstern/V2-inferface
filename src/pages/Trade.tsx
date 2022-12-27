@@ -32,7 +32,7 @@ export const Trade = () => {
                 <TradingChart asset={pairIndex} />
               </TradingSection>
               <PairSelectionTable setPairIndex={setPairIndex} />
-              <TradingPositionTable />
+              <TradingPositionTable setPairIndex={setPairIndex}/>
               <TradingOrderForm pairIndex={pairIndex}/>
               <DailyPerformanceChart />
             </TradingForm>

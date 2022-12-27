@@ -28,6 +28,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '.ActionField': {
     visibility: 'hidden'
   },
+  cursor: 'pointer',
   '&:hover': {
     backgroundColor: '#777E90',
     '.MuiTableCell-root': {
@@ -41,8 +42,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface IPositionTable {
   tableType: number; // 0 is your market, 1 is your limit, 2 is all
+  setPairIndex: any
 }
-export const PositionTable = ({ tableType }: IPositionTable) => {
+export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -518,6 +520,7 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
         <TableHead>
           <TableRow>
             <TableCell>User</TableCell>
+            <TableCell>L/S</TableCell>
             <TableCell>Pair</TableCell>
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
@@ -530,8 +533,8 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
           </TableRow>
         </TableHead>
         <CustomTableBody>
-          {(tableType === 0 ? openPositions : limitOrders).map((position, index) => (
-            <StyledTableRow key={position.id}>
+          {(tableType === 0 ? openPositions : limitOrders).map((position) => (
+            <StyledTableRow key={position.id} onClick={() => setPairIndex(position.asset)}>
               <TableCell>
                 <TableCellContainer>
                   <VisibilityBox>
@@ -540,6 +543,7 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
                   {position.trader.slice(0, 6)}
                 </TableCellContainer>
               </TableCell>
+              <TableCell>{position.direction ? "Long" : "Short"}</TableCell>
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
@@ -550,11 +554,17 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
               <TableCell>{"0.000"}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
-                  <EditButton onClick={() => handleClickEditOpen(position.id)}>
+                  <EditButton onClick={(e) => {
+                      handleClickEditOpen(position.id);
+                      e.stopPropagation();
+                    }}>
                     <SmallText>Edit</SmallText>
                     <Edit sx={{ fontSize: '18px' }} />
                   </EditButton>
-                  <CloseButton onClick={() => (tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id))}>
+                  <CloseButton onClick={(e) => {
+                    tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id);
+                    e.stopPropagation();
+                    }}>
                     {tableType === 0 ? "Close" : "Cancel"}
                     <Close sx={{ fontSize: '18px' }} />
                   </CloseButton>
