@@ -543,7 +543,7 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
                   {position.trader.slice(0, 6)}
                 </TableCellContainer>
               </TableCell>
-              <TableCell>{position.direction ? "Long" : "Short"}</TableCell>
+              <TableCell style={{color: position.direction ? '#26a69a' : '#EF5350'}}>{position.direction ? "Long" : "Short"}</TableCell>
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
