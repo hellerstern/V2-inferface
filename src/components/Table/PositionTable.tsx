@@ -553,13 +553,13 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
 
       if (isTP) {
         if (position.direction) {
-          if (price < _oracleData.price) {
+          if (parseFloat(price.toString()) < parseFloat(_oracleData.price)) {
             toast.warning("Take profit too low");
             setForceRerender(Math.random());
             return;
           }
         } else {
-          if (price > _oracleData.price) {
+          if (parseFloat(price.toString()) > parseFloat(_oracleData.price)) {
             toast.warning("Take profit too high");
             setForceRerender(Math.random());
             return;
@@ -567,13 +567,13 @@ export const PositionTable = ({ tableType, setPairIndex }: IPositionTable) => {
         }
       } else {
         if (position.direction) {
-          if (price > _oracleData.price) {
+          if (parseFloat(price.toString()) > parseFloat(_oracleData.price)) {
             toast.warning("Stop loss too high");
             setForceRerender(Math.random());
             return;
           }
         } else {
-          if (price < _oracleData.price) {
+          if (parseFloat(price.toString()) < parseFloat(_oracleData.price)) {
             toast.warning("Stop loss too low");
             setForceRerender(Math.random());
             return;
