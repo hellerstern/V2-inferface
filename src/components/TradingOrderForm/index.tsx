@@ -121,9 +121,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function handleStopLossChange(event: any) {
     setSlFixed(false);
     if (isLong) {
-      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
+      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
     } else {
-      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
+      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
     }
     setStopLossPercent(event.target.value.toString());
   }
@@ -132,11 +132,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function handleTakeProfitChange(event: any) {
     setTpFixed(false);
     if (isLong) {
-      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(6));
+      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
     } else {
       let _tpPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100);
       if (_tpPrice < 0) _tpPrice = 0;
-      setTakeProfitPrice(_tpPrice.toPrecision(6))
+      setTakeProfitPrice(_tpPrice.toPrecision(7))
     }
     setTakeProfitPercent(event.target.value.toString());
   }
@@ -166,9 +166,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function handleSetOpenPrice(value: any) {
     if (orderType === "Market") {
       setOrderType("Limit");
-      setOpenPrice(parseFloat(value).toPrecision(5));
+      setOpenPrice(value.slice(0, 7));
     } else {
       setOpenPrice(value);
+      console.log(value);
     }
   }
 
@@ -289,7 +290,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         </FormAction>
         <FormArea>
           <TigrisInput label="Price" value={
-            orderType === "Market" ? getOpenPrice() : parseFloat(openPrice).toString()
+            orderType === "Market" ? getOpenPrice().replace("NaN", "") : openPrice.replace("NaN", "")
           } setValue={
             handleSetOpenPrice
           } />
@@ -299,7 +300,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             </div>
           </div>
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
-          <TigrisInput label="Leverage" value={leverage.toString()} setValue={setLeverage} />
+          <TigrisInput label="Leverage" value={leverage} setValue={setLeverage} />
           <TigrisSlider // Margin
             defaultValue={Math.sqrt(5)}
             aria-label="Default"
@@ -414,27 +415,27 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getStopLossPrice() {
     if (stopLossPercent === "0") return "0";
     if (isLong) {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(7);
     } else {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(7);
     }
   }
 
   function getTakeProfitPrice() {
     if (takeProfitPercent === "0") return "0";
     if (isLong) {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(7);
     } else {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(6);
+      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(7);
     }
   }
 
   function liqPrice() {
     let _liqPrice;
     if (isLong) {
-      _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(6);
+      _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(7);
     } else {
-      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(6);
+      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(7);
     }
     if (_liqPrice === "NaN") {
       return "-";
@@ -446,10 +447,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     let _openPrice;
     if (isLong) {
       _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * parseFloat(spread);
-      return _openPrice.toPrecision(6);
+      return _openPrice.toPrecision(7);
     } else {
       _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * parseFloat(spread);
-      return _openPrice.toPrecision(6);
+      return _openPrice.toPrecision(7);
     }
   }
 
@@ -459,7 +460,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
     const balance = ((await tokenContract.balanceOf(address)) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2);
     setTokenBalance(balance);
-    console.log(balance);
   }
 
   function marginScale(value: number) {
