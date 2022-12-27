@@ -14,80 +14,89 @@ const cookies = new Cookies();
 
 let isGenerating = false;
 export const generateShellWallet = async () => {
-  if (isGenerating) {
-    console.log("Shell gen in process");
-    return;
-  }
-  isGenerating = true;
-  const provider = new ethers.providers.Web3Provider(ethereum);
-  const signer = provider.getSigner();
-  const signerAddress = await signer.getAddress();
+    if (isGenerating) {
+        console.log("Shell gen in process");
+        return;
+    }
+    isGenerating = true;
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
 
-  const wallet = Wallet.generate();
-  const privateKey = wallet.getPrivateKeyString();
-  const address = wallet.getAddressString();
+    const wallet = Wallet.generate();
+    const privateKey = wallet.getPrivateKeyString();
+    const address = wallet.getAddressString();
 
-  let signature;
-  try {
-    signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + address)).toString();
-  } catch(err) {
-    console.log(err);
+    let signature;
+    try {
+        signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + address)).toString();
+    } catch (err) {
+        console.log(err);
+        isGenerating = false;
+        return;
+    }
     isGenerating = false;
-    return;
-  }
-  isGenerating = false;
-  
-  cookies.set(signerAddress+"_k", signature, {sameSite: "strict", expires: new Date(Date.now() + 86400000)});
-  const e_privateKey = encryptpwd.encrypt(privateKey, signature);
 
-  localStorage.setItem(signerAddress + '_public_key', address);
-  localStorage.setItem(signerAddress + '_e_private_key', e_privateKey);
-  
-  currentAddress = address;
-  shell_private = privateKey;
+    cookies.set(signerAddress + "_k", signature, { sameSite: "strict", expires: new Date(Date.now() + 86400000) });
+    const e_privateKey = encryptpwd.encrypt(privateKey, signature);
+
+    localStorage.setItem(signerAddress + '_public_key', address);
+    localStorage.setItem(signerAddress + '_e_private_key', e_privateKey);
+
+    currentAddress = address;
+    shell_private = privateKey;
 }
 
 export const unlockShellWallet = async () => {
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
     const signerAddress = await signer.getAddress();
-    if(!signerAddress || signerAddress === "") {
+    if (!signerAddress || signerAddress === "") {
         return;
     }
 
     console.log(signerAddress);
 
-    if(localStorage.getItem(signerAddress + '_public_key') === null || localStorage.getItem(signerAddress + '_e_private_key') === null) {
+    if (localStorage.getItem(signerAddress + '_public_key') === null || localStorage.getItem(signerAddress + '_e_private_key') === null) {
         await generateShellWallet();
     } else {
         const e_privateKey = localStorage.getItem(signerAddress + '_e_private_key');
         const _currentAddress = localStorage.getItem(signerAddress + '_public_key');
         if (_currentAddress === null) {
-          return;
+            return;
         }
         currentAddress = _currentAddress;
 
-        let signature = cookies.get(signerAddress+"_k");
-        if(!signature || signature === "") {
-            signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + currentAddress)).toString();
-            cookies.set(signerAddress+"_k", signature, {sameSite: "strict", expires: new Date(Date.now() + 86400000)});
+        let signature = cookies.get(signerAddress + "_k");
+        if (!signature || signature === "") {
+            if (isGenerating) return;
+            isGenerating = true;
+            try {
+                signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + currentAddress)).toString();
+            } catch (err) {
+                console.log(err);
+                isGenerating = false;
+                return;
+            }
+            isGenerating = false;
+            cookies.set(signerAddress + "_k", signature, { sameSite: "strict", expires: new Date(Date.now() + 86400000) });
         }
         shell_private = encryptpwd.decrypt(e_privateKey, signature);
     }
 }
 
 export const getShellAddress = async () => {
-    if(!currentAddress) return ""; // await unlockShellWallet();
+    if (!currentAddress) return ""; // await unlockShellWallet();
 
     return currentAddress;
 }
 
 export const getShellBalance = async () => {
-    if(!currentAddress) return "0";
+    if (!currentAddress) return "0";
 
     const provider = new ethers.providers.Web3Provider(ethereum);
     const balance = await provider.getBalance(currentAddress);
-    
+
     return ethers.utils.formatEther(balance);
 }
 
@@ -97,7 +106,7 @@ export const getShellNonce = async () => {
 }
 
 export const getShellWallet = async () => {
-    if(!shell_private || shell_private === "") {
+    if (!shell_private || shell_private === "") {
         await unlockShellWallet();
     }
 
@@ -107,7 +116,7 @@ export const getShellWallet = async () => {
     return wallet;
 }
 
-export const sendGasBack = async (wallet:any) => {
+export const sendGasBack = async (wallet: any) => {
     const _wallet = await getShellWallet();
     const gasPriceEstimate = await _wallet.getGasPrice();
     const balance = ethers.utils.parseEther(await getShellBalance());
@@ -116,7 +125,7 @@ export const sendGasBack = async (wallet:any) => {
         data: '0x00000000',
         value: 0
     });
-    const _value = (parseInt(balance.toString())-parseInt(gasPriceEstimate.toString())*parseInt(gasLimitEstimate.toString())*2).toString();
+    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 2).toString();
     await _wallet.sendTransaction({
         to: wallet,
         value: _value,

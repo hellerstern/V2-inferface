@@ -459,7 +459,7 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
         currentNetwork.addresses.tigusdvault,
         currentNetwork.addresses.tigusd,
         address,
-        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0 }
+        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
       );
       const response: any = await toast.promise(
         tx,
@@ -492,7 +492,7 @@ export const PositionTable = ({ tableType }: IPositionTable) => {
       const tx = tradingContract.cancelLimitOrder(
         id,
         address,
-        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0 }
+        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
       );
       const response: any = await toast.promise(
         tx,

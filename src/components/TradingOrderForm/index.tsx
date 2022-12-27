@@ -633,7 +633,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           _oracleData.signature,
           [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
           address,
-          { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0 }
+          { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
         );
         const response: any = await toast.promise(
           tx,
