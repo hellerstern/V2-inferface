@@ -11,10 +11,12 @@ import { CommodityPairsTable } from './CommodityPairsTable';
 import { FavPairsTable } from './FavPairsTable';
 
 interface PairSelectionTableProps {
+  isMobile: boolean;
   setPairIndex: any;
+  onClose?: () => void;
 }
 
-export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) => {
+export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSelectionTableProps) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setSearchQuery('');
@@ -24,17 +26,22 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const handleSearch = (event: any) => {
-    setSearchQuery((event.target.value).toUpperCase());
+    setSearchQuery(event.target.value.toUpperCase());
   };
 
   return (
     <TradingDetailContainer>
       <SearchContainer>
-        <Box sx={{ padding: '15px 9px 0 9px' }}>
-          <SearchBar onChange={handleSearch}/>
+        <Box sx={{ padding: '15px 20px 0 9px', display: 'flex', gap: '18px', alignItems: 'center' }}>
+          <SearchBar onChange={handleSearch} />
+          {isMobile && (
+            <Box sx={{ cursor: 'pointer' }} onClick={onClose}>
+              Cancel
+            </Box>
+          )}
         </Box>
         <TabsContainer sx={{ borderColor: 'divider' }}>
-          <IconButton onClick={() => setValue(4)} sx={{padding: '0px'}}>
+          <IconButton onClick={() => setValue(4)} sx={{ padding: '0px' }}>
             <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
           </IconButton>
           <Tabs
@@ -51,19 +58,19 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
+          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
+          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
+          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
         </TabPanel>
         <TabPanel value={value} index={3}>
           <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery}/>
+          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
         </TabPanel>
       </SearchContainer>
     </TradingDetailContainer>
@@ -71,17 +78,9 @@ export const PairSelectionTable = ({ setPairIndex }: PairSelectionTableProps) =>
 };
 
 const TradingDetailContainer = styled(Box)(({ theme }) => ({
-  minWidth: '400px',
-  width: '400px',
+  width: '100%',
   height: '100%',
-  minHeight: '560px',
-  backgroundColor: '#18191D',
-  [theme.breakpoints.down('desktop')]: {
-    order: 2
-  },
-  [theme.breakpoints.down('md')]: {
-    display: 'none'
-  }
+  backgroundColor: '#18191D'
 }));
 
 const SearchContainer = styled(Box)({

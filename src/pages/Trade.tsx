@@ -25,15 +25,17 @@ export const Trade = () => {
     <TradeContainer>
       {miniPage === 0 && (
         <>
-          <TokenDetails pairIndex={pairIndex} />
+          <TokenDetails pairIndex={pairIndex} setPairIndex={setPairIndex} />
           <Container>
             <TradingForm>
               <TradingSection>
                 <TradingChart asset={pairIndex} />
               </TradingSection>
-              <PairSelectionTable setPairIndex={setPairIndex} />
-              <TradingPositionTable setPairIndex={setPairIndex}/>
-              <TradingOrderForm pairIndex={pairIndex}/>
+              <PairTableContainer>
+                <PairSelectionTable isMobile={false} setPairIndex={setPairIndex} />
+              </PairTableContainer>
+              <TradingPositionTable setPairIndex={setPairIndex} />
+              <TradingOrderForm pairIndex={pairIndex} />
               <DailyPerformanceChart />
             </TradingForm>
           </Container>
@@ -66,5 +68,19 @@ const TradingSection = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('desktop')]: {
     gridColumn: '1 / 3',
     order: 1
+  }
+}));
+
+const PairTableContainer = styled(Box)(({ theme }) => ({
+  minWidth: '400px',
+  width: '400px',
+  height: '100%',
+  minHeight: '560px',
+  backgroundColor: '#18191D',
+  [theme.breakpoints.down('desktop')]: {
+    order: 2
+  },
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
   }
 }));

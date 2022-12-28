@@ -9,17 +9,19 @@ import { Container } from '../../../src/components/Container';
 import usePreventBodyScroll from '../../../src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
-import { getNetwork } from "../../../src/constants/networks";
+import { getNetwork } from '../../../src/constants/networks';
 import { oracleSocket } from '../../../src/context/socket';
+import { PairSelectionModal } from '../Modal/PairSelectionModal';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 interface ITokenDetails {
-  pairIndex: number
+  pairIndex: number;
+  setPairIndex: (value: number) => void;
 }
 
-export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
-
+export const TokenDetails = ({ pairIndex, setPairIndex }: ITokenDetails) => {
+  const [isPairModalOpen, setPairModalOpen] = useState(false);
   const LogoArray = [
     logos.btcLogo,
     logos.ethLogo,
@@ -39,7 +41,7 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
     logos.atomLogo,
     logos.btcLogo, // hbar
     logos.btcLogo, // tron
-    logos.solLogo, 
+    logos.solLogo,
     logos.dogeLogo,
     logos.ltcLogo,
     logos.bchLogo,
@@ -56,30 +58,31 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
     logos.btcLogo, // xag
     logos.linkLogo, // link/btc
     logos.xmrLogo // xmr/btc
-  ]
+  ];
 
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (
-        (data[pairIndex].price/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !== (oracleRef.current[pairIndex].price/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
-        || data[pairIndex].spread !== oracleRef.current[pairIndex].spread) {
+        (data[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !==
+          (oracleRef.current[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) ||
+        data[pairIndex].spread !== oracleRef.current[pairIndex].spread
+      ) {
         setOracleData(data);
         oracleRef.current = data;
       }
     });
   }, []);
-	const [oracleData, setOracleData] = React.useState(Array(35).fill({price: "0", spread: "0"}));
-  const oracleRef = useRef(Array(35).fill({price: "0", spread: "0"}));
+  const [oracleData, setOracleData] = React.useState(Array(35).fill({ price: '0', spread: '0' }));
+  const oracleRef = useRef(Array(35).fill({ price: '0', spread: '0' }));
 
   const INFOS: any = [
-    { name: 'Oracle Price',
+    {
+      name: 'Oracle Price',
       value:
         oracleData[pairIndex] != null
-          ?
-        (parseInt(oracleData[pairIndex].price)/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
-          :
-        0
-      , label: ''
+          ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
+          : 0,
+      label: ''
     },
     { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
     { name: '24h Volume', value: '$230,050.00', label: '' },
@@ -89,14 +92,14 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
     { name: 'Closing Fee', value: '0.10%', label: '' },
     { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
     { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
-    { name: 'Price Spread',
+    {
+      name: 'Price Spread',
       value:
         oracleData[pairIndex] != null
-          ?
-        (oracleData[pairIndex].spread as unknown as number/1e8).toFixed(3) + "%"
-          :
-        "0.000%"
-      , label: '' }
+          ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
+          : '0.000%',
+      label: ''
+    }
   ];
 
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {
@@ -119,9 +122,9 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
     <TradeContainer>
       <Container>
         <TradeWrapper>
-          <KindOfToken>
+          <KindOfToken onClick={() => setPairModalOpen(true)}>
             <Tokens>
-              <img src={LogoArray[pairIndex]} style={{height: '28px'}} />
+              <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
               <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
               <Box className="multi-value">
                 <span>100X</span>
@@ -129,6 +132,12 @@ export const TokenDetails = ({ pairIndex }: ITokenDetails) => {
             </Tokens>
             <AiFillStar />
           </KindOfToken>
+          <PairSelectionModal
+            isModalOpen={isPairModalOpen}
+            setModalOpen={setPairModalOpen}
+            pairIndex={pairIndex}
+            setPairIndex={setPairIndex}
+          />
           <DesktopStatusInfos onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} onWheel={onWheel}>
               {INFOS.map((item: any, index: number) => (
@@ -193,6 +202,7 @@ const KindOfToken = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: '8px',
   padding: '15px 15px 15px 0',
+  cursor: 'pointer',
   borderRight: '1px solid #23262F',
   [theme.breakpoints.down('md')]: {
     justifyContent: 'space-between',
