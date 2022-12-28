@@ -178,9 +178,19 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
             setForceRerender(Math.random());
             return;
           }
+          if (parseFloat(price.toString()) < parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
+            toast.warning("Stop loss past liquidation price!");
+            setForceRerender(Math.random());
+            return;
+          }
         } else {
           if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Stop loss too low");
+            toast.warning("Stop loss too low!");
+            setForceRerender(Math.random());
+            return;
+          }
+          if (parseFloat(price.toString()) > parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
+            toast.warning("Stop loss past liquidation price!");
             setForceRerender(Math.random());
             return;
           }
