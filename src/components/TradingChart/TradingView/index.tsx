@@ -154,6 +154,7 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 
 	const posLines = useRef<EntityId[]>([]);
 	useEffect(() => {
+		tvWidget.current.onChartReady(() => {
 			posLines.current.forEach(line => {
 				try {
 					tvWidget.current.chart().removeEntity(line);
@@ -260,6 +261,7 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 					));
 				}
 			}
+		});
 	}, [posData, asset]);
 
 	return (
