@@ -49,7 +49,7 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
             onChange={handleChange}
             aria-label="basic tabs example"
             TabIndicatorProps={{ style: { backgroundColor: value === 4 ? '#FABE3C' : '#3772ff', height: '2px' } }}
-            sx={{ height: '30px' }}
+            sx={{ height: '30px', overflow: 'auto', '& .MuiTabs-scroller': { overflow: 'auto !important' } }}
           >
             <CustomTab label="USD Pairs" {...a11yProps(0)} />
             <CustomTab label="BTC pairs" {...a11yProps(1)} />

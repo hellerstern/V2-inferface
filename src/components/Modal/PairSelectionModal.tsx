@@ -1,5 +1,5 @@
-import { Modal } from '@mui/material';
-import { Box } from '@mui/system';
+import { Modal, Box } from '@mui/material';
+import { styled } from '@mui/system';
 import { PairSelectionTable } from '../PairSelectionTable';
 
 interface PairModalProps {
@@ -11,14 +11,7 @@ interface PairModalProps {
 
 export const PairSelectionModal = (props: PairModalProps) => {
   const { isModalOpen, setModalOpen, setPairIndex } = props;
-  const style = {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    width: '400px',
-    minHeight: '560px',
-    overflow: 'auto'
-  };
+  const style = {};
   return (
     <Modal
       keepMounted
@@ -27,9 +20,21 @@ export const PairSelectionModal = (props: PairModalProps) => {
       aria-labelledby="keep-mounted-modal-title"
       aria-describedby="keep-mounted-modal-description"
     >
-      <Box sx={style}>
+      <PairTableContainer sx={style}>
         <PairSelectionTable isMobile={true} onClose={() => setModalOpen(false)} setPairIndex={setPairIndex} />
-      </Box>
+      </PairTableContainer>
     </Modal>
   );
 };
+
+const PairTableContainer = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '400px',
+  minHeight: '560px',
+  overflow: 'auto',
+  [theme.breakpoints.down(400)]: {
+    maxWidth: '320px'
+  }
+}));
