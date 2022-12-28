@@ -6,15 +6,16 @@ import {
 	ChartingLibraryWidgetOptions,
 	LanguageCode,
 	ResolutionString,
+	EntityId
 } from '../../../charting_library';
 import Datafeed from './datafeed.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useContext } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
 import { oracleSocket } from '../../../../src/context/socket';
 
-
 export interface ChartContainerProps {
 	asset: any;
+	positionData: any;
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -23,7 +24,9 @@ function getLanguageFromURL(): LanguageCode | null {
 	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode;
 }
 
-export const TVChartContainer = ({ asset }: ChartContainerProps) => {
+export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) => {
+
+	const posData = positionData;
 
 	const widgetOptions: ChartingLibraryWidgetOptions = {
 		symbol: getNetwork(0).assets[asset].name as string,
@@ -117,7 +120,7 @@ export const TVChartContainer = ({ asset }: ChartContainerProps) => {
 								textcolor: "#26A69A",
 								horzLabelsAlign: "right",
 								vertLabelsAlign: "bottom",
-								fontsize: "12",
+								fontsize: "11",
 							} 
 						}
 					);
@@ -140,7 +143,7 @@ export const TVChartContainer = ({ asset }: ChartContainerProps) => {
 								textcolor: "#EF534F",
 								horzLabelsAlign: "right",
 								vertLabelsAlign: "top",
-								fontsize: "12"
+								fontsize: "11"
 							} 
 						}
 					);
@@ -148,6 +151,92 @@ export const TVChartContainer = ({ asset }: ChartContainerProps) => {
 			});
 		});
 	}, []);
+
+	const posLines = useRef<EntityId[]>([]);
+	useEffect(() => {
+		tvWidget.current.onChartReady(() => {
+			console.log(positionData);
+			console.log(asset);
+			posLines.current.forEach(line => {
+				try {
+					tvWidget.current.chart().removeEntity(line);
+				} catch {}
+			});
+			for (let i=0; i<positionData.openPositions.length; i++) {
+				if (positionData.openPositions[i].asset === asset) {
+					posLines.current.push(tvWidget.current.chart().createShape(
+						{ 
+							time: 0, 
+							price: parseFloat(positionData.openPositions[i].price)/1e18
+						}, 
+						{ 
+							shape: 'horizontal_line', 
+							lock: true,
+							disableSelection: true,
+							overrides: {
+								showPrice: true,
+								linestyle: 0,
+								linewidth: 1,
+								linecolor: "#FFFFFF",
+								showLabel: true,
+								text: (parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(1) + (positionData.openPositions[i].direction ? "x LONG ID " : "x SHORT ID ") + positionData.openPositions[i].id,
+								textcolor: "#FFFFFF",
+								horzLabelsAlign: "right",
+								vertLabelsAlign: "top",
+								fontsize: "11",
+							} 
+						}
+					));
+					posLines.current.push(tvWidget.current.chart().createShape(
+						{ 
+							time: 0, 
+							price: parseFloat(positionData.openPositions[i].slPrice)/1e18
+						}, 
+						{ 
+							shape: 'horizontal_line', 
+							lock: true,
+							disableSelection: true,
+							overrides: {
+								showPrice: true,
+								linestyle: 0,
+								linewidth: 1,
+								linecolor: "#EF534F",
+								showLabel: true,
+								text: "STOP LOSS ID " + positionData.openPositions[i].id,
+								textcolor: "#EF534F",
+								horzLabelsAlign: "right",
+								vertLabelsAlign: "top",
+								fontsize: "11",
+							} 
+						}
+					));
+					posLines.current.push(tvWidget.current.chart().createShape(
+						{ 
+							time: 0, 
+							price: parseFloat(positionData.openPositions[i].tpPrice)/1e18
+						}, 
+						{ 
+							shape: 'horizontal_line', 
+							lock: true,
+							disableSelection: true,
+							overrides: {
+								showPrice: true,
+								linestyle: 0,
+								linewidth: 1,
+								linecolor: "#26A69A",
+								showLabel: true,
+								text: "TAKE PROFIT ID " + positionData.openPositions[i].id,
+								textcolor: "#26A69A",
+								horzLabelsAlign: "right",
+								vertLabelsAlign: "bottom",
+								fontsize: "11",
+							} 
+						}
+					));
+				}
+			}
+		});
+	}, [posData, asset]);
 
 	return (
 		<div
