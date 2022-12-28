@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';

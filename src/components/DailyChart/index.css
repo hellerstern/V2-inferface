@@ -26,3 +26,19 @@ text {
 .highcharts-grid-line {
   stroke: #777e91;
 }
+
+.highcharts-navigator-handle {
+  fill: #18191d;
+}
+
+.highcharts-scrollbar-thumb {
+  fill: #777e91;
+}
+
+.highcharts-scrollbar-track {
+  fill: #141416;
+}
+
+.highcharts-scrollbar-button {
+  fill: #141416;
+}
