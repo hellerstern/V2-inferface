@@ -560,7 +560,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
     const now = Math.floor(Date.now() / 1000);
-    const tx = await tradingContract.approveProxy(await getShellAddress(), now + 86400, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 86400, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
     const response: any = await toast.promise(
       tx,
       {

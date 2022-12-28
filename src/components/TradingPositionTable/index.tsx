@@ -12,9 +12,10 @@ interface TabBarProps {
 
 interface IPositionTable {
   setPairIndex: any;
+  positionData: any;
 }
 
-export const TradingPositionTable = ({setPairIndex}: IPositionTable) => {
+export const TradingPositionTable = ({setPairIndex, positionData}: IPositionTable) => {
   const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
   const [show, setShow] = useState('Before Closing Fees');
@@ -35,7 +36,7 @@ export const TradingPositionTable = ({setPairIndex}: IPositionTable) => {
             <TableDropDownMenu state={show} setState={setShow} />
           </TableDropDown>
         </TableAction>
-        <PositionTable tableType={tab} setPairIndex={setPairIndex}/>
+        <PositionTable tableType={tab} setPairIndex={setPairIndex} positionData={positionData}/>
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Performance Chart</TableMediaLabel>

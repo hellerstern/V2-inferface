@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';
@@ -10,10 +10,14 @@ import { TradingPositionTable } from '../../src/components/TradingPositionTable'
 import { DailyPerformanceChart } from '../../src/components/DailyChart';
 import { useStore } from '../../src/context/StoreContext';
 import { Cumulative } from './MiniPage/Cumulative';
+import { PositionData } from 'src/components/Table/PositionData';
 
 export const Trade = () => {
+
+  const positionData = PositionData().positionData;
+  
   const [pairIndex, setPairIndex] = useState(
-    localStorage.getItem('LastPairSelected') ? (localStorage.getItem('LastPairSelected') as unknown as number) : 0
+    localStorage.getItem('LastPairSelected') !== null ? parseInt(localStorage.getItem('LastPairSelected') as string) : 0
   );
   const { miniPage } = useStore();
 
@@ -29,10 +33,10 @@ export const Trade = () => {
           <Container>
             <TradingForm>
               <TradingSection>
-                <TradingChart asset={pairIndex} />
+                <TradingChart asset={pairIndex} positionData={positionData}/>
               </TradingSection>
               <PairSelectionTable setPairIndex={setPairIndex} />
-              <TradingPositionTable setPairIndex={setPairIndex}/>
+              <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData}/>
               <TradingOrderForm pairIndex={pairIndex}/>
               <DailyPerformanceChart />
             </TradingForm>
