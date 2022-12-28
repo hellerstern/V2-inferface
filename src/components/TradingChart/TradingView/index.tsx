@@ -154,12 +154,10 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 
 	const posLines = useRef<EntityId[]>([]);
 	useEffect(() => {
-		tvWidget.current.onChartReady(() => {
-			console.log(positionData);
-			console.log(asset);
 			posLines.current.forEach(line => {
 				try {
 					tvWidget.current.chart().removeEntity(line);
+					posLines.current = [];
 				} catch {}
 			});
 			for (let i=0; i<positionData.openPositions.length; i++) {
@@ -174,7 +172,7 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 							lock: true,
 							disableSelection: true,
 							overrides: {
-								showPrice: true,
+								showPrice: false,
 								linestyle: 0,
 								linewidth: 1,
 								linecolor: "#FFFFFF",
@@ -182,51 +180,78 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 								text: (parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(1) + (positionData.openPositions[i].direction ? "x LONG ID " : "x SHORT ID ") + positionData.openPositions[i].id,
 								textcolor: "#FFFFFF",
 								horzLabelsAlign: "right",
-								vertLabelsAlign: "top",
+								vertLabelsAlign: "bottom",
 								fontsize: "11",
 							} 
 						}
 					));
+					if (parseFloat(positionData.openPositions[i].slPrice) !== 0) {
+						posLines.current.push(tvWidget.current.chart().createShape(
+							{ 
+								time: 0, 
+								price: parseFloat(positionData.openPositions[i].slPrice)/1e18
+							}, 
+							{ 
+								shape: 'horizontal_line', 
+								lock: true,
+								disableSelection: true,
+								overrides: {
+									showPrice: false,
+									linestyle: 0,
+									linewidth: 1,
+									linecolor: "#EF534F",
+									showLabel: true,
+									text: "STOP LOSS ID " + positionData.openPositions[i].id,
+									textcolor: "#EF534F",
+									horzLabelsAlign: "right",
+									vertLabelsAlign: "top",
+									fontsize: "11",
+								} 
+							}
+						));
+					}
+					if (parseFloat(positionData.openPositions[i].tpPrice) !== 0) {
+						posLines.current.push(tvWidget.current.chart().createShape(
+							{ 
+								time: 0, 
+								price: parseFloat(positionData.openPositions[i].tpPrice)/1e18
+							}, 
+							{ 
+								shape: 'horizontal_line', 
+								lock: true,
+								disableSelection: true,
+								overrides: {
+									showPrice: false,
+									linestyle: 0,
+									linewidth: 1,
+									linecolor: "#26A69A",
+									showLabel: true,
+									text: "TAKE PROFIT ID " + positionData.openPositions[i].id,
+									textcolor: "#26A69A",
+									horzLabelsAlign: "right",
+									vertLabelsAlign: "bottom",
+									fontsize: "11",
+								} 
+							}
+						));
+					}
 					posLines.current.push(tvWidget.current.chart().createShape(
 						{ 
 							time: 0, 
-							price: parseFloat(positionData.openPositions[i].slPrice)/1e18
+							price: parseFloat(positionData.openPositions[i].liqPrice)/1e18
 						}, 
 						{ 
 							shape: 'horizontal_line', 
-							lock: true,
+							lock: false,
 							disableSelection: true,
 							overrides: {
-								showPrice: true,
+								showPrice: false,
 								linestyle: 0,
 								linewidth: 1,
-								linecolor: "#EF534F",
+								linecolor: "yellow",
 								showLabel: true,
-								text: "STOP LOSS ID " + positionData.openPositions[i].id,
-								textcolor: "#EF534F",
-								horzLabelsAlign: "right",
-								vertLabelsAlign: "top",
-								fontsize: "11",
-							} 
-						}
-					));
-					posLines.current.push(tvWidget.current.chart().createShape(
-						{ 
-							time: 0, 
-							price: parseFloat(positionData.openPositions[i].tpPrice)/1e18
-						}, 
-						{ 
-							shape: 'horizontal_line', 
-							lock: true,
-							disableSelection: true,
-							overrides: {
-								showPrice: true,
-								linestyle: 0,
-								linewidth: 1,
-								linecolor: "#26A69A",
-								showLabel: true,
-								text: "TAKE PROFIT ID " + positionData.openPositions[i].id,
-								textcolor: "#26A69A",
+								text: "LIQ ID " + positionData.openPositions[i].id,
+								textcolor: "yellow",
 								horzLabelsAlign: "right",
 								vertLabelsAlign: "bottom",
 								fontsize: "11",
@@ -235,7 +260,6 @@ export const TVChartContainer = ({ asset, positionData}: ChartContainerProps) =>
 					));
 				}
 			}
-		});
 	}, [posData, asset]);
 
 	return (

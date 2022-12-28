@@ -159,13 +159,13 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
 
       if (isTP) {
         if (position.direction) {
-          if (parseFloat(price.toString()) < parseFloat(_oracleData.price)) {
+          if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
             toast.warning("Take profit too low");
             setForceRerender(Math.random());
             return;
           }
         } else {
-          if (parseFloat(price.toString()) > parseFloat(_oracleData.price)) {
+          if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
             toast.warning("Take profit too high");
             setForceRerender(Math.random());
             return;
@@ -173,13 +173,13 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
         }
       } else {
         if (position.direction) {
-          if (parseFloat(price.toString()) > parseFloat(_oracleData.price)) {
+          if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
             toast.warning("Stop loss too high");
             setForceRerender(Math.random());
             return;
           }
         } else {
-          if (parseFloat(price.toString()) < parseFloat(_oracleData.price)) {
+          if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
             toast.warning("Stop loss too low");
             setForceRerender(Math.random());
             return;
@@ -267,7 +267,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
                     isTP={false}
                   />
               </TableCell>
-              <TableCell>{"0.000"}</TableCell>
+              <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
                   <EditButton onClick={(e) => {
