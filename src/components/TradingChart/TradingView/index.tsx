@@ -207,7 +207,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], false, line.getPrice(), line)
+							updateTPSL(positionData.openPositions[i], false, line)
 						})
 							.setText(
 								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " STOP LOSS"
@@ -236,7 +236,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], true, line.getPrice(), line)
+							updateTPSL(positionData.openPositions[i], true, line)
 						})
 							.setText(
 								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " TAKE PROFIT"
@@ -265,7 +265,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							modifyMargin(positionData.openPositions[i], line.getPrice(), line)
+							modifyMargin(positionData.openPositions[i], line)
 						})
 							.setText(
 								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " LIQUIDATION"
@@ -299,25 +299,25 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		const signer = await getShellWallet();
 		return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
 	}
-	async function updateTPSL(position: any, isTP: boolean, limitPrice: number, line: IOrderLineAdapter) {
+	async function updateTPSL(position: any, isTP: boolean, line: IOrderLineAdapter) {
 		try {
 			const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 			const _oracleData: any = oracleData[asset];
 			const tradingContract = await getTradingContract();
 			const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-			const price = ethers.utils.parseEther(limitPrice.toString());
+			const price = ethers.utils.parseEther(line.getPrice().toString());
 
 			if (isTP) {
 				if (position.direction) {
 					if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Take profit too low");
-						line.setPrice(parseFloat(position.tpPrice));
+						line.setPrice(parseFloat(position.tpPrice)/1e18);
 						return;
 					}
 				} else {
 					if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Take profit too high");
-						line.setPrice(parseFloat(position.tpPrice));
+						line.setPrice(parseFloat(position.tpPrice)/1e18);
 						return;
 					}
 				}
@@ -325,23 +325,23 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				if (position.direction) {
 					if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss too high");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 					if (parseFloat(price.toString()) < parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss past liquidation price!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 				} else {
 					if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss too low!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 					if (parseFloat(price.toString()) > parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss past liquidation price!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 				}
@@ -378,12 +378,13 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 			console.log(err);
 		}
 	}
-	async function modifyMargin(position: any, newLiqPrice: number, line: IOrderLineAdapter) {
+	async function modifyMargin(position: any, line: IOrderLineAdapter) {
 		const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 		const _oracleData: any = oracleData[asset];
 		const tradingContract = await getTradingContract();
 		const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 		const currentLiq = parseFloat(position.liqPrice) / 1e18;
+		const newLiqPrice = line.getPrice();
 
 		console.log(newLiqPrice);
 
