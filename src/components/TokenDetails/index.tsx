@@ -281,7 +281,6 @@ const MobileStatusInfos = styled(Box)(({ theme }) => ({
   padding: '15px',
   display: 'none',
   width: '100%',
-  height: '100%',
   gridTemplateColumns: 'auto auto auto',
   [theme.breakpoints.down('md')]: {
     display: 'grid',
@@ -291,6 +290,7 @@ const MobileStatusInfos = styled(Box)(({ theme }) => ({
     gridTemplateColumns: 'auto auto'
   },
   '.index-info': {
+    maxHeight: '35px',
     padding: '0 11px',
     '.title': {
       color: '#D2CEDE',

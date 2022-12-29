@@ -85,7 +85,7 @@ const TradingDetailContainer = styled(Box)(({ theme }) => ({
 
 const SearchContainer = styled(Box)({
   // padding: '15px 9px'
-  maxHeight: '560px'
+  // maxHeight: '560px'
 });
 
 const TabsContainer = styled(Box)({
