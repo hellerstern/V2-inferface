@@ -180,7 +180,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						)
-							.setText("POSITION")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + ""
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].price) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -207,7 +209,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 						).onMove(() => {
 							updateTPSL(positionData.openPositions[i], false, line.getPrice(), line)
 						})
-							.setText("STOP LOSS")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " STOP LOSS"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].slPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -234,7 +238,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 						).onMove(() => {
 							updateTPSL(positionData.openPositions[i], true, line.getPrice(), line)
 						})
-							.setText("TAKE PROFIT")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " TAKE PROFIT"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].tpPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -261,7 +267,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 						).onMove(() => {
 							modifyMargin(positionData.openPositions[i], line.getPrice(), line)
 						})
-							.setText("LIQUIDATION                                                                                                                                                                                                                                                                                                    ")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " LIQUIDATION"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].liqPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
