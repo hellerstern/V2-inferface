@@ -132,12 +132,16 @@ export const TokenDetails = ({ pairIndex, setPairIndex }: ITokenDetails) => {
             </Tokens>
             <AiFillStar />
           </KindOfToken>
+          { isPairModalOpen ?
           <PairSelectionModal
             isModalOpen={isPairModalOpen}
             setModalOpen={setPairModalOpen}
             pairIndex={pairIndex}
             setPairIndex={setPairIndex}
           />
+          : 
+          <></>
+          }
           <DesktopStatusInfos onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} onWheel={onWheel}>
               {INFOS.map((item: any, index: number) => (
