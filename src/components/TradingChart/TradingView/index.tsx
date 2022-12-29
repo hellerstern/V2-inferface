@@ -391,6 +391,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		if (position.direction) {
 			if (newLiqPrice < currentLiq) {
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
+				if (newLeverage < 2) {
+					toast.warning("Leverage too low!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
@@ -431,6 +436,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					_oracleData.isClosed
 				];
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
+				if (newLeverage > 100) {
+					toast.warning("Leverage too high!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toRemove = (parseFloat(position.margin) / 1e18) - positionSize / newLeverage;
 				const tx = tradingContract.removeMargin(
@@ -465,6 +475,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		} else {
 			if (newLiqPrice > currentLiq) {
 				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
+				if (newLeverage < 2) {
+					toast.warning("Leverage too low!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
@@ -505,6 +520,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					_oracleData.isClosed
 				];
 				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
+				if (newLeverage > 100) {
+					toast.warning("Leverage too high!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toRemove = (parseFloat(position.margin) / 1e18) - positionSize / newLeverage;
 				const tx = tradingContract.removeMargin(
