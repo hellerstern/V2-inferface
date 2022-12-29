@@ -319,7 +319,11 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
 
   return (
     <Input
-      sx={{ fontSize: '12px', color: '#B1B5C3', width: '60px' }}
+      sx={{
+        fontSize: '12px',
+        width: '60px',
+        color: 'inherit'
+      }}
       type="text"
       disableUnderline={true}
       placeholder={"None"}
