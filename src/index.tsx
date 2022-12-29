@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { RainbowKitProvider, Theme, connectorsForWallets, Chain } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, Theme, connectorsForWallets, Chain, DisclaimerComponent } from '@rainbow-me/rainbowkit';
 import {
   metaMaskWallet,
   ledgerWallet,
   walletConnectWallet,
-  argentWallet, braveWallet, coinbaseWallet, imTokenWallet, injectedWallet, omniWallet, rainbowWallet, trustWallet
+  argentWallet, braveWallet, imTokenWallet, omniWallet, rainbowWallet, trustWallet
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -100,6 +100,8 @@ const connectors = connectorsForWallets([
       walletConnectWallet({ chains }),
       ledgerWallet({ chains }),
       braveWallet({ chains }),
+      argentWallet({ chains }),
+      imTokenWallet({ chains }),
       omniWallet({ chains }),
       rainbowWallet({ chains })
     ]
@@ -150,28 +152,48 @@ const TigrisTheme: Theme = {
     standby: "#000000"
   },
   fonts: {
-    body: "#000000"
+    body: "..."
   },
   radii: {
-    actionButton: "#FFFFFF",
-    connectButton: "#FFFFFF",
-    menuButton: "#FFFFFF",
-    modal: "#363A44",
-    modalMobile: "#FFFFFF"
+    actionButton: "...",
+    connectButton: "...",
+    menuButton: "...",
+    modal: "...",
+    modalMobile: "..."
   },
   shadows: {
-    connectButton: "#FFFFFF",
-    dialog: "#FFFFFF",
-    profileDetailsAction: "#FFFFFF",
-    selectedOption: "#FFFFFF",
-    selectedWallet: "#FFFFFF",
-    walletLogo: "#FFFFFF"
+    connectButton: "...",
+    dialog: "...",
+    profileDetailsAction: "...",
+    selectedOption: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+    selectedWallet: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+    walletLogo: "..."
   }
 };
+
+interface DisclaimerProps {
+  Text: any;
+  Link: any;
+}
+const Disclaimer: DisclaimerComponent = ({ Text, Link }: DisclaimerProps) => (
+  <Text>
+    New to Tigris Trade?
+    <Link href="https://docs.tigris.trade"> Click here to read Tigris Trade documentation.</Link>
+  </Text>
+);
+
 root.render(
   <React.StrictMode>
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={TigrisTheme} modalSize="compact">
+      <RainbowKitProvider
+        chains={chains}
+        theme={TigrisTheme}
+        modalSize="compact"
+        appInfo={{
+          appName: 'Tigris Trade',
+          disclaimer: Disclaimer
+        }}
+      >
         <App />
       </RainbowKitProvider>
     </WagmiConfig>
