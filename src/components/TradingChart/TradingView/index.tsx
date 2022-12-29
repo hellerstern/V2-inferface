@@ -261,7 +261,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 						).onMove(() => {
 							modifyMargin(positionData.openPositions[i], line.getPrice(), line)
 						})
-							.setText("LIQUIDATION")
+							.setText("LIQUIDATION                                                                                                                                                                                                                                                                                                    ")
 							.setPrice(parseFloat(positionData.openPositions[i].liqPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -455,7 +455,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 			}
 		} else {
 			if (newLiqPrice > currentLiq) {
-				const newLeverage = 0.9 / (1 - parseFloat(position.price) / 1e18 / newLiqPrice);
+				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
@@ -495,7 +495,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					_oracleData.timestamp,
 					_oracleData.isClosed
 				];
-				const newLeverage = 0.9 / (1 - parseFloat(position.price) / 1e18 / newLiqPrice);
+				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toRemove = (parseFloat(position.margin) / 1e18) - positionSize / newLeverage;
 				const tx = tradingContract.removeMargin(
