@@ -3,7 +3,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } fro
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { ethLogo, linkLogo, xmrLogo } from '../../config/images';
-import { getNetwork } from "../../../src/constants/networks";
+import { getNetwork } from '../../../src/constants/networks';
 import { oracleSocket, oracleData } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
@@ -21,28 +21,33 @@ interface PairFieldProps {
   name: string;
 }
 const PairField = ({ favor, handleFavoriteToggle, icon, name }: PairFieldProps) => {
-
   const handleStarClick = (event: React.MouseEvent, setFav: boolean) => {
     handleFavoriteToggle(name, setFav);
     event.stopPropagation();
-  }
+  };
 
   return (
     <PairFieldContainer>
       {favor ? (
-        <IconButton onClick={(e) => {
-            handleStarClick(e, false)
-          }} sx={{padding: '0px'}}>
-          <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }}/>
+        <IconButton
+          onClick={(e) => {
+            handleStarClick(e, false);
+          }}
+          sx={{ padding: '0px' }}
+        >
+          <Star sx={{ color: '#FABE3C', width: '20px', height: '20px' }} />
         </IconButton>
       ) : (
-        <IconButton onClick={(e) => {
-            handleStarClick(e, true)
-          }} sx={{padding: '0px'}}>
-          <StarBorder sx={{ width: '20px', height: '20px' }}/>
+        <IconButton
+          onClick={(e) => {
+            handleStarClick(e, true);
+          }}
+          sx={{ padding: '0px' }}
+        >
+          <StarBorder sx={{ width: '20px', height: '20px' }} />
         </IconButton>
       )}
-      <img src={icon} style={{maxHeight: '24px'}}/>
+      <img src={icon} style={{ maxHeight: '24px' }} />
       <CoinName>{name}</CoinName>
     </PairFieldContainer>
   );
@@ -71,7 +76,7 @@ interface PriceCellProps {
   pairIndex: any;
 }
 
-export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
+export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       if (data[pairIndex] != null && data[pairIndex].price !== oraclePrice) {
@@ -79,53 +84,78 @@ export const PriceCell = ({setPairIndex, pairIndex}: PriceCellProps) => {
       }
     });
   }, []);
-  
-  const [oraclePrice, setOraclePrice] = useState(oracleData === "Loading..." ? "Loading..." : oracleData[pairIndex] === null ? "Loading..." : (oracleData[pairIndex] as any).price);
+
+  const [oraclePrice, setOraclePrice] = useState(
+    oracleData === 'Loading...'
+      ? 'Loading...'
+      : oracleData[pairIndex] === null
+      ? 'Loading...'
+      : (oracleData[pairIndex] as any).price
+  );
 
   return (
     <>
-    <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
-      {oraclePrice === "Loading..." ? "Loading..." : (oraclePrice/1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
-    </TableCell>
+      <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
+        {oraclePrice === 'Loading...'
+          ? 'Loading...'
+          : (oraclePrice / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+      </TableCell>
     </>
-  )
-}
+  );
+};
 
-export const BTCPairsTable = ({setPairIndex, searchQuery}: Props) => {
-
+export const BTCPairsTable = ({ setPairIndex, searchQuery }: Props) => {
   const [FavPairs, setFavPairs] = useState<string[]>(
-    JSON.parse(localStorage.getItem("FavPairs") === null ? '["BTC/USD", "ETH/USD"]' : localStorage.getItem("FavPairs") as string) as string[]
+    JSON.parse(
+      localStorage.getItem('FavPairs') === null
+        ? '["BTC/USD", "ETH/USD"]'
+        : (localStorage.getItem('FavPairs') as string)
+    ) as string[]
   );
 
   function handleFavoriteToggle(name: string, setFav: boolean) {
-    const favPairs: any = JSON.parse(localStorage.getItem("FavPairs") as string);
+    const favPairs: any = JSON.parse(localStorage.getItem('FavPairs') as string);
     if (setFav) {
       favPairs.push(name);
     } else {
       favPairs.splice(FavPairs.indexOf(name), 1);
     }
-    localStorage.setItem("FavPairs", JSON.stringify(favPairs));
+    localStorage.setItem('FavPairs', JSON.stringify(favPairs));
     setFavPairs(favPairs);
   }
 
   const rows = [
     createData(
-      <PairField favor={FavPairs.includes('ETH/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={ethLogo} name={'ETH/BTC'} />,
+      <PairField
+        favor={FavPairs.includes('ETH/BTC')}
+        handleFavoriteToggle={handleFavoriteToggle}
+        icon={ethLogo}
+        name={'ETH/BTC'}
+      />,
       <Benefit percent={0.63} value={110} />,
       11
     ),
     createData(
-      <PairField favor={FavPairs.includes('LINK/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={linkLogo} name={'LINK/BTC'} />,
+      <PairField
+        favor={FavPairs.includes('LINK/BTC')}
+        handleFavoriteToggle={handleFavoriteToggle}
+        icon={linkLogo}
+        name={'LINK/BTC'}
+      />,
       <Benefit percent={0.63} value={110} />,
       33
     ),
     createData(
-      <PairField favor={FavPairs.includes('XMR/BTC')} handleFavoriteToggle={handleFavoriteToggle} icon={xmrLogo} name={'XMR/BTC'} />,
+      <PairField
+        favor={FavPairs.includes('XMR/BTC')}
+        handleFavoriteToggle={handleFavoriteToggle}
+        icon={xmrLogo}
+        name={'XMR/BTC'}
+      />,
       <Benefit percent={0.63} value={110} />,
       34
     )
-  ]
-  .filter(pair => (pair.pair.props.name).includes(searchQuery));
+  ].filter((pair) => pair.pair.props.name.includes(searchQuery));
 
   return (
     <>
@@ -146,7 +176,7 @@ export const BTCPairsTable = ({setPairIndex, searchQuery}: Props) => {
             {rows.map((row, index) => (
               <CustomTableRow key={index} onClick={() => setPairIndex(row.pairIndex)}>
                 <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
-                <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex}/>
+                <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex} />
                 <TableCell align="center">{row.profit}</TableCell>
               </CustomTableRow>
             ))}
@@ -185,5 +215,8 @@ const CustomTableRow = styled(TableRow)({
 
 const TbodyContainer = styled(Box)(({ theme }) => ({
   height: '400px',
-  overflowY: 'auto'
+  overflowY: 'auto',
+  [theme.breakpoints.down('desktop')]: {
+    height: '500px'
+  }
 }));

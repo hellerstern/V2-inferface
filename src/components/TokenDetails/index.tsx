@@ -291,6 +291,7 @@ const MobileStatusInfos = styled(Box)(({ theme }) => ({
     gridTemplateColumns: 'auto auto'
   },
   '.index-info': {
+    maxHeight: '35px',
     padding: '0 11px',
     '.title': {
       color: '#D2CEDE',
