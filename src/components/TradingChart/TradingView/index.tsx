@@ -370,11 +370,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					toast.error(
 						isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
 					);
-					isTP ? line.setPrice(parseFloat(position.tpPrice)) : line.setPrice(parseFloat(position.slPrice));
+					isTP ? line.setPrice(parseFloat(position.tpPrice)/1e18) : line.setPrice(parseFloat(position.slPrice)/1e18);
 				}
 			}, 1000);
 		} catch (err) {
-			isTP ? line.setPrice(parseFloat(position.tpPrice)) : line.setPrice(parseFloat(position.slPrice));
+			isTP ? line.setPrice(parseFloat(position.tpPrice)/1e18) : line.setPrice(parseFloat(position.slPrice)/1e18);
 			console.log(err);
 		}
 	}
