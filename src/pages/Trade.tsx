@@ -13,6 +13,7 @@ import { Cumulative } from './MiniPage/Cumulative';
 import { PositionData } from 'src/components/Table/PositionData';
 
 export const Trade = () => {
+
   const positionData = PositionData().positionData;
 
   const [pairIndex, setPairIndex] = useState(

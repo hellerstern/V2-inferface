@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -55,7 +55,10 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
   const { address } = useAccount();
   const { chain } = useNetwork();
 
-  const [forceRerender, setForceRerender] = useState(Math.random())
+  const [forceRerender, setForceRerender] = useState(Math.random());
+  useEffect(() => {
+    setForceRerender(Math.random());
+  }, [positionData]);
 
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const handleClickEditOpen = (position: any) => {
@@ -103,7 +106,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
           toast.error(
             'Closing position failed!'
           );
-        }          
+        }
       }, 1000);
     } catch (err) {
       console.log(err);
@@ -139,7 +142,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
           toast.error(
             'Cancelling limit order failed!'
           );
-        }          
+        }
       }, 1000);
     } catch (err) {
       console.log(err);
@@ -221,7 +224,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
           toast.error(
             isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
           );
-        }          
+        }
       }, 1000);
     } catch (err) {
       console.log(err);
@@ -257,7 +260,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
                   {position.trader.slice(0, 6)}
                 </TableCellContainer>
               </TableCell>
-              <TableCell style={{color: position.direction ? '#26a69a' : '#EF5350'}}>{position.direction ? "Long" : "Short"}</TableCell>
+              <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
@@ -272,25 +275,25 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
               </TableCell>
               <TableCell>
                 <InputStore
-                    handleUpdateTPSLChange={handleUpdateTPSLChange}
-                    position={position}
-                    isTP={false}
-                  />
+                  handleUpdateTPSLChange={handleUpdateTPSLChange}
+                  position={position}
+                  isTP={false}
+                />
               </TableCell>
               <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
                   <EditButton onClick={(e) => {
-                      handleClickEditOpen(position.id);
-                      e.stopPropagation();
-                    }}>
+                    handleClickEditOpen(position.id);
+                    e.stopPropagation();
+                  }}>
                     <SmallText>Edit</SmallText>
                     <Edit sx={{ fontSize: '18px' }} />
                   </EditButton>
                   <CloseButton onClick={(e) => {
                     tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id);
                     e.stopPropagation();
-                    }}>
+                  }}>
                     {tableType === 0 ? "Close" : "Cancel"}
                     <Close sx={{ fontSize: '18px' }} />
                   </CloseButton>
@@ -316,7 +319,7 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
 
   return (
     <Input
-      sx={{fontSize: '12px', color: '#B1B5C3', width: '60px'}}
+      sx={{ fontSize: '12px', color: '#B1B5C3', width: '60px' }}
       type="text"
       disableUnderline={true}
       placeholder={"None"}
@@ -325,7 +328,7 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
         setTpsl(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'));
       }}
       onKeyDown={(key) => {
-        if(key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
+        if (key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
           handleUpdateTPSLChange(position, isTP, tpsl === "" ? "0" : tpsl);
         }
       }}

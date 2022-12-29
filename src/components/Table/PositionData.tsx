@@ -22,7 +22,7 @@ export const PositionData = () => {
     getPositionsIndex();
   }, [address, chain]);
 
-  const isGettingPositions = {value: false};
+  const isGettingPositions = { value: false };
   async function getPositionsIndex() {
     if (!chain || !address) return;
     if (isGettingPositions.value) return;
@@ -38,7 +38,7 @@ export const PositionData = () => {
     {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i=0; i<userTrades.length; i++) {
+      for (let i = 0; i < userTrades.length; i++) {
         _calls.push(
           {
             reference: userTrades[i].toString(),
@@ -48,12 +48,12 @@ export const PositionData = () => {
         )
       }
       const contractCallContext: ContractCallContext[] = [
-          {
-              reference: 'library',
-              contractAddress: currentNetwork.addresses.tradinglibrary,
-              abi: currentNetwork.abis.tradinglibrary,
-              calls: _calls
-          }
+        {
+          reference: 'library',
+          contractAddress: currentNetwork.addresses.tradinglibrary,
+          abi: currentNetwork.abis.tradinglibrary,
+          calls: _calls
+        }
       ];
       let results: any = await multicall.call(contractCallContext);
       if (results.results.library === undefined) {
@@ -76,7 +76,7 @@ export const PositionData = () => {
     {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i=0; i<userTrades.length; i++) {
+      for (let i = 0; i < userTrades.length; i++) {
         _calls.push(
           {
             reference: userTrades[i].toString(),
@@ -86,12 +86,12 @@ export const PositionData = () => {
         )
       }
       const contractCallContext: ContractCallContext[] = [
-          {
-              reference: 'positions',
-              contractAddress: currentNetwork.addresses.positions,
-              abi: currentNetwork.abis.positions,
-              calls: _calls
-          }
+        {
+          reference: 'positions',
+          contractAddress: currentNetwork.addresses.positions,
+          abi: currentNetwork.abis.positions,
+          calls: _calls
+        }
       ];
       let results: any = await multicall.call(contractCallContext);
       if (results.results.positions === undefined) {
@@ -162,8 +162,8 @@ export const PositionData = () => {
                 id: data.id,
                 asset: data.tradeInfo.asset,
                 accInterest: 0,
-                liqPrice: data.tradeInfo.direction ? (parseInt(data.price)-parseInt(data.price)*0.9/(parseInt(data.tradeInfo.leverage)/1e18)).toString()
-                  : (parseInt(data.price)+parseInt(data.price)*0.9/(parseInt(data.tradeInfo.leverage)/1e18)).toString()
+                liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
+                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
               }
             );
             setOpenPositions(openP);
@@ -349,16 +349,29 @@ export const PositionData = () => {
                 id: data.id,
                 asset: openP[i].asset,
                 accInterest: openP[i].accInterest,
-                liqPrice: openP[i].liqPrice
+                liqPrice: openP[i].direction
+                  ? (parseInt(openP[i].price) - (parseInt(openP[i].price) + parseInt(openP[i].price) * parseInt(openP[i].accInterest) / parseInt(data.newMargin)) * 0.9 / (parseInt(data.newLeverage) / 1e18)).toString()
+                  : (parseInt(openP[i].price) + (parseInt(openP[i].price) + parseInt(openP[i].price) * parseInt(openP[i].accInterest) / parseInt(data.newMargin)) * 0.9 / (parseInt(data.newLeverage) / 1e18)).toString()
               }
-              toast.success((
-                "Successfully added " +
-                ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
-                " margin to " +
-                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[openP[i].asset].name +
-                (openP[i].direction ? " long" : " short")
-              ));
+              if (parseFloat(openP[i].margin) < parseFloat(data.newMargin)) {
+                toast.success((
+                  "Successfully added " +
+                  ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
+                  " margin to " +
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                  currentNetwork.assets[openP[i].asset].name +
+                  (openP[i].direction ? " long" : " short")
+                ));
+              } else {
+                toast.success((
+                  "Successfully removed " +
+                  ((parseFloat(openP[i].margin) - parseFloat(data.newMargin)) / 1e18).toFixed(2) +
+                  " margin from " +
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                  currentNetwork.assets[openP[i].asset].name +
+                  (openP[i].direction ? " long" : " short")
+                ));
+              }
               openP[i] = modP;
               break;
             }
@@ -431,7 +444,7 @@ export const PositionData = () => {
                     (openP[i].direction ? "long " : "short ") +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                     currentNetwork.assets[openP[i].asset].name
-                  ));                  
+                  ));
                 } else {
                   toast.success((
                     "Successfully set " +
@@ -491,7 +504,7 @@ export const PositionData = () => {
 
   return (
     {
-      positionData : {
+      positionData: {
         openPositions: openPositions,
         limitOrders: limitOrders,
         allPositions: allPositions

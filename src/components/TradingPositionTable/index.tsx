@@ -15,7 +15,7 @@ interface IPositionTable {
   positionData: any;
 }
 
-export const TradingPositionTable = ({setPairIndex, positionData}: IPositionTable) => {
+export const TradingPositionTable = ({ setPairIndex, positionData }: IPositionTable) => {
   const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
   const [show, setShow] = useState('Before Closing Fees');
@@ -36,14 +36,14 @@ export const TradingPositionTable = ({setPairIndex, positionData}: IPositionTabl
             <TableDropDownMenu state={show} setState={setShow} />
           </TableDropDown>
         </TableAction>
-        <PositionTable tableType={tab} setPairIndex={setPairIndex} positionData={positionData}/>
+        <PositionTable tableType={tab} setPairIndex={setPairIndex} positionData={positionData} />
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Performance Chart</TableMediaLabel>
         <TableMediaAction onClick={() => {
           setMiniPage(1);
           window.scrollTo(0, 0);
-          }}>
+        }}>
           Advanced Stats
           <OpenInNew fontSize="small" />
         </TableMediaAction>
