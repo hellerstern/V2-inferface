@@ -280,8 +280,6 @@ const DesktopStatusInfos = styled(Box)(({ theme }) => ({
 const MobileStatusInfos = styled(Box)(({ theme }) => ({
   padding: '15px',
   display: 'none',
-  width: '100%',
-  height: '100%',
   gridTemplateColumns: 'auto auto auto',
   [theme.breakpoints.down('md')]: {
     display: 'grid',
