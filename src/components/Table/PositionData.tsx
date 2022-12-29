@@ -5,6 +5,10 @@ import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import { oracleData } from 'src/context/socket';
 import { toast } from 'react-toastify';
+import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
+
+declare const window: any
+const { ethereum } = window;
 
 export const PositionData = () => {
   const { address } = useAccount();
@@ -16,46 +20,114 @@ export const PositionData = () => {
 
   useEffect(() => {
     getPositionsIndex();
-  }, [chain, address]);
+  }, [address, chain]);
 
+  const isGettingPositions = { value: false };
   async function getPositionsIndex() {
     if (!chain || !address) return;
+    if (isGettingPositions.value) return;
+    isGettingPositions.value = true;
     const currentNetwork = getNetwork(chain.id);
-    const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, ethers.getDefaultProvider(currentNetwork.rpc));
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, provider);
 
     const userTrades = await positionContract.userTrades(address);
 
-    const posPromisesIndex = [];
-    for (let i = 0; i < userTrades.length; i++) {
-      posPromisesIndex.push(positionContract.trades(userTrades[i]));
+    // Get liq prices
+    const liqPrices: any[] = [];
+    {
+      const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
+      const _calls: any[] = [];
+      for (let i = 0; i < userTrades.length; i++) {
+        _calls.push(
+          {
+            reference: userTrades[i].toString(),
+            methodName: 'getLiqPrice(address,uint256,uint256)',
+            methodParameters: [currentNetwork.addresses.positions, userTrades[i].toString(), 9000000000]
+          }
+        )
+      }
+      const contractCallContext: ContractCallContext[] = [
+        {
+          reference: 'library',
+          contractAddress: currentNetwork.addresses.tradinglibrary,
+          abi: currentNetwork.abis.tradinglibrary,
+          calls: _calls
+        }
+      ];
+      let results: any = await multicall.call(contractCallContext);
+      if (results.results.library === undefined) {
+        results = {
+          results: {
+            library: {
+              callsReturnContext: []
+            }
+          }
+        }
+      }
+      results.results.library.callsReturnContext.forEach((returnValue: any) => {
+        liqPrices.push(parseInt(returnValue.returnValues[0].hex, 16).toString());
+      });
     }
 
-    Promise.all(posPromisesIndex).then((s) => {
-      const openP: any[] = [];
-      const limitO: any[] = [];
-
-      for (let i = 0; i < s.length; i++) {
-        const pos = {
-          trader: s[i].trader,
-          margin: parseFloat(s[i].margin).toString(),
-          leverage: parseFloat(s[i].leverage).toString(),
-          price: parseFloat(s[i].price).toString(),
-          tpPrice: parseFloat(s[i].tpPrice).toString(),
-          slPrice: parseFloat(s[i].slPrice).toString(),
-          direction: s[i].direction,
-          id: parseInt(s[i].id),
-          asset: parseFloat(s[i].asset),
-          accInterest: 0
+    // Get position data
+    const openP: any[] = [];
+    const limitO: any[] = [];
+    {
+      const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
+      const _calls: any[] = [];
+      for (let i = 0; i < userTrades.length; i++) {
+        _calls.push(
+          {
+            reference: userTrades[i].toString(),
+            methodName: 'trades(uint256)',
+            methodParameters: [userTrades[i]]
+          }
+        )
+      }
+      const contractCallContext: ContractCallContext[] = [
+        {
+          reference: 'positions',
+          contractAddress: currentNetwork.addresses.positions,
+          abi: currentNetwork.abis.positions,
+          calls: _calls
         }
-        if (parseFloat(s[i].orderType) === 0) {
+      ];
+      let results: any = await multicall.call(contractCallContext);
+      if (results.results.positions === undefined) {
+        results = {
+          results: {
+            positions: {
+              callsReturnContext: []
+            }
+          }
+        }
+      }
+      results.results.positions.callsReturnContext.forEach((returnValue: any, index: number) => {
+        const pos = {
+          trader: returnValue.returnValues[8],
+          margin: parseInt(returnValue.returnValues[0].hex, 16).toString(),
+          leverage: parseInt(returnValue.returnValues[1].hex, 16).toString(),
+          price: parseInt(returnValue.returnValues[4].hex, 16).toString(),
+          tpPrice: parseInt(returnValue.returnValues[5].hex, 16).toString(),
+          slPrice: parseInt(returnValue.returnValues[6].hex, 16).toString(),
+          direction: returnValue.returnValues[3],
+          id: parseInt(returnValue.returnValues[9].hex, 16),
+          asset: parseInt(returnValue.returnValues[2].hex, 16),
+          accInterest: parseInt(returnValue.returnValues[11].hex, 16).toString(),
+          liqPrice: liqPrices[index]
+        }
+        console.log(pos);
+        if (parseInt(returnValue.returnValues[7].hex, 16) === 0) {
           openP.push(pos);
         } else {
           limitO.push(pos);
         }
-      }
+      });
       setOpenPositions(openP);
       setLimitOrders(limitO);
-    });
+    }
+    isGettingPositions.value = false;
   }
 
   useEffect(() => {
@@ -67,9 +139,16 @@ export const PositionData = () => {
       });
 
       socket.on('PositionOpened', (data: any) => {
-        const currentNetwork = getNetwork(0);
+        const currentNetwork = getNetwork(chain?.id);
         if (data.trader === address && data.chainId === chain?.id) {
           if (data.orderType === 0) {
+            toast.success((
+              (data.tradeInfo.direction ? "Longed " : "Shorted ") +
+              (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
+              currentNetwork.assets[data.tradeInfo.asset].name +
+              " @ " +
+              (parseFloat(data.price) / 1e18).toPrecision(6)
+            ));
             const openP: any[] = openPositions.slice();
             openP.push(
               {
@@ -82,16 +161,11 @@ export const PositionData = () => {
                 direction: data.tradeInfo.direction,
                 id: data.id,
                 asset: data.tradeInfo.asset,
-                accInterest: 0
+                accInterest: 0,
+                liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
+                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
               }
             );
-            toast.success((
-              (data.tradeInfo.direction ? "Longed " : "Shorted ") +
-              (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
-              currentNetwork.assets[data.tradeInfo.asset].name +
-              " @ " +
-              (parseFloat(data.price) / 1e18).toPrecision(6)
-            ));
             setOpenPositions(openP);
             console.log('EVENT: Market Trade Opened');
           } else {
@@ -173,7 +247,8 @@ export const PositionData = () => {
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
-                  accInterest: openP[i].accInterest
+                  accInterest: openP[i].accInterest,
+                  liqPrice: openP[i].liqPrice
                 }
                 toast.success((
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
@@ -222,7 +297,8 @@ export const PositionData = () => {
                   direction: data.direction,
                   id: data.id,
                   asset: data.asset,
-                  accInterest: 0
+                  accInterest: 0,
+                  liqPrice: 0
                 }
               );
               limitO.splice(i, 1);
@@ -262,6 +338,7 @@ export const PositionData = () => {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
+              console.log(data);
               const modP = {
                 trader: openP[i].trader,
                 margin: data.newMargin,
@@ -272,16 +349,32 @@ export const PositionData = () => {
                 direction: openP[i].direction,
                 id: data.id,
                 asset: openP[i].asset,
-                accInterest: openP[i].accInterest
+                accInterest: openP[i].accInterest,
+                liqPrice: openP[i].direction
+                  ? (parseFloat(openP[i].price) - (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
+                  // _tradePrice - ((_tradePrice*1e18/_leverage) * uint(int(_margin)+_accInterest) / _margin) * _liqPercent / 1e10;
+                  : (parseFloat(openP[i].price) + (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
               }
-              toast.success((
-                "Successfully added " +
-                ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
-                " margin to " +
-                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[openP[i].asset].name +
-                (openP[i].direction ? " long" : " short")
-              ));
+              console.log(modP.liqPrice);
+              if (data.isMarginAdded) {
+                toast.success((
+                  "Successfully added " +
+                  ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
+                  " margin to " +
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                  currentNetwork.assets[openP[i].asset].name +
+                  (openP[i].direction ? " long" : " short")
+                ));
+              } else {
+                toast.success((
+                  "Successfully removed " +
+                  ((parseFloat(openP[i].margin) - parseFloat(data.newMargin)) / 1e18).toFixed(2) +
+                  " margin from " +
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
+                  currentNetwork.assets[openP[i].asset].name +
+                  (openP[i].direction ? " long" : " short")
+                ));
+              }
               openP[i] = modP;
               break;
             }
@@ -307,7 +400,8 @@ export const PositionData = () => {
                 direction: openP[i].direction,
                 id: data.id,
                 asset: openP[i].asset,
-                accInterest: openP[i].accInterest
+                accInterest: openP[i].accInterest,
+                liqPrice: openP[i].liqPrice
               }
               toast.success((
                 "Successfully opened " +
@@ -344,7 +438,8 @@ export const PositionData = () => {
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
-                  accInterest: openP[i].accInterest
+                  accInterest: openP[i].accInterest,
+                  liqPrice: openP[i].liqPrice
                 }
                 if (parseFloat(data.price) === 0) {
                   toast.success((
@@ -352,7 +447,7 @@ export const PositionData = () => {
                     (openP[i].direction ? "long " : "short ") +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                     currentNetwork.assets[openP[i].asset].name
-                  ));                  
+                  ));
                 } else {
                   toast.success((
                     "Successfully set " +
@@ -375,7 +470,8 @@ export const PositionData = () => {
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
-                  accInterest: openP[i].accInterest
+                  accInterest: openP[i].accInterest,
+                  liqPrice: openP[i].liqPrice
                 }
                 if (parseFloat(data.price) === 0) {
                   toast.success((
@@ -411,7 +507,7 @@ export const PositionData = () => {
 
   return (
     {
-      positionData : {
+      positionData: {
         openPositions: openPositions,
         limitOrders: limitOrders,
         allPositions: allPositions
