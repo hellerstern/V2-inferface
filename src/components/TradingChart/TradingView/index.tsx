@@ -180,7 +180,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						)
-							.setText("POSITION")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + ""
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].price) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -205,9 +207,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], false, line.getPrice(), line)
+							updateTPSL(positionData.openPositions[i], false, line)
 						})
-							.setText("STOP LOSS")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " STOP LOSS"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].slPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -232,9 +236,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], true, line.getPrice(), line)
+							updateTPSL(positionData.openPositions[i], true, line)
 						})
-							.setText("TAKE PROFIT")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " TAKE PROFIT"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].tpPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -259,9 +265,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								disableUndo: true
 							}
 						).onMove(() => {
-							modifyMargin(positionData.openPositions[i], line.getPrice(), line)
+							modifyMargin(positionData.openPositions[i], line)
 						})
-							.setText("LIQUIDATION                                                                                                                                                                                                                                                                                                    ")
+							.setText(
+								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " LIQUIDATION"
+							)
 							.setPrice(parseFloat(positionData.openPositions[i].liqPrice) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
@@ -291,25 +299,25 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		const signer = await getShellWallet();
 		return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
 	}
-	async function updateTPSL(position: any, isTP: boolean, limitPrice: number, line: IOrderLineAdapter) {
+	async function updateTPSL(position: any, isTP: boolean, line: IOrderLineAdapter) {
 		try {
 			const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 			const _oracleData: any = oracleData[asset];
 			const tradingContract = await getTradingContract();
 			const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-			const price = ethers.utils.parseEther(limitPrice.toString());
+			const price = ethers.utils.parseEther(line.getPrice().toString());
 
 			if (isTP) {
 				if (position.direction) {
 					if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Take profit too low");
-						line.setPrice(parseFloat(position.tpPrice));
+						line.setPrice(parseFloat(position.tpPrice)/1e18);
 						return;
 					}
 				} else {
 					if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Take profit too high");
-						line.setPrice(parseFloat(position.tpPrice));
+						line.setPrice(parseFloat(position.tpPrice)/1e18);
 						return;
 					}
 				}
@@ -317,23 +325,23 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				if (position.direction) {
 					if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss too high");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 					if (parseFloat(price.toString()) < parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss past liquidation price!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 				} else {
 					if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss too low!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 					if (parseFloat(price.toString()) > parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
 						toast.warning("Stop loss past liquidation price!");
-						line.setPrice(parseFloat(position.slPrice));
+						line.setPrice(parseFloat(position.slPrice)/1e18);
 						return;
 					}
 				}
@@ -362,26 +370,32 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					toast.error(
 						isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
 					);
-					isTP ? line.setPrice(parseFloat(position.tpPrice)) : line.setPrice(parseFloat(position.slPrice));
+					isTP ? line.setPrice(parseFloat(position.tpPrice)/1e18) : line.setPrice(parseFloat(position.slPrice)/1e18);
 				}
 			}, 1000);
 		} catch (err) {
-			isTP ? line.setPrice(parseFloat(position.tpPrice)) : line.setPrice(parseFloat(position.slPrice));
+			isTP ? line.setPrice(parseFloat(position.tpPrice)/1e18) : line.setPrice(parseFloat(position.slPrice)/1e18);
 			console.log(err);
 		}
 	}
-	async function modifyMargin(position: any, newLiqPrice: number, line: IOrderLineAdapter) {
+	async function modifyMargin(position: any, line: IOrderLineAdapter) {
 		const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 		const _oracleData: any = oracleData[asset];
 		const tradingContract = await getTradingContract();
 		const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 		const currentLiq = parseFloat(position.liqPrice) / 1e18;
+		const newLiqPrice = line.getPrice();
 
 		console.log(newLiqPrice);
 
 		if (position.direction) {
 			if (newLiqPrice < currentLiq) {
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
+				if (newLeverage < 2) {
+					toast.warning("Leverage too low!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
@@ -422,6 +436,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					_oracleData.isClosed
 				];
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
+				if (newLeverage > 100) {
+					toast.warning("Leverage too high!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toRemove = (parseFloat(position.margin) / 1e18) - positionSize / newLeverage;
 				const tx = tradingContract.removeMargin(
@@ -456,6 +475,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		} else {
 			if (newLiqPrice > currentLiq) {
 				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
+				if (newLeverage < 2) {
+					toast.warning("Leverage too low!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
@@ -496,6 +520,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					_oracleData.isClosed
 				];
 				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
+				if (newLeverage > 100) {
+					toast.warning("Leverage too high!");
+					line.setPrice(currentLiq);
+					return;
+				}
 				const positionSize = (parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18) + (parseFloat(position.accInterest) / 1e18);
 				const toRemove = (parseFloat(position.margin) / 1e18) - positionSize / newLeverage;
 				const tx = tradingContract.removeMargin(

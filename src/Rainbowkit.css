@@ -1534,13 +1534,13 @@
   border-color: var(--rk-colors-modalBackground);
 }
 [data-rk] .ju367vdl {
-  border-color: white;
+  border-color: #363A44;
 }
 [data-rk] .ju367vdm:hover {
-  border-color: white;
+  border-color: #363A44;
 }
 [data-rk] .ju367vdn:active {
-  border-color: white;
+  border-color: #363A44;
 }
 [data-rk] .ju367vdo {
   border-color: var(--rk-colors-modalText);
@@ -1669,7 +1669,7 @@
   box-shadow: var(--rk-shadows-walletLogo);
 }
 [data-rk] .ju367veu {
-  color: var(--rk-colors-accentColor);
+  color: white;
 }
 [data-rk] .ju367vev:hover {
   color: var(--rk-colors-accentColor);
