@@ -1,7 +1,7 @@
-import { ErrorOutlineOutlined } from '@mui/icons-material';
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
+import { Notification } from 'src/components/Notification';
 import { useAccount } from 'wagmi';
 
 const reduceAddress = (address: any) => {
@@ -18,13 +18,10 @@ export const Proxy = () => {
         <ShellWalletMedia>
           <MediaBar>Shell Wallet</MediaBar>
           <MediaContent>
-            <Notification>
-              <ErrorOutlineOutlined sx={{ width: '20px', height: '20px', color: '#6FCF97', marginTop: '2px' }} />
-              <AlertContent>
-                Shell wallet is a frontend wallet that enables instant one-click trades. You need to fund the wallet
-                with MATIC on Polygon or ETH on Arbitrum to start trading.
-              </AlertContent>
-            </Notification>
+            <Notification
+              content="Shell wallet is a frontend wallet that enables instant one-click trades. You need to fund the wallet
+                with MATIC on Polygon or ETH on Arbitrum to start trading."
+            />
             <AddressSection>
               <p>Address</p>
               <DesktopAddress style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}>
@@ -114,22 +111,6 @@ const MediaContent = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   gap: '23px',
   backgroundColor: '#18191D'
-}));
-
-const Notification = styled(Box)(({ theme }) => ({
-  backgroundColor: '#141416',
-  borderRadius: '5px',
-  padding: '20px 16px',
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '9px'
-}));
-
-const AlertContent = styled(Box)(({ theme }) => ({
-  color: '#777E90',
-  fontSize: '14px',
-  lineHeight: '24px',
-  fontWeight: '400'
 }));
 
 const AddressSection = styled(Box)(({ theme }) => ({

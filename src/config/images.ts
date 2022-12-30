@@ -10,6 +10,7 @@ import MetamaskSvg from '../assets/icons/metamask.svg';
 import CopySvg from '../assets/icons/copy.svg';
 import ExpandSvg from '../assets/icons/expand.svg';
 import GasStationSvg from '../assets/icons/gas-station.svg';
+import ArbiScanSvg from '../assets/images/Arbiscan.svg';
 
 // Coins & Tokens
 import adaLogo from '../assets/images/CoinImage/adaLogo.svg';
@@ -29,10 +30,11 @@ import maticLogo from '../assets/images/CoinImage/maticLogo.svg';
 import nearLogo from '../assets/images/CoinImage/nearLogo.svg';
 import solLogo from '../assets/images/CoinImage/solLogo.svg';
 import tigusdLogo from '../assets/images/CoinImage/tigusdLogo.svg';
-import usdtLogo from '../assets/images/CoinImage/usdtLogo.svg'
+import usdtLogo from '../assets/images/CoinImage/usdtLogo.svg';
 import uniLogo from '../assets/images/CoinImage/uniLogo.svg';
 import xmrLogo from '../assets/images/CoinImage/xmrLogo.svg';
 import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
+import PolygonSvg from '../assets/images/CoinImage/Polygon.svg';
 
 export {
   LOGO,
@@ -67,5 +69,7 @@ export {
   usdtLogo,
   uniLogo,
   xmrLogo,
-  xrpLogo
+  xrpLogo,
+  ArbiScanSvg,
+  PolygonSvg
 };

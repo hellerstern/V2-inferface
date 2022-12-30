@@ -131,7 +131,8 @@ const Dropdown = styled(Button)({
 });
 
 const CustomMenuItem = styled(MenuItem)(({ theme }) => ({
-  fontSize: '12px'
+  fontSize: '12px',
+  width: '100%'
 }));
 
 const Content = styled(Box)(({ theme }) => ({

@@ -1,5 +1,6 @@
 import { TabPanel } from '../../src/components/TabPanel';
 import { useStore } from '../../src/context/StoreContext';
+import { Governance } from './Governance';
 import { Trade } from './Trade';
 
 export const Home = () => {
@@ -13,7 +14,7 @@ export const Home = () => {
         Vault
       </TabPanel>
       <TabPanel value={page} index={2}>
-        Gorvernance
+        <Governance />
       </TabPanel>
       <TabPanel value={page} index={3}>
         Referral

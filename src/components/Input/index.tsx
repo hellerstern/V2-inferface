@@ -64,18 +64,18 @@ export const TigrisInput = (props: InputProps) => {
   const valueRef = useRef<HTMLInputElement>(null);
   const [isVisit, setVisit] = useState(false);
   const handleClickOutside = (event: React.MouseEvent<HTMLElement>) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as any)) {
-        setVisit(false);
+    if (inputRef.current && !inputRef.current.contains(event.target as any)) {
+      setVisit(false);
     }
   };
 
   const handleClickInside = () => {
-      setVisit(true);
-      valueRef.current?.focus();      
+    setVisit(true);
+    valueRef.current?.focus();
   };
 
   useEffect(() => {
-      document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
+    document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
   }, [inputRef]);
   return (
     <InputContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
@@ -86,7 +86,14 @@ export const TigrisInput = (props: InputProps) => {
           value={value}
           type="text"
           ref={valueRef}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'))}
+          onChange={(e: React.FormEvent<HTMLInputElement>) =>
+            setValue(
+              e.currentTarget.value
+                .replace(/[^0-9.]/g, '')
+                .replace(/(\..*?)\..*/g, '$1')
+                .replace(/^0[^.]/, '0')
+            )
+          }
         />
         <Box>{unit}</Box>
       </InputArea>
@@ -173,7 +180,7 @@ const InputValue = styled('input')<containerProps>(({ visited, theme }) => ({
   background: 'none',
   textAlign: 'right',
   border: 'none',
-  color: visited ? '#FFFFFF' : 'rgba(255, 255, 255, 0.25)',
+  color: visited === 1 ? '#FFFFFF' : 'rgba(255, 255, 255, 0.25)',
   letterSpacing: '0.05em',
 
   [theme.breakpoints.down(390)]: {
