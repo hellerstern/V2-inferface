@@ -11,7 +11,14 @@ interface Props {
 
 const TradingChart = ({ asset, positionData }: Props) => {
   return (
-    <div style={{ width: '100%', height: '560px' }}>
+    <div style={{
+      width: '100%',
+      height: '560px',
+      userSelect: 'none',
+      MozUserSelect: 'none',
+      KhtmlUserSelect: 'none',
+      WebkitUserSelect: 'none'
+    }}>
       <TVChartContainer asset={asset} positionData={positionData} />
     </div>
   );
