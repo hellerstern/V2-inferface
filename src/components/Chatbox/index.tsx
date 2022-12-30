@@ -45,7 +45,7 @@ export const Chatbox = () => {
   }, [])
   
   async function getRandomCatgirl() {
-    const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=AIzaSyBiPxAr2gmWpR4d9Vxt_tZaeIJf-XH0jn4&cx=e0f354ced324a40e9&q=anime+catgirl+profile+picture&searchType=image&start=${Math.floor(Math.random() * 400)}`);
+    const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=AIzaSyBiPxAr2gmWpR4d9Vxt_tZaeIJf-XH0jn4&cx=e0f354ced324a40e9&q=anime+catgirl+profile+picture&searchType=image&start=${Math.floor(Math.random() * 100)}`);
     const data = await response.json();
     const image = data.items[0];
     localStorage.setItem("ChatPFP", image.link);
