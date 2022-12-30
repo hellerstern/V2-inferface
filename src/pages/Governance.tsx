@@ -263,7 +263,7 @@ const GovernanceAction = styled(Box)(({ theme }) => ({
   width: '100%',
   gap: '12px',
   [theme.breakpoints.down(768)]: {
-    flexDirection: 'column'
+    flexDirection: 'column-reverse'
   }
 }));
 
