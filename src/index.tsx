@@ -128,7 +128,7 @@ const TigrisTheme: Theme = {
     closeButton: "#FFFFFF",
     closeButtonBackground: "#23262F",
     connectButtonBackground: "#17191D",
-    connectButtonBackgroundError: "#FFFFFF",
+    connectButtonBackgroundError: "#17191D",
     connectButtonInnerBackground: "#17191D",
     connectButtonText: "#FFFFFF",
     connectButtonTextError: "#FFFFFF",
