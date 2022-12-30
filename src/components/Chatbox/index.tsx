@@ -182,7 +182,8 @@ export const Chatbox = () => {
   return (
     <div
       style={{
-        touchAction: 'none'
+        touchAction: 'none',
+        zIndex: 1
       }}
     >
       {
@@ -198,7 +199,7 @@ export const Chatbox = () => {
             position: 'relative',
             top: 41,
             left: 15,
-            zIndex: 1000,
+            zIndex: 1,
             color: '#FFFFFF',
             pointerEvents: 'none'
           }}/>
