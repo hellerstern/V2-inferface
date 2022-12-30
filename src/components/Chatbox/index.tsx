@@ -67,28 +67,46 @@ export const Chatbox = () => {
   ]);
   const [isClosed, setClosed] = useState(true);
 
+  const getClientPos = (event: any) => {
+    console.log(event);
+    if (event.touches) {
+      return {
+        clientX: event.touches[0].clientX,
+        clientY: event.touches[0].clientY
+      };
+    }
+    return {
+      clientX: event.clientX,
+      clientY: event.clientY
+    };
+  }
+
   useEffect(() => {
     const handleMouseMove = (event: any) => {
       if (isDragging) {
         event.preventDefault();
+        const { clientX, clientY } = getClientPos(event);
         setCurrentPosition({
-          x: event.clientX - initialPosition.x,
-          y: event.clientY - initialPosition.y
+          x: clientX - initialPosition.x,
+          y: clientY - initialPosition.y
         });
       }
     };
 
     document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', handleMouseMove);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleMouseMove);
     };
   }, [isDragging, initialPosition]);
 
   const handleMouseDown = (event: any) => {
+    const { clientX, clientY } = getClientPos(event);
     setInitialPosition({
-      x: event.clientX - currentPosition.x,
-      y: event.clientY - currentPosition.y
+      x: clientX - currentPosition.x,
+      y: clientY - currentPosition.y
     });
     setIsDragging(true);
   };
@@ -222,6 +240,8 @@ export const Chatbox = () => {
               }}
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchEnd={handleMouseUp}
             >
               <h4 style={{ margin: 0, fontWeight: 'normal', color: 'white' }}>Chatbox</h4>
               <button
