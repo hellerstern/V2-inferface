@@ -1,0 +1,15 @@
+.spinner {
+  background-image: linear-gradient(#0049DC 10%, #920BBC);
+  width: 50px;
+  height: 50px;
+  animation: spinning 8s linear infinite;
+  text-align: center;
+  border-radius: 50px;
+  filter: blur(0px);
+}
+
+@keyframes spinning {
+  to {
+    transform: rotate(360deg);
+  }
+}
