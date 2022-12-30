@@ -97,16 +97,24 @@ export const Chatbox = () => {
 
   const handleSend = () => {
     // Send message logic goes here
-    setMessages([...messages,
-      {
-        profilePicture: "https://i1.sndcdn.com/artworks-yoaYzcn8fmBy6F3O-Ex8ICg-t500x500.jpg",
-        username: "AnonTrader123",
-        date: "2022-12-30",
-        time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
-        message: message
-      }
-    ]);
-    setMessage('');
+    if(message !== "") {
+      setMessages([...messages,
+        {
+          profilePicture: "https://i1.sndcdn.com/artworks-yoaYzcn8fmBy6F3O-Ex8ICg-t500x500.jpg",
+          username: "AnonTrader123",
+          date: "2022-12-30",
+          time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
+          message: message
+        }
+      ]);
+      setMessage('');
+    }
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      handleSend();
+    }
   };
 
   return (
@@ -192,8 +200,10 @@ export const Chatbox = () => {
         outline: 'none',
         color: 'white'
       }}
+      placeholder="Send a message..."
       value={message}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
     />
     <button
       style={{
