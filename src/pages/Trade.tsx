@@ -8,6 +8,7 @@ import TradingChart from '../../src/components/TradingChart/TradingChart';
 import { TradingOrderForm } from '../../src/components/TradingOrderForm';
 import { TradingPositionTable } from '../../src/components/TradingPositionTable';
 import { DailyPerformanceChart } from '../../src/components/DailyChart';
+import { Chatbox } from '../../src/components/Chatbox';
 import { useStore } from '../../src/context/StoreContext';
 import { Cumulative } from './MiniPage/Cumulative';
 import { PositionData } from 'src/components/Table/PositionData';
@@ -27,8 +28,10 @@ export const Trade = () => {
 
   return (
     <TradeContainer>
+
       {miniPage === 0 && (
         <>
+          <Chatbox/>
           <TokenDetails pairIndex={pairIndex} setPairIndex={setPairIndex} />
           <Container>
             <TradingForm>
