@@ -15,18 +15,18 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
       <img
         src={profilePicture}
         alt="Profile"
-        style={{ width: 50, height: 50, borderRadius: 25 }}
+        style={{ width: 40, height: 40, borderRadius: 999, marginTop: '2px' }}
       />
       <div style={{ marginLeft: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontWeight: 'normal' }}>{username}</h4>
-          <span style={{ marginLeft: 10, color: '#8e9297' }}>
+          <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '15px' }}>{username}</h4>
+          <span style={{ marginLeft: 10, color: '#8e9297', fontSize: '15px' }}>
             {moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').format(
               'MMM DD, YYYY HH:mm'
             )}
           </span>
         </div>
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{message}</p>
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '14px' }}>{message}</p>
       </div>
     </div>
   );
