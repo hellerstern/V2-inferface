@@ -180,7 +180,11 @@ export const Chatbox = () => {
   }, [isClosed]);
 
   return (
-    <div>
+    <div
+      style={{
+        touchAction: 'none'
+      }}
+    >
       {
         isClosed ?
         <animated.div
@@ -205,119 +209,110 @@ export const Chatbox = () => {
           />
         </animated.div>
         :
-        <div style={
-          isDragging ? {
-            userSelect: 'none',
-            MozUserSelect: 'none',
-            KhtmlUserSelect: 'none',
-            WebkitUserSelect: 'none'
-          } : {}
-        }>
+        <div
+          style={{
+            position: 'fixed',
+            left: currentPosition.x,
+            top: currentPosition.y,
+            width: 300,
+            height: 400,
+            backgroundColor: '#36393f',
+            borderRadius: 0,
+            boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)',
+            zIndex: 1000
+          }}
+        >
           <div
             style={{
-              position: 'fixed',
-              left: currentPosition.x,
-              top: currentPosition.y,
-              width: 300,
-              height: 400,
-              backgroundColor: '#36393f',
+              width: '100%',
+              height: 40,
+              backgroundColor: '#2f3136',
               borderRadius: 0,
-              boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)',
-              zIndex: 1000
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0px 20px',
+              cursor: isDragging ? 'grabbing' : 'grab'
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchEnd={handleMouseUp}
+          >
+            <h4 style={{ margin: 0, fontWeight: 'normal', color: 'white' }}>Chatbox</h4>
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#72767d'
+              }}
+              onClick={() => setClosed(true)}
+            >
+              <FaRegTimesCircle size={20} />
+            </button>
+          </div>
+          <div
+            style={{
+              width: '100%',
+              height: 310,
+              overflow: 'auto',
+              paddingLeft: 20,
+              paddingRight: 20,
+              color: 'white'
             }}
           >
-            <div
-              style={{
-                width: '100%',
-                height: 40,
-                backgroundColor: '#2f3136',
-                borderRadius: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0px 20px',
-                cursor: isDragging ? 'grabbing' : 'grab'
-              }}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onTouchStart={handleMouseDown}
-              onTouchEnd={handleMouseUp}
-            >
-              <h4 style={{ margin: 0, fontWeight: 'normal', color: 'white' }}>Chatbox</h4>
-              <button
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#72767d'
-                }}
-                onClick={() => setClosed(true)}
-              >
-                <FaRegTimesCircle size={20} />
-              </button>
+            <div style={{ overflowY: 'scroll', height: '100%' }}>
+              <div>
+                {messages.map((message, index) => (
+                  <Message
+                    key={index}
+                    profilePicture={message.profilePicture}
+                    username={message.username}
+                    date={message.date}
+                    time={message.time}
+                    message={message.message}
+                  />
+                ))}
+              </div>
+              <div ref={(el) => { messagesEnd.current = el; }} style={{ float:"left", clear: "both" }}/>
             </div>
-            <div
+          </div>
+          <div
+            style={{
+              width: '100%',
+              height: 50,
+              backgroundColor: '#2f3136',
+              borderRadius: 0,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0px 20px'
+            }}
+          >
+            <input
               style={{
-                width: '100%',
-                height: 310,
-                overflow: 'auto',
-                paddingLeft: 20,
-                paddingRight: 20,
+                flex: 1,
+                background: 'none',
+                border: 'none',
+                outline: 'none',
                 color: 'white'
               }}
-            >
-              <div style={{ overflowY: 'scroll', height: '100%' }}>
-                <div>
-                  {messages.map((message, index) => (
-                    <Message
-                      key={index}
-                      profilePicture={message.profilePicture}
-                      username={message.username}
-                      date={message.date}
-                      time={message.time}
-                      message={message.message}
-                    />
-                  ))}
-                </div>
-                <div ref={(el) => { messagesEnd.current = el; }} style={{ float:"left", clear: "both" }}/>
-              </div>
-            </div>
-            <div
+              placeholder="Send a message..."
+              value={message}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+            <button
               style={{
-                width: '100%',
-                height: 50,
-                backgroundColor: '#2f3136',
-                borderRadius: 0,
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0px 20px'
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#43b581'
               }}
+              onClick={handleSend}
             >
-              <input
-                style={{
-                  flex: 1,
-                  background: 'none',
-                  border: 'none',
-                  outline: 'none',
-                  color: 'white'
-                }}
-                placeholder="Send a message..."
-                value={message}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-              />
-              <button
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#43b581'
-                }}
-                onClick={handleSend}
-              >
-                Send
-              </button>
-            </div>
+              Send
+            </button>
           </div>
         </div>
       }
