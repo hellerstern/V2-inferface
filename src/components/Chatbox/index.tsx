@@ -167,6 +167,7 @@ export const Chatbox = () => {
         <animated.div
         style={{
           position: 'fixed',
+          cursor: 'pointer',
           ...springs
         }}
         >
