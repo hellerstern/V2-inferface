@@ -70,6 +70,7 @@ export const Chatbox = () => {
   useEffect(() => {
     const handleMouseMove = (event: any) => {
       if (isDragging) {
+        event.preventDefault();
         setCurrentPosition({
           x: event.clientX - initialPosition.x,
           y: event.clientY - initialPosition.y
@@ -106,7 +107,7 @@ export const Chatbox = () => {
       userSent.current = true;
       setMessages([...messages,
         {
-          profilePicture: "https://i1.sndcdn.com/artworks-yoaYzcn8fmBy6F3O-Ex8ICg-t500x500.jpg",
+          profilePicture: "https://i.ibb.co/PTMBfJK/tigris-User.png",
           username: "AnonTrader123",
           date: "2022-12-30",
           time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
@@ -216,7 +217,8 @@ export const Chatbox = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0px 20px'
+                padding: '0px 20px',
+                cursor: isDragging ? 'grabbing' : 'grab'
               }}
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
