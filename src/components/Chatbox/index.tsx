@@ -18,7 +18,7 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
       <img
         src={profilePicture}
         alt="Profile"
-        style={{ width: 30, height: 30, borderRadius: 999}}
+        style={{ width: 40, height: 40, borderRadius: 999}}
       />
       <div style={{ marginLeft: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -37,6 +37,20 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
 };
 
 export const Chatbox = () => {
+  // Generate user's profile picture
+  useEffect(() => {
+    if (localStorage.getItem("ChatPFP") === null) {
+      getRandomCatgirl();
+    }
+  }, [])
+  
+  async function getRandomCatgirl() {
+    const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=AIzaSyBiPxAr2gmWpR4d9Vxt_tZaeIJf-XH0jn4&cx=e0f354ced324a40e9&q=anime+catgirl+profile+picture&searchType=image&start=${Math.floor(Math.random() * 400)}`);
+    const data = await response.json();
+    const image = data.items[0];
+    localStorage.setItem("ChatPFP", image.link);
+  }
+
   const [isDragging, setIsDragging] = useState(false);
   const [initialPosition, setInitialPosition] = useState({ x: 10, y: 200 });
   const [currentPosition, setCurrentPosition] = useState({ x: 10, y: 200 });
@@ -123,9 +137,15 @@ export const Chatbox = () => {
     // Send message logic goes here
     if(message !== "") {
       userSent.current = true;
+      let pfp;
+      if (localStorage.getItem("ChatPFP") !== null) {
+        pfp = localStorage.getItem("ChatPFP") as string;
+      } else {
+        pfp = "https://i.ibb.co/PTMBfJK/tigris-User.png";
+      }
       setMessages([...messages,
         {
-          profilePicture: "https://i.ibb.co/PTMBfJK/tigris-User.png",
+          profilePicture: pfp,
           username: "AnonTrader123",
           date: "2022-12-30",
           time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
