@@ -67,7 +67,29 @@ export const Chatbox = () => {
   };
 
   const [message, setMessage] = useState('');
-  const [sentMessage, setSentMessage] = useState('');
+  const [messages, setMessages] = useState([
+    {
+      profilePicture: "https://media.tenor.com/NoMOEOtIhJQAAAAd/discord-profile-neko.gif",
+      username: "GainsGoblin",
+      date: "2022-12-30",
+      time: "5:18",
+      message: "Hello"
+    },
+    {
+      profilePicture: "https://i.pinimg.com/736x/1d/58/75/1d58751a974becc20dd43507e7fbf1c6.jpg",
+      username: "Telcontar",
+      date: "2022-12-30",
+      time: "5:19",
+      message: ":pepeweird:"
+    },
+    {
+      profilePicture: "https://pbs.twimg.com/profile_images/1370228657717866496/ev0xEQrK_400x400.jpg",
+      username: "Heinz",
+      date: "2022-12-30",
+      time: "5:21",
+      message: "Sunflower farm is making millionzz"
+    }
+  ]);
 
   const handleChange = (event: any) => {
     setMessage(event.target.value);
@@ -75,7 +97,15 @@ export const Chatbox = () => {
 
   const handleSend = () => {
     // Send message logic goes here
-    setSentMessage(message);
+    setMessages([...messages,
+      {
+        profilePicture: "https://i1.sndcdn.com/artworks-yoaYzcn8fmBy6F3O-Ex8ICg-t500x500.jpg",
+        username: "AnonTrader123",
+        date: "2022-12-30",
+        time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
+        message: message
+      }
+    ]);
     setMessage('');
   };
 
@@ -129,30 +159,17 @@ export const Chatbox = () => {
       color: 'white'
     }}
   >
-    <div>
-      <div>
+    <div style={{ overflowY: 'scroll', height: 340 }}>
+      {messages.map((message, index) => (
         <Message
-          profilePicture="https://media.tenor.com/NoMOEOtIhJQAAAAd/discord-profile-neko.gif"
-          username="GainsGoblin"
-          date="2022-12-30"
-          time="05:18"
-          message="Hello"
+          key={index}
+          profilePicture={message.profilePicture}
+          username={message.username}
+          date={message.date}
+          time={message.time}
+          message={message.message}
         />
-        <Message
-          profilePicture="https://i.pinimg.com/736x/1d/58/75/1d58751a974becc20dd43507e7fbf1c6.jpg"
-          username="Telcontar"
-          date="2022-12-30"
-          time="05:19"
-          message=":pepeweird:"
-        />
-        <Message
-          profilePicture="https://pbs.twimg.com/profile_images/1370228657717866496/ev0xEQrK_400x400.jpg"
-          username="Heinz"
-          date="2022-12-30"
-          time="05:21"
-          message="Sunflower farm is making millionzz"
-        />
-      </div>
+      ))}
     </div>
   </div>
   <div
