@@ -11,7 +11,7 @@ interface PairModalProps {
 
 export const PairSelectionModal = (props: PairModalProps) => {
   const { isModalOpen, setModalOpen, setPairIndex } = props;
-  const style = {};
+  const style = {outline: '0'};
   return (
     <Modal
       keepMounted
