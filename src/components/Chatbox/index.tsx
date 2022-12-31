@@ -99,7 +99,6 @@ export const Chatbox = () => {
           message: data.message
         }
       ]);
-      scrollToBottomIfNeeded();
     });
   }, [messages]);
 
@@ -109,12 +108,20 @@ export const Chatbox = () => {
       // Get the last child element of the messages list
       const lastMessage = messagesListRef.current.lastChild;
 
-      // Get the scroll position and total height of the messages list
-      const { scrollTop, scrollHeight } = messagesListRef.current;
-      const { clientHeight } = messagesListRef.current.parentNode;
+      // Get the total height of the messages list
+      const totalHeight = messagesListRef.current.scrollHeight;
+      console.log(totalHeight);
 
-      // If the user is already scrolled to the bottom, scroll to the bottom of the list
-      if ((scrollTop as number) + (clientHeight as number) === scrollHeight) {
+      // Get the current scroll position of the messages list
+      const scrollPosition = messagesListRef.current.scrollTop;
+      console.log(scrollPosition);
+
+      // Calculate the height of the visible portion of the messages list
+      const visibleHeight = messagesListRef.current.offsetHeight;
+      console.log(visibleHeight);
+
+      // Check if the scroll position is at the bottom of the list
+      if ((scrollPosition as number) + (visibleHeight as number) + 300 >= totalHeight) {
         lastMessage.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
       }
     }
@@ -163,6 +170,8 @@ export const Chatbox = () => {
     if (userSent.current) {
       userSent.current = false;
       scrollToBottom();
+    } else {
+      scrollToBottomIfNeeded();
     }
   }, [messages])
 

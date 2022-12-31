@@ -31,11 +31,7 @@ oracleSocket.on('data', (data) => {
     oracleData = data;
 });
 
-export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigitalocean.app', {
-    transports: ['websocket'],
-    pingTimeout: 30000,
-    pingInterval: 30000
-});
+export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigitalocean.app', {transports: ['websocket']});
 
 chatSocket.on('disconnect', (reason) => {
     console.log('[chatSocket] Disconnected:', reason);
