@@ -183,21 +183,19 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }: DisclaimerProps) => (
 );
 
 root.render(
-  <React.StrictMode>
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        chains={chains}
-        theme={TigrisTheme}
-        modalSize="compact"
-        appInfo={{
-          appName: 'Tigris Trade',
-          disclaimer: Disclaimer
-        }}
-      >
-        <App />
-      </RainbowKitProvider>
-    </WagmiConfig>
-  </React.StrictMode>
+  <WagmiConfig client={wagmiClient}>
+    <RainbowKitProvider
+      chains={chains}
+      theme={TigrisTheme}
+      modalSize="compact"
+      appInfo={{
+        appName: 'Tigris Trade',
+        disclaimer: Disclaimer
+      }}
+    >
+      <App />
+    </RainbowKitProvider>
+  </WagmiConfig>
 );
 
 // If you want to start measuring performance in your app, pass a function

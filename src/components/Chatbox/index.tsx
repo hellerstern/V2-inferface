@@ -58,6 +58,9 @@ export const Chatbox = () => {
 
   const [fetchTimeout, setFetchTimeout] = useState(0);
 
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
+
   async function fetchMessages() {
     if (fetchTimeout > Date.now()) return;
     setFetchTimeout(Date.now() + 300);
@@ -83,18 +86,25 @@ export const Chatbox = () => {
   }
 
   // Listen for new messages
-  chatSocket.on('message', (data: any) => {
-    setMessages([...messages,
-      {
-        profilePicture: data.profilePicture,
-        username: data.username,
-        date: data.date,
-        time: data.time,
-        message: data.message
-      }
-    ]);
-    scrollToBottomIfNeeded();
-  });
+  useEffect(() => {
+    chatSocket.on('message', (data: any) => {
+      console.log(data);
+      setMessages([...messages,
+        {
+          profilePicture: data.profilePicture,
+          username: data.username,
+          date: data.date,
+          time: data.time,
+          message: data.message
+        }
+      ]);
+      scrollToBottomIfNeeded();
+    });
+
+    return() => {
+      chatSocket.off('message');
+    }
+  }, [messages]);
 
   const messagesListRef = useRef<any>(null);
   const scrollToBottomIfNeeded = () => {
@@ -139,9 +149,6 @@ export const Chatbox = () => {
       userSent.current = true;
     }
   };
-
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
 
   const handleChange = (event: any) => {
     setMessage(event.target.value);
