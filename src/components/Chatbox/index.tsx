@@ -21,7 +21,7 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
         alt="Profile"
         style={{ width: 40, height: 40, borderRadius: 999}}
       />
-      <div style={{ marginLeft: 20 }}>
+      <div style={{ marginLeft: 10}}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '13px' }}>{username}
           <span style={{ marginLeft: 10, color: '#8e9297', fontSize: '13px' }}>
@@ -351,8 +351,8 @@ export const Chatbox = () => {
               width: '100%',
               height: 310,
               overflow: 'auto',
-              paddingLeft: 20,
-              paddingRight: 20,
+              paddingLeft: 10,
+              paddingRight: 0,
               color: 'white'
             }}
           >
