@@ -37,6 +37,10 @@ export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigit
     pingInterval: 30000
 });
 
+chatSocket.on('disconnect', (reason) => {
+    console.log('[chatSocket] Disconnected:', reason);
+});
+
 export let oracleData = "Loading...";
 
 export const SocketContext = createContext();

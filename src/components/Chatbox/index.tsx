@@ -87,6 +87,7 @@ export const Chatbox = () => {
 
   // Listen for new messages
   useEffect(() => {
+    chatSocket.off('message');
     chatSocket.on('message', (data: any) => {
       console.log(data);
       setMessages([...messages,
@@ -100,10 +101,6 @@ export const Chatbox = () => {
       ]);
       scrollToBottomIfNeeded();
     });
-
-    return() => {
-      chatSocket.off('message');
-    }
   }, [messages]);
 
   const messagesListRef = useRef<any>(null);
