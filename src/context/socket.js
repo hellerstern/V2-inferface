@@ -31,6 +31,8 @@ oracleSocket.on('data', (data) => {
     oracleData = data;
 });
 
+export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigitalocean.app', {transports: ['websocket'] });
+
 export let oracleData = "Loading...";
 
 export const SocketContext = createContext();

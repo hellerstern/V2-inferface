@@ -4,6 +4,7 @@ import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import moment from 'moment';
 import { useSpring, animated } from '@react-spring/web'
 import './chatbubble.css';
+import { chatSocket } from 'src/context/socket';
 
 interface IMessage {
   profilePicture: any;
@@ -37,12 +38,42 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
 };
 
 export const Chatbox = () => {
+
+  // SERVER MESSAGING
   // Generate user's profile picture
   useEffect(() => {
     if (localStorage.getItem("ChatPFP") === null) {
       getRandomCatgirl();
     }
   }, [])
+
+  const messageTracker = useRef(-1);
+  const messagesFinished = useRef(false);
+
+  useEffect(() =>{
+    if (messageTracker.current >= 0) return;
+    messageTracker.current += 1;
+    fetchMessages();
+  }, []);
+
+  const [fetchTimeout, setFetchTimeout] = useState(0);
+
+  async function fetchMessages() {
+    if (fetchTimeout > Date.now()) return;
+    setFetchTimeout(Date.now() + 300);
+    const toFetch = 'https://chatbox-server-l9yj9.ondigitalocean.app/messages?start='+(messageTracker.current.toString())+'&end='+((messageTracker.current + 6).toString());
+    console.log(toFetch);
+    messageTracker.current += 6;
+    const response = await fetch(toFetch);
+    const newMessages = await response.json();
+    console.log(newMessages);
+    if (newMessages.length === 0) messagesFinished.current = true;
+    console.log(messagesFinished.current);
+    setMessages(prevMessages => [...newMessages, ...prevMessages]);
+    try {
+      messagesListRef.current.scrollBy(0,(65*newMessages.length));
+    } catch {}
+  }
   
   async function getRandomCatgirl() {
     const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=AIzaSyBiPxAr2gmWpR4d9Vxt_tZaeIJf-XH0jn4&cx=e0f354ced324a40e9&q=anime+catgirl+profile+picture&searchType=image&start=${Math.floor(Math.random() * 100)}`);
@@ -51,38 +82,110 @@ export const Chatbox = () => {
     localStorage.setItem("ChatPFP", image.link);
   }
 
+  // Listen for new messages
+  chatSocket.on('message', (data: any) => {
+    setMessages([...messages,
+      {
+        profilePicture: data.profilePicture,
+        username: data.username,
+        date: data.date,
+        time: data.time,
+        message: data.message
+      }
+    ]);
+    scrollToBottomIfNeeded();
+  });
+
+  const messagesListRef = useRef<any>(null);
+  const scrollToBottomIfNeeded = () => {
+    if (messagesListRef.current) {
+      // Get the last child element of the messages list
+      const lastMessage = messagesListRef.current.lastChild;
+
+      // Get the scroll position and total height of the messages list
+      const { scrollTop, scrollHeight } = messagesListRef.current;
+      const { clientHeight } = messagesListRef.current.parentNode;
+
+      // If the user is already scrolled to the bottom, scroll to the bottom of the list
+      if ((scrollTop as number) + (clientHeight as number) === scrollHeight) {
+        lastMessage.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+      }
+    }
+  };
+  
+  const handleSend = () => {
+    // Send message logic goes here
+    if(message !== "") {
+      let pfp;
+      if (localStorage.getItem("ChatPFP") !== null) {
+        pfp = localStorage.getItem("ChatPFP") as string;
+      } else {
+        pfp = "https://i.ibb.co/PTMBfJK/tigris-User.png";
+      }
+      let tradername;
+      if (localStorage.getItem("ChatUsername") !== null) {
+        tradername = localStorage.getItem("ChatUsername") as string;
+      } else {
+        tradername = "AnonTrader123";
+      }
+      chatSocket.emit('receive', {
+        username: tradername,
+        profilePicture: pfp,
+        date: new Date().toISOString().slice(0, 10),
+        time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
+        message: message
+      });
+      setMessage('');
+      userSent.current = true;
+    }
+  };
+
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
+
+  const handleChange = (event: any) => {
+    setMessage(event.target.value);
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      handleSend();
+    }
+  };
+
+  const userSent = useRef(false);
+
+  useEffect(() => {
+    if (userSent.current) {
+      userSent.current = false;
+      scrollToBottom();
+    }
+  }, [messages])
+
+  const scrollToBottom = () => {
+    messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
+  }
+
+  const handleScroll = () => {
+    if (fetchTimeout > Date.now()) return;
+    if (!messagesFinished.current) {
+      // Check if the user has scrolled near the top of the messages list
+      if (messagesListRef.current.scrollTop < 10) {
+        // Query more messages from the server
+        fetchMessages();
+      }
+    }
+  };
+
+  // Dragging
   const [isDragging, setIsDragging] = useState(false);
   const [initialPosition, setInitialPosition] = useState({ x: 10, y: 200 });
   const [currentPosition, setCurrentPosition] = useState({ x: 10, y: 200 });
   const messagesEnd = useRef<any>();
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      profilePicture: "https://media.tenor.com/NoMOEOtIhJQAAAAd/discord-profile-neko.gif",
-      username: "GainsGoblin",
-      date: "2022-12-30",
-      time: "5:18",
-      message: "Hello"
-    },
-    {
-      profilePicture: "https://i.pinimg.com/736x/1d/58/75/1d58751a974becc20dd43507e7fbf1c6.jpg",
-      username: "Telcontar",
-      date: "2022-12-30",
-      time: "5:19",
-      message: ":pepeweird:"
-    },
-    {
-      profilePicture: "https://pbs.twimg.com/profile_images/1370228657717866496/ev0xEQrK_400x400.jpg",
-      username: "Heinz",
-      date: "2022-12-30",
-      time: "5:21",
-      message: "Sunflower farm is making millionzz"
-    }
-  ]);
+
   const [isClosed, setClosed] = useState(true);
 
   const getClientPos = (event: any) => {
-    console.log(event);
     if (event.touches) {
       return {
         clientX: event.touches[0].clientX,
@@ -129,52 +232,6 @@ export const Chatbox = () => {
     setIsDragging(false);
   };
 
-  const handleChange = (event: any) => {
-    setMessage(event.target.value);
-  };
-
-  const handleSend = () => {
-    // Send message logic goes here
-    if(message !== "") {
-      userSent.current = true;
-      let pfp;
-      if (localStorage.getItem("ChatPFP") !== null) {
-        pfp = localStorage.getItem("ChatPFP") as string;
-      } else {
-        pfp = "https://i.ibb.co/PTMBfJK/tigris-User.png";
-      }
-      setMessages([...messages,
-        {
-          profilePicture: pfp,
-          username: "AnonTrader123",
-          date: "2022-12-30",
-          time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
-          message: message
-        }
-      ]);
-      setMessage('');
-    }
-  };
-
-  const handleKeyDown = (event: any) => {
-    if (event.key === 'Enter') {
-      handleSend();
-    }
-  };
-
-  const userSent = useRef(false);
-
-  useEffect(() => {
-    if (userSent.current) {
-      userSent.current = false;
-      scrollToBottom();
-    }
-  }, [messages])
-
-  const scrollToBottom = () => {
-    messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
-  }
-
   const [springs, api] = useSpring(() => ({
     from: {
       x: currentPosition.x,
@@ -196,7 +253,10 @@ export const Chatbox = () => {
         x: 10,
         y: currentPosition.y
       }
-    })
+    });
+    if (!isClosed) {
+      messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
+    }
   }, [isClosed]);
 
   return (
@@ -225,7 +285,7 @@ export const Chatbox = () => {
           }}/>
           <div className="spinner"
           onClick={() => {
-            setClosed(false)
+            setClosed(false);
           }}
           />
         </animated.div>
@@ -283,19 +343,17 @@ export const Chatbox = () => {
               color: 'white'
             }}
           >
-            <div style={{ overflowY: 'scroll', height: '100%' }}>
-              <div>
-                {messages.map((message, index) => (
-                  <Message
-                    key={index}
-                    profilePicture={message.profilePicture}
-                    username={message.username}
-                    date={message.date}
-                    time={message.time}
-                    message={message.message}
-                  />
-                ))}
-              </div>
+            <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={() => handleScroll()}>
+              {messages.map((message, index) => (
+                <Message
+                  key={index}
+                  profilePicture={message.profilePicture}
+                  username={message.username}
+                  date={message.date}
+                  time={message.time}
+                  message={message.message}
+                />
+              ))}
               <div ref={(el) => { messagesEnd.current = el; }} style={{ float:"left", clear: "both" }}/>
             </div>
           </div>
