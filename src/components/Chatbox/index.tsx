@@ -69,7 +69,7 @@ export const Chatbox = () => {
     console.log(newMessages);
     if (newMessages.length === 0) messagesFinished.current = true;
     console.log(messagesFinished.current);
-    setMessages(prevMessages => [...newMessages, ...prevMessages]);
+    setMessages(prevMessages => [...newMessages.slice().reverse(), ...prevMessages]);
     try {
       messagesListRef.current.scrollBy(0,(65*newMessages.length));
     } catch {}
