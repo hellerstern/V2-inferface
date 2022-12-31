@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
+import { MdSend } from "react-icons/md";
 import moment from 'moment';
 import { useSpring, animated } from '@react-spring/web'
 import './chatbubble.css';
@@ -341,7 +342,7 @@ export const Chatbox = () => {
             onTouchStart={handleMouseDown}
             onTouchEnd={handleMouseUp}
           >
-            <h4 style={{ margin: 0, fontWeight: 'normal', color: 'white' }}>Chatbox</h4>
+            <div style={{ margin: 0, fontWeight: '400', fontSize: 14, color: '#72767d'}}>Open Chat</div>
             <button
               style={{
                 background: 'none',
@@ -407,11 +408,12 @@ export const Chatbox = () => {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: '#43b581'
+                color: '#43b581',
+                marginBottom: -5
               }}
               onClick={handleSend}
             >
-              Send
+              <MdSend size={20} />
             </button>
           </div>
         </div>
