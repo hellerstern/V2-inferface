@@ -3,7 +3,6 @@ import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';
 import { TokenDetails } from '../../src/components/TokenDetails';
-import { PairSelectionTable } from '../../src/components/PairSelectionTable';
 import TradingChart from '../../src/components/TradingChart/TradingChart';
 import { TradingOrderForm } from '../../src/components/TradingOrderForm';
 import { TradingPositionTable } from '../../src/components/TradingPositionTable';
@@ -38,13 +37,12 @@ export const Trade = () => {
               <TradingSection>
                 <TradingChart asset={pairIndex} positionData={positionData} />
               </TradingSection>
-              <PairTableContainer>
-                <PairSelectionTable isMobile={false} setPairIndex={setPairIndex} />
-              </PairTableContainer>
-              <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
-              <TradingOrderForm pairIndex={pairIndex} />
-              <DailyPerformanceChart />
+              <OrderFormContainer>
+                <TradingOrderForm pairIndex={pairIndex} />
+              </OrderFormContainer>
             </TradingForm>
+            <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
+            <DailyPerformanceChart />
           </Container>
         </>
       )}
@@ -65,6 +63,7 @@ const TradingForm = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '3fr 1fr',
   gap: '5px',
+  marginBottom: '5px',
   [theme.breakpoints.down('desktop')]: {
     gridTemplateColumns: '1fr 3fr'
   }
@@ -79,16 +78,15 @@ const TradingSection = styled(Box)(({ theme }) => ({
   }
 }));
 
-const PairTableContainer = styled(Box)(({ theme }) => ({
-  minWidth: '400px',
+const OrderFormContainer = styled(Box)(({ theme }) => ({
   width: '400px',
+  maxWidth: '400px',
   height: '100%',
-  minHeight: '560px',
   backgroundColor: '#18191D',
   [theme.breakpoints.down('desktop')]: {
     order: 2
   },
   [theme.breakpoints.down('md')]: {
-    display: 'none'
+    order: 2
   }
 }));

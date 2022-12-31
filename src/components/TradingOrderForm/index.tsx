@@ -724,6 +724,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 };
 
 const Container = styled(Box)(({ theme }) => ({
+  maxWidth: '100%',
   minHeight: '560px',
   height: '100%',
   order: 3,
@@ -741,15 +742,17 @@ const FormLabel = styled(Box)(({ theme }) => ({
   padding: '15px 14px',
   textTransform: 'uppercase',
   fontSize: '12px',
-  lineHeight: '20px',
+  lineHeight: '15px',
   letterSpacing: '0.1em',
-  fontWeight: 700
+  fontWeight: 700,
+  borderBottom: '5px solid #141416'
 }));
 
 const FormContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
   backgroundColor: '#18191D',
+  marginRight: '5px',
   marginTop: '7px',
   padding: '20px 20px'
 }));

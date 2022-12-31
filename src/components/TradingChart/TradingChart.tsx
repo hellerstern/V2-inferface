@@ -13,7 +13,7 @@ const TradingChart = ({ asset, positionData }: Props) => {
   return (
     <div style={{
       width: '100%',
-      height: '560px',
+      height: '640px',
       userSelect: 'none',
       MozUserSelect: 'none',
       KhtmlUserSelect: 'none',

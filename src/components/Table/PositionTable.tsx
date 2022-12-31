@@ -239,6 +239,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
             <TableCell>User</TableCell>
             <TableCell>L/S</TableCell>
             <TableCell>Pair</TableCell>
+            <TableCell>Size</TableCell>
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
@@ -262,6 +263,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
               </TableCell>
               <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
+              <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
