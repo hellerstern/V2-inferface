@@ -33,7 +33,7 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
           </span>
           </h4>
         </div>
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px' }}>{message}</p>
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: '18px' }}>{message}</p>
       </div>
     </div>
   );
@@ -366,13 +366,20 @@ export const Chatbox = () => {
             left: currentPosition.x,
             top: currentPosition.y,
             width: 300,
+            minWidth: 250,
             height: 400,
+            minHeight: 300,
             backgroundColor: '#36393f',
             borderRadius: 0,
             boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)',
-            zIndex: 1000
+            zIndex: 1000,
+            resize: 'both',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'auto'
           }}
         >
+          {/* Top bar of the chatbox */}
           <div
             style={{
               width: '100%',
@@ -383,7 +390,8 @@ export const Chatbox = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '0px 10px',
-              cursor: isDragging ? 'grabbing' : 'grab'
+              cursor: isDragging ? 'grabbing' : 'grab',
+              flexShrink: 0
             }}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
@@ -409,14 +417,15 @@ export const Chatbox = () => {
               <FaRegTimesCircle size={20} style={{marginBottom: '-3px'}} />
             </button>
           </div>
+          {/* List of messages */}
           <div
             style={{
               width: '100%',
-              height: 320,
-              overflow: 'auto',
               paddingLeft: 10,
               paddingRight: 0,
-              color: 'white'
+              color: 'white',
+              flexGrow: 1,
+              overflowY: 'scroll'
             }}
           >
             <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={() => handleScroll()}>
@@ -433,6 +442,7 @@ export const Chatbox = () => {
               <div ref={(el) => { messagesEnd.current = el; }} style={{ float:"left", clear: "both" }}/>
             </div>
           </div>
+          {/* Bottom bar for sending message */}
           <div
             style={{
               width: '100%',
@@ -441,7 +451,8 @@ export const Chatbox = () => {
               borderRadius: 0,
               display: 'flex',
               alignItems: 'center',
-              padding: '0px 10px'
+              padding: '0px 10px',
+              flexShrink: 0
             }}
           >
             <input
