@@ -11,6 +11,7 @@ import { Chatbox } from '../../src/components/Chatbox';
 import { useStore } from '../../src/context/StoreContext';
 import { Cumulative } from './MiniPage/Cumulative';
 import { PositionData } from 'src/components/Table/PositionData';
+import { TraderProfile } from 'src/context/profile';
 
 export const Trade = () => {
 
@@ -23,6 +24,7 @@ export const Trade = () => {
 
   useEffect(() => {
     if (localStorage.getItem('FavPairs') === null) localStorage.setItem('FavPairs', '["BTC/USD", "ETH/USD"]');
+    TraderProfile();
   }, []);
 
   return (

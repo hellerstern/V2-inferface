@@ -6,6 +6,7 @@ import { AppThemeProvider } from './Provider';
 import { Layout } from './layouts/layout';
 
 import { Proxy } from './pages/Proxy';
+import { Profile } from './pages/Profile';
 import { Home } from './pages';
 
 import './App.css';
@@ -20,6 +21,7 @@ function App() {
               <Route path={PUBLIC_ROUTES.default} element={<Home />} />
               <Route path={PUBLIC_ROUTES.home} element={<Home />} />
               <Route path={PUBLIC_ROUTES.proxy} element={<Proxy />} />
+              <Route path={PUBLIC_ROUTES.profile} element={<Profile />} />
             </Routes>
           </Layout>
         </AppThemeProvider>

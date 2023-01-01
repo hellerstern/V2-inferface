@@ -17,6 +17,8 @@ import { CurrencyList } from '../../src/components/List/Currency';
 import { NavList } from '../../src/components/List/NavList';
 import { AccountSetting } from '../../src/components/List/AccountSetting';
 import { useNavigate } from 'react-router-dom';
+import { TraderProfile } from 'src/context/profile';
+
 // import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
   const navigate = useNavigate();
@@ -87,9 +89,11 @@ export const Header = () => {
                     largeScreen: true
                   }}
                 />
-                <Avatar sx={{ width: 30, height: 30, marginLeft: 1 }}>
-                  <Person />
-                </Avatar>
+                <IconButton onClick={() => navigate('/profile/'+(TraderProfile().username as string))} sx={{marginLeft: 1}}>
+                  <Avatar sx={{ width: 30, height: 30 }}>
+                    <Person />
+                  </Avatar>
+                </IconButton>
               </Actions>
             </ActiveBar>
             <MobileActiveBar>
