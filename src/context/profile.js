@@ -27,11 +27,11 @@ async function getTraderProfile() {
 }
 
 async function generateUsername() {
-    const adjectives = ['adorable', 'beautiful', 'clean', 'drab', 'elegant', 'fancy', 'glamorous', 'handsome', 'long', 'magnificent', 'old-fashioned', 'plain', 'quaint', 'sparkling', 'ugliest', 'unsightly', 'wide-eyed', 'alive', 'better', 'careful', 'clever', 'dead', 'easy', 'famous', 'gifted', 'helpful', 'important', 'inexpensive', 'mushy', 'odd', 'powerful', 'rich', 'shy', 'tender', 'unimportant', 'uninterested', 'vast', 'wrong', 'angry', 'bewildered', 'clumsy', 'defeated', 'embarrassed', 'fierce', 'grumpy', 'helpless', 'itchy', 'jealous', 'lazy', 'mysterious', 'nervous', 'obnoxious', 'panicky', 'repulsive', 'scary', 'thoughtless', 'uptight', 'worried'];
-  
+    const adjectives = ['dashing', 'equal', 'smug, weighty, huge, prickly, grim, vast, inner, safe, ancient, puzzling, little, some, unable, steep, feline, any, liquid, mad, wary, grand, rich, lined, giant, one, chubby, poised, giddy, brisk, long, fast, creamy, square, living, needy, bony, mixed, crisp, tough, linear, cute, half, regal, shaky, feisty, foamy, squeaky, unruly, lethal, glass, wobbly, crazy, brief, asleep, silver, silly, rotten, greedy, urban, wavy, earthy, red, plastic, evil, bogus, stained, joyful, huge, tiny, guilty, unfit, slow, shady, large, original, original, true, candid, natural, used, steel, fragile, curvy, frozen, metallic, loose, gentle, boring, sedate, healthy, spicy, spotty, secret, frantic, dry, numb, salty, curved, acidic, cruel, unripe, rubbery, soupy, showy, lewd, icy, vain, fertile, godly, gaping, sparse, swift, caring, itchy, young, elfin, lean, pushy']
+
     const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
     const randomNumber = Math.floor(Math.random() * 10000) + 1;
-  
+
     return adjective + "Trader" + randomNumber.toString();
 }
 
@@ -40,6 +40,6 @@ async function getRandomCatgirl() {
     const data = await response.json();
     const image = data.items[0];
     return image.link;
-  }
+}
 
 export const ProfileContext = createContext();
