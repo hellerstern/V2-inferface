@@ -17,7 +17,7 @@ interface IMessage {
 }
 const Message = ({ profilePicture, username, date, time, message }: IMessage) => {
   return (
-    <div style={{ display: 'flex', marginBottom: 20, marginTop: 5 }}>
+    <div style={{ display: 'flex', marginBottom: 15, marginTop: 5 }}>
       <img
         src={profilePicture}
         alt="Profile"
