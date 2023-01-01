@@ -233,60 +233,131 @@ export const Chatbox = () => {
 
   const [springs, api] = useSpring(() => ({
     from: {
-      x: currentPosition.x,
-      y: currentPosition.y
+      x: 0,
+      y: 0
     },
     to: {
-      x: 10,
-      y: currentPosition.y
+      x: window.innerWidth,
+      y: window.innerHeight
     }
   }))
 
   useEffect(() => {
-    api.start({
-      from: {
-        x: currentPosition.x,
-        y: currentPosition.y - 80
-      },
-      to: {
-        x: 10,
-        y: currentPosition.y - 80
-      }
-    });
+    if (isClosed) {
+      api.start({
+        from: {
+          x: currentPosition.x,
+          y: 0
+        },
+        to: {
+          x: 10,
+          y: 0
+        }
+      });
+    }
     if (!isClosed) {
       messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
     }
   }, [isClosed]);
 
+  // ================================================================================================================
+  // BUBBLE
+  // ================================================================================================================
+  const [isBubbleDragging, setIsBubbleDragging] = useState(false);
+  const [initialBubblePosition, setInitialBubblePosition] = useState({ x: 10, y: 200 });
+  const [currentBubblePosition, setCurrentBubblePosition] = useState({ x: 10, y: 200 });
+  const [beforeBubblePosition, setBeforeBubblePosition] = useState({ x: 10, y: 200 });
+
+  useEffect(() => {
+    const handleBubbleMouseMove = (event: any) => {
+      if (isBubbleDragging) {
+        event.preventDefault();
+        const { clientX, clientY } = getClientPos(event);
+        setCurrentBubblePosition({
+          x: clientX - initialBubblePosition.x,
+          y: clientY - initialBubblePosition.y
+        });
+      }
+    };
+
+    document.addEventListener('mousemove', handleBubbleMouseMove);
+    document.addEventListener('touchmove', handleBubbleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleBubbleMouseMove);
+      document.removeEventListener('touchmove', handleBubbleMouseMove);
+    };
+  }, [isBubbleDragging, initialBubblePosition]);
+
+  const handleBubbleMouseDown = (event: any) => {
+    const { clientX, clientY } = getClientPos(event);
+    setInitialBubblePosition({
+      x: clientX - currentBubblePosition.x,
+      y: clientY - currentBubblePosition.y
+    });
+    setBeforeBubblePosition({
+      x: currentBubblePosition.x,
+      y: currentBubblePosition.y
+    });
+    setIsBubbleDragging(true);
+  };
+
+  const handleBubbleMouseUp = () => {
+    setIsBubbleDragging(false);
+    if (currentBubblePosition.x === beforeBubblePosition.x && currentBubblePosition.y === beforeBubblePosition.y) {
+      setClosed(false);
+    }
+    const storeX = currentBubblePosition.x;
+    setCurrentBubblePosition({
+      x: 10,
+      y: currentBubblePosition.y
+    });
+    api.start({
+      from: {
+        x: storeX,
+        y: 0
+      },
+      to: {
+        x: 10,
+        y: 0
+      }
+    });
+  };
+
   return (
     <div
       style={{
         touchAction: 'none',
-        zIndex: 1
+        zIndex: 1,
+        position: 'fixed'
       }}
     >
       {
         isClosed ?
         <animated.div
-        style={{
-          position: 'fixed',
-          cursor: 'pointer',
-          ...springs
-        }}
-        >
-          <HiChatBubbleLeftRight size={20} style={{
-            position: 'relative',
-            top: 41,
-            left: 15,
-            zIndex: 1,
-            color: '#FFFFFF',
-            pointerEvents: 'none'
-          }}/>
-          <div className="spinner"
-          onClick={() => {
-            setClosed(false);
+          style={{
+            position: 'fixed',
+            cursor: 'pointer',
+            left: currentBubblePosition.x,
+            top: currentBubblePosition.y,
+            ...springs
           }}
-          />
+          onMouseDown={handleBubbleMouseDown}
+          onMouseUp={handleBubbleMouseUp}
+          onTouchStart={handleBubbleMouseDown}
+          onTouchEnd={handleBubbleMouseUp}
+        >
+          <div style={{position: 'fixed'}}>
+            <HiChatBubbleLeftRight size={20} style={{
+              position: 'relative',
+              top: 41,
+              left: 15,
+              zIndex: 1,
+              color: '#FFFFFF',
+              pointerEvents: 'none'
+            }}/>
+            <div className="spinner" />
+          </div>
         </animated.div>
         :
         <div
@@ -327,7 +398,13 @@ export const Chatbox = () => {
                 cursor: 'pointer',
                 color: '#72767d'
               }}
-              onClick={() => setClosed(true)}
+              onClick={() => {
+                setCurrentBubblePosition({
+                  x: 10,
+                  y: currentPosition.y
+                });
+                setClosed(true);
+              }}
             >
               <FaRegTimesCircle size={20} />
             </button>
