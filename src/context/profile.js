@@ -22,7 +22,9 @@ async function getTraderProfile() {
         profile.description = "Hi, I am " + profile.username + ".";
         isProfileChanged = true;
     }
-    if (isProfileChanged) localStorage.setItem("TraderProfile", JSON.stringify(profile));
+    if (isProfileChanged) {
+        localStorage.setItem("TraderProfile", JSON.stringify(profile));
+    }
     return profile;
 }
 

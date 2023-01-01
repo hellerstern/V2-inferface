@@ -246,11 +246,11 @@ export const Chatbox = () => {
     api.start({
       from: {
         x: currentPosition.x,
-        y: currentPosition.y
+        y: currentPosition.y - 80
       },
       to: {
         x: 10,
-        y: currentPosition.y
+        y: currentPosition.y - 80
       }
     });
     if (!isClosed) {
