@@ -406,7 +406,7 @@ export const Chatbox = () => {
                 setClosed(true);
               }}
             >
-              <FaRegTimesCircle size={20} />
+              <FaRegTimesCircle size={20} style={{marginBottom: '-3px'}} />
             </button>
           </div>
           <div
