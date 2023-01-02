@@ -9,7 +9,7 @@ import { a11yProps } from '../../src/components/TabPanel';
 import { useStore } from '../../src/context/StoreContext';
 import { NotificationsNone, Person, Dehaze, Search, Close } from '@mui/icons-material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useNetwork } from 'wagmi';
 import { CustomConnectButton } from '../../src/components/CustomConnectButton';
 import { LanguageList } from '../../src/components/List/Language';
 import { CurrencyList } from '../../src/components/List/Currency';
@@ -17,6 +17,7 @@ import { NavList } from '../../src/components/List/NavList';
 import { AccountSetting } from '../../src/components/List/AccountSetting';
 import { useNavigate } from 'react-router-dom';
 import { TraderProfile } from 'src/context/profile';
+import { getShellBalance } from 'src/shell_wallet';
 
 // import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
@@ -25,11 +26,22 @@ export const Header = () => {
   const [isModalOpen, setModalOpen] = React.useState(false);
 
   const { isConnected, address } = useAccount();
+  const { chain } = useNetwork();
   const { disconnect } = useDisconnect();
 
-  // React.useEffect(() => {
-  //   console.log('shell-balance: ', getShellBalance());
-  // }, []);
+  const [gasBalance, setGasBalance] = React.useState("0.000");
+
+  React.useEffect(() => {
+    const x = async ()=> {
+      const gBalance = await getShellBalance();
+      const b = parseFloat(gBalance.toString()).toFixed(4);
+      setGasBalance(b);
+    }
+
+    setInterval(()=>{
+      x();
+    }, 10000);
+  }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
@@ -75,7 +87,7 @@ export const Header = () => {
               <Actions>
                 <ShellButton onClick={() => navigate('/proxy')}>
                   <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                  <GasAmount>0.000 ETH</GasAmount>
+                  <GasAmount>{gasBalance + (chain?.id === 137 ? " MATIC" : " ETH")}</GasAmount>
                 </ShellButton>
                 <ConnectButton
                   accountStatus="address"
@@ -187,7 +199,8 @@ const ContainerWrapper = styled(Box)(({ theme }) => ({
 const TigrisLogo = styled(Box)({
   width: '200px',
   height: 'auto',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  marginBottom: '-5px'
 });
 
 const Img = styled('img')({

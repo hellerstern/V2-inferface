@@ -17,7 +17,7 @@ export const Notification = (props: notificationProps) => {
 
 const NotificationContainer = styled(Box)(({ theme }) => ({
   backgroundColor: '#141416',
-  borderRadius: '5px',
+  borderRadius: '0px',
   padding: '20px 16px',
   display: 'flex',
   alignItems: 'flex-start',

@@ -1,8 +1,13 @@
+import { useState, useEffect, useRef } from 'react';
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { Notification } from 'src/components/Notification';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
+import { getShellBalance, getShellAddress, sendGasBack, getShellWallet, unlockShellWallet } from 'src/shell_wallet';
+import { ethers } from 'ethers';
+import { getNetwork } from 'src/constants/networks';
+import { toast } from 'react-toastify';
 
 const reduceAddress = (address: any) => {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -10,8 +15,130 @@ const reduceAddress = (address: any) => {
   return res;
 };
 
+declare const window: any
+const { ethereum } = window;
+
 export const Proxy = () => {
   const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const [gasBalance, setGasBalance] = useState(0);
+  const [shellAddress, setShellAddress] = useState("Loading...");
+  const shellExpire = useRef(0);
+
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  function getApprovalHours() {
+    if (shellExpire.current === 0) return "0"
+    const now = Math.floor(Date.now() / 1000);
+    const h = Math.floor((shellExpire.current-now) / 3600);
+    setHours(h);
+  }
+  function getApprovalMinutes() {
+    if (shellExpire.current === 0) return "0"
+    const now = Math.floor(Date.now() / 1000);
+    const m = Math.floor((shellExpire.current-now) % 3600 / 60);
+    setMinutes(m);
+  }
+  function getApprovalSeconds() {
+    if (shellExpire.current === 0) return "0"
+    const now = Math.floor(Date.now() / 1000);
+    const s = Math.floor((shellExpire.current-now) % 60);
+    setSeconds(s);
+  }
+
+  useEffect(() => {
+    const x = async () => {
+      await unlockShellWallet();
+      const shellBalance = await getShellBalance();
+      const b = parseFloat(shellBalance.toString());
+      setGasBalance(b);
+      setShellAddress(await getShellAddress());
+      await getProxy();
+    }
+    x();
+    setInterval(() => {
+      getApprovalHours();
+      getApprovalMinutes();
+      getApprovalSeconds();
+    }, 1000);
+  }, []);
+
+  async function getTradingContract() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, new ethers.providers.Web3Provider(ethereum).getSigner());
+  }
+
+  async function getProxy() {
+    const tradingContract = await getTradingContract();
+    const proxy = await tradingContract.proxyApprovals(address);
+    const exp = parseInt(proxy[1]);
+    shellExpire.current = exp;
+  }
+
+  function handleSendGasBack() {
+    sendGasBackToWallet();
+  }
+  async function sendGasBackToWallet() {
+    const tx = sendGasBack(address);
+    await toast.promise(tx,
+      {
+        pending: "Sending gas back...",
+        success: "Successfully sent gas back!",
+        error: "Failed to send gas back!"
+      }
+    );
+    setGasBalance(0);
+  }
+
+  function handleExtendShell() {
+    extendShell();
+  }
+  async function extendShell() {
+    const tradingContract = await getTradingContract();
+    if(!tradingContract) return;
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+    const now = Math.floor(Date.now() / 1000);
+    const tx = tradingContract?.approveProxy(shellAddress, now + 86400, {gasPrice: gasPriceEstimate, value: 0});
+    await toast.promise(tx,
+      {
+        pending: "Extending approval period...",
+        success: "Successfully extended approval period!",
+        error: "Failed to extend approval period!"
+      }
+    );
+    shellExpire.current = now + 86400;
+  }
+
+  function handleFundShell() {
+    fundShell();
+  }
+  async function fundShell() {
+    const tradingContract = await getTradingContract();
+    if(!tradingContract) return;
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+    const tx = tradingContract?.approveProxy(shellAddress, shellExpire.current, {gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.001")});
+    await toast.promise(tx,
+      {
+        pending: "Funding proxy wallet...",
+        success: "Successfully funded proxy wallet!",
+        error: "Failed to fund proxy wallet!"
+      }
+    );
+    setGasBalance(gasBalance + 0.001);
+  }
+
+  const update = async () => {
+    setGasBalance(parseFloat(await getShellBalance()));
+    setShellAddress(await getShellAddress());
+    getProxy();
+  }
+
+  function copy() {
+    navigator.clipboard.writeText(shellAddress);
+  }
+
   return (
     <Container>
       <ProxyContainer>
@@ -25,41 +152,41 @@ export const Proxy = () => {
             <AddressSection>
               <p>Address</p>
               <DesktopAddress style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}>
-                {isConnected ? address : 'Wallet is not connected'}
+                {isConnected ? shellAddress : 'Wallet is not connected'}
               </DesktopAddress>
-              <MobileAddress>{isConnected ? reduceAddress(address) : 'Wallet is not connected'}</MobileAddress>
+              <MobileAddress>{isConnected ? shellAddress : 'Wallet is not connected'}</MobileAddress>
             </AddressSection>
-            <CopyAddressButton>Copy Shell Wallet Address</CopyAddressButton>
+            <CopyAddressButton onClick={() => copy()}>Copy Shell Wallet Address</CopyAddressButton>
           </MediaContent>
         </ShellWalletMedia>
         <ShellWalletAction>
           <GasBalanceContainer>
-            <GasBalance>0.0000 ETH</GasBalance>
+            <GasBalance>{gasBalance.toFixed(4) + (chain?.id === 137 ? " MATIC" : " ETH")}</GasBalance>
             <p style={{ color: '#777E90', fontSize: '15px', lineHeight: '20px' }}>Shell Wallet Gas Balance</p>
           </GasBalanceContainer>
           <ApproveContainer>
             <ApprovePeriod>
               <TimeBox>
-                <TimeValue>23</TimeValue>
+                <TimeValue>{hours}</TimeValue>
                 <TimeType>Hours</TimeType>
               </TimeBox>
               :
               <TimeBox>
-                <TimeValue>59</TimeValue>
+                <TimeValue>{minutes}</TimeValue>
                 <TimeType>Minutes</TimeType>
               </TimeBox>
               :
               <TimeBox>
-                <TimeValue>00</TimeValue>
+                <TimeValue>{seconds}</TimeValue>
                 <TimeType>Seconds</TimeType>
               </TimeBox>
             </ApprovePeriod>
           </ApproveContainer>
-          <ApproveLabel>Shell Wallet Approve Period</ApproveLabel>
+          <ApproveLabel>Shell Wallet Approval Period</ApproveLabel>
           <ButtonGroup>
-            <ExtendApproveButton>Extend the approve period</ExtendApproveButton>
-            <SendGasButton>Send 0.0005 ETH to the wallet</SendGasButton>
-            <WithdrawButton>Withdraw balance</WithdrawButton>
+            <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
+            <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
+            <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
           </ButtonGroup>
         </ShellWalletAction>
       </ProxyContainer>
@@ -124,7 +251,7 @@ const AddressSection = styled(Box)(({ theme }) => ({
 }));
 
 const CopyAddressButton = styled(Button)(({ theme }) => ({
-  borderRadius: '4px',
+  borderRadius: '0px',
   backgroundColor: '#3772FF',
   '&:hover': {
     backgroundColor: '#3772FF'
@@ -226,7 +353,7 @@ const ButtonGroup = styled(Box)(({ theme }) => ({
 
 const ExtendApproveButton = styled(Button)(({ theme }) => ({
   background: 'none',
-  borderRadius: '4px',
+  borderRadius: '0px',
   width: '100%',
   height: '40px',
   textTransform: 'none',
@@ -239,7 +366,7 @@ const ExtendApproveButton = styled(Button)(({ theme }) => ({
 const SendGasButton = styled(Button)(({ theme }) => ({
   marginT: '10px',
   backgroundColor: '#3772FF',
-  borderRadius: '4px',
+  borderRadius: '0px',
   width: '100%',
   height: '40px',
   textTransform: 'none',
@@ -255,7 +382,7 @@ const SendGasButton = styled(Button)(({ theme }) => ({
 const WithdrawButton = styled(Button)(({ theme }) => ({
   marginT: '10px',
   backgroundColor: 'none',
-  borderRadius: '4px',
+  borderRadius: '0px',
   width: '100%',
   height: '40px',
   textTransform: 'none',

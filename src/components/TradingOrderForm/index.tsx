@@ -524,7 +524,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           console.log("Oops");
   }
 
-  // TODO TOASTS
   async function getTradingContract() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const signer = await getShellWallet();
