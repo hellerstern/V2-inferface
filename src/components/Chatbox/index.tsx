@@ -41,8 +41,9 @@ const Message = ({ profilePicture, username, date, time, message }: IMessage) =>
 
 export const Chatbox = () => {
 
-  // SERVER MESSAGING
-
+  // ================================================================================================================
+  // MESSAGES
+  // ================================================================================================================
   const messageTracker = useRef(-1);
   const messagesFinished = useRef(false);
 
@@ -176,7 +177,9 @@ export const Chatbox = () => {
     }
   };
 
-  // Dragging
+  // ================================================================================================================
+  // CHATBOX
+  // ================================================================================================================
   const [isDragging, setIsDragging] = useState(false);
   const [initialPosition, setInitialPosition] = useState({ x: 10, y: 200 });
   const [currentPosition, setCurrentPosition] = useState({ x: 10, y: 200 });
@@ -327,7 +330,6 @@ export const Chatbox = () => {
   return (
     <div
       style={{
-        touchAction: 'none',
         zIndex: 1,
         position: 'fixed'
       }}
@@ -336,6 +338,7 @@ export const Chatbox = () => {
         isClosed ?
         <animated.div
           style={{
+            touchAction: 'none',
             position: 'fixed',
             cursor: 'pointer',
             left: currentBubblePosition.x,
@@ -362,6 +365,7 @@ export const Chatbox = () => {
         :
         <div
           style={{
+            touchAction: 'none',
             position: 'fixed',
             left: currentPosition.x,
             top: currentPosition.y,
