@@ -7,7 +7,6 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { a11yProps } from '../../src/components/TabPanel';
 import { useStore } from '../../src/context/StoreContext';
-import { CustomizedMenus } from '../../src/components/Dropdown/CurrencyDrop';
 import { NotificationsNone, Person, Dehaze, Search, Close } from '@mui/icons-material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useDisconnect } from 'wagmi';
@@ -74,10 +73,6 @@ export const Header = () => {
                 <Dehaze />
               </MobileTab>
               <Actions>
-                <CustomizedMenus />
-                <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
-                  <NotificationsNone />
-                </IconButton>
                 <ShellButton onClick={() => navigate('/proxy')}>
                   <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
                   <GasAmount>0.000 ETH</GasAmount>
@@ -93,6 +88,9 @@ export const Header = () => {
                   <Avatar sx={{ width: 30, height: 30 }}>
                     <Person />
                   </Avatar>
+                </IconButton>
+                <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
+                  <NotificationsNone />
                 </IconButton>
               </Actions>
             </ActiveBar>
