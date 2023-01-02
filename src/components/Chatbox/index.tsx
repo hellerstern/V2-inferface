@@ -426,7 +426,7 @@ export const Chatbox = () => {
             style={{
               width: '100%',
               paddingLeft: 10,
-              paddingRight: 0,
+              paddingRight: 5,
               color: 'white',
               flexGrow: 1,
               overflowY: 'scroll'
