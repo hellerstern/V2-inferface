@@ -423,13 +423,13 @@ export const Chatbox = () => {
           </div>
           {/* List of messages */}
           <div
+            className="logs"
             style={{
               width: '100%',
               paddingLeft: 10,
-              paddingRight: 5,
               color: 'white',
               flexGrow: 1,
-              overflowY: 'scroll'
+              overflowY: 'hidden'
             }}
           >
             <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={() => handleScroll()}>
