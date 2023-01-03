@@ -33,19 +33,19 @@ export const Proxy = () => {
     if (shellExpire.current === 0) return "0"
     const now = Math.floor(Date.now() / 1000);
     const h = Math.floor((shellExpire.current-now) / 3600);
-    setHours(h);
+    setHours(h > 0 ? h : 0);
   }
   function getApprovalMinutes() {
     if (shellExpire.current === 0) return "0"
     const now = Math.floor(Date.now() / 1000);
     const m = Math.floor((shellExpire.current-now) % 3600 / 60);
-    setMinutes(m);
+    setMinutes(m > 0 ? m : 0);
   }
   function getApprovalSeconds() {
     if (shellExpire.current === 0) return "0"
     const now = Math.floor(Date.now() / 1000);
     const s = Math.floor((shellExpire.current-now) % 60);
-    setSeconds(s);
+    setSeconds(s > 0 ? s : 0);
   }
 
   useEffect(() => {
