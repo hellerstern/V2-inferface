@@ -166,12 +166,12 @@ export const Chatbox = () => {
     messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
   }
 
-  const handleScroll = (event: any) => {
+  const handleScroll = () => {
+    if (messagesListRef.current.scrollHeight - messagesListRef.current.scrollTop - messagesListRef.current.clientHeight <= 2) {
+      messagesListRef.current.scrollTop -= 0.5;
+    }
     if (messagesListRef.current.scrollTop === 0) {
       messagesListRef.current.scrollTop = 0.5;
-    }
-    if (messagesListRef.current.scrollHeight - messagesListRef.current.scrollTop - messagesListRef.current.clientHeight === 0) {
-      messagesListRef.current.scrollTop -= 0.5;
     }
     if (fetchTimeout > Date.now()) return;
     if (!messagesFinished.current) {
@@ -440,7 +440,7 @@ export const Chatbox = () => {
               overflowY: 'hidden'
             }}
           >
-            <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={(e) => handleScroll(e)}>
+            <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={() => handleScroll()}>
               {messages.map((message, index) => (
                 <Message
                   key={index}
