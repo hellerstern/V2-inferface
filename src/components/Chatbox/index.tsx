@@ -255,7 +255,7 @@ export const Chatbox = () => {
           y: 0
         },
         to: {
-          x: 10,
+          x: 5,
           y: 0
         }
       });
@@ -269,9 +269,9 @@ export const Chatbox = () => {
   // BUBBLE
   // ================================================================================================================
   const [isBubbleDragging, setIsBubbleDragging] = useState(false);
-  const [initialBubblePosition, setInitialBubblePosition] = useState({ x: 10, y: 200 });
-  const [currentBubblePosition, setCurrentBubblePosition] = useState({ x: 10, y: 200 });
-  const [beforeBubblePosition, setBeforeBubblePosition] = useState({ x: 10, y: 200 });
+  const [initialBubblePosition, setInitialBubblePosition] = useState({ x: 5, y: window.innerHeight-85 });
+  const [currentBubblePosition, setCurrentBubblePosition] = useState({ x: 5, y: window.innerHeight-85 });
+  const [beforeBubblePosition, setBeforeBubblePosition] = useState({ x: 5, y: window.innerHeight-85 });
 
   useEffect(() => {
     const handleBubbleMouseMove = (event: any) => {
@@ -323,7 +323,7 @@ export const Chatbox = () => {
         y: 0
       },
       to: {
-        x: 10,
+        x: 5,
         y: 0
       }
     });
@@ -414,7 +414,7 @@ export const Chatbox = () => {
               }}
               onClick={() => {
                 setCurrentBubblePosition({
-                  x: 10,
+                  x: 5,
                   y: currentPosition.y
                 });
                 setClosed(true);
