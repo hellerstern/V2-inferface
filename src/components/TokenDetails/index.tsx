@@ -184,11 +184,7 @@ const TradeContainer = styled(Box)(({ theme }) => ({
   // height: '63px',
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
-  userSelect: 'none',
-  MozUserSelect: 'none',
-  KhtmlUserSelect: 'none',
-  WebkitUserSelect: 'none'
+  alignItems: 'center'
 }));
 
 const TradeWrapper = styled(Box)(({ theme }) => ({

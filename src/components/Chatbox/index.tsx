@@ -18,11 +18,13 @@ interface IMessage {
 const Message = ({ profilePicture, username, date, time, message }: IMessage) => {
   return (
     <div style={{ display: 'flex', marginBottom: 15, marginTop: 5 }}>
-      <img
-        src={profilePicture}
-        alt="Profile"
-        style={{ width: 40, height: 40, borderRadius: 999}}
-      />
+      <div style={{ width: 40, height: 40, borderRadius: 999, background: "#2E3137"}}>
+        <img
+          src={profilePicture}
+          alt="Profile"
+          style={{ width: 40, height: 40, borderRadius: 999}}
+        />
+      </div>
       <div style={{ marginLeft: 10}}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '13px' }}>{username}
