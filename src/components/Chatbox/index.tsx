@@ -166,7 +166,13 @@ export const Chatbox = () => {
     messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
   }
 
-  const handleScroll = () => {
+  const handleScroll = (event: any) => {
+    if (messagesListRef.current.scrollTop === 0) {
+      messagesListRef.current.scrollTop = 0.5;
+    }
+    if (messagesListRef.current.scrollHeight - messagesListRef.current.scrollTop - messagesListRef.current.clientHeight === 0) {
+      messagesListRef.current.scrollTop -= 0.5;
+    }
     if (fetchTimeout > Date.now()) return;
     if (!messagesFinished.current) {
       // Check if the user has scrolled near the top of the messages list
@@ -434,7 +440,7 @@ export const Chatbox = () => {
               overflowY: 'hidden'
             }}
           >
-            <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={() => handleScroll()}>
+            <div style={{ overflowY: 'scroll', height: '100%' }} ref={messagesListRef} onScroll={(e) => handleScroll(e)}>
               {messages.map((message, index) => (
                 <Message
                   key={index}
