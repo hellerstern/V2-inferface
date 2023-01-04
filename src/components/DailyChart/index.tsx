@@ -33,11 +33,13 @@ export const DailyPerformanceChart = () => {
     plotOptions: {
       series: {
         showInNavigator: true,
-        gapSize: 6
+        gapSize: 6,
+        animation: false
       }
     },
     chart: {
-      height: 600
+      height: 600,
+      animation: false
     },
 
     credits: {

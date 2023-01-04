@@ -33,11 +33,13 @@ export const CumulativeChart = () => {
     plotOptions: {
       series: {
         showInNavigator: true,
-        gapSize: 6
+        gapSize: 6,
+        animation: false
       }
     },
     chart: {
-      height: 500
+      height: 500,
+      animation: false
     },
 
     credits: {
