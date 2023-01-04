@@ -2,6 +2,8 @@
 // import React, { useContext, useCallback, useState, useEffect} from 'react';
 // import {createChart, CrosshairMode} from 'lightweight-charts';
 // import { SocketContext} from '../../context/socket';
+import { Box } from '@mui/material';
+import { styled } from '@mui/system';
 import { TVChartContainer } from './TradingView/index';
 
 interface Props {
@@ -11,17 +13,22 @@ interface Props {
 
 const TradingChart = ({ asset, positionData }: Props) => {
   return (
-    <div style={{
-      width: '100%',
-      height: '640px',
-      userSelect: 'none',
-      MozUserSelect: 'none',
-      KhtmlUserSelect: 'none',
-      WebkitUserSelect: 'none'
-    }}>
+    <Wrapper>
       <TVChartContainer asset={asset} positionData={positionData} />
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: '100%',
+  userSelect: 'none',
+  MozUserSelect: 'none',
+  KhtmlUserSelect: 'none',
+  WebkitUserSelect: 'none',
+  [theme.breakpoints.down('desktop')]: {
+    height: '640px'
+  }
+}));
 
 export default TradingChart;

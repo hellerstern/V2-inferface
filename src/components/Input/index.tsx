@@ -219,12 +219,12 @@ const InputFieldValue = styled('input')(({ theme }) => ({
   background: 'none',
   border: 'none',
   color: '#FFFFFF',
-  letterSpacing: '0.05em',
+  letterSpacing: '0.05em'
 
-  [theme.breakpoints.down(390)]: {
-    width: '50px'
-  },
-  [theme.breakpoints.down(350)]: {
-    width: '40px'
-  }
+  // [theme.breakpoints.down(390)]: {
+  //   width: '50px'
+  // },
+  // [theme.breakpoints.down(350)]: {
+  //   width: '40px'
+  // }
 }));
