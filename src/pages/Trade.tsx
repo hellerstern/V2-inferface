@@ -12,9 +12,9 @@ import { useStore } from '../../src/context/StoreContext';
 import { Cumulative } from './MiniPage/Cumulative';
 import { PositionData } from 'src/components/Table/PositionData';
 import { TraderProfile } from 'src/context/profile';
+import { PairSelectionTable } from 'src/components/PairSelectionTable';
 
 export const Trade = () => {
-
   const positionData = PositionData().positionData;
 
   const [pairIndex, setPairIndex] = useState(
@@ -29,10 +29,9 @@ export const Trade = () => {
 
   return (
     <TradeContainer>
-
       {miniPage === 0 && (
         <>
-          <Chatbox/>
+          <Chatbox />
           <TokenDetails pairIndex={pairIndex} setPairIndex={setPairIndex} />
           <Container>
             <TradingForm>
@@ -42,6 +41,9 @@ export const Trade = () => {
               <OrderFormContainer>
                 <TradingOrderForm pairIndex={pairIndex} />
               </OrderFormContainer>
+              <PairTableContainer>
+                <PairSelectionTable isMobile={false} setPairIndex={setPairIndex} />
+              </PairTableContainer>
             </TradingForm>
             <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
             <DailyPerformanceChart />
@@ -67,7 +69,10 @@ const TradingForm = styled(Box)(({ theme }) => ({
   gap: '5px',
   marginBottom: '5px',
   [theme.breakpoints.down('desktop')]: {
-    gridTemplateColumns: '1fr 3fr'
+    gridTemplateColumns: '2fr 2fr'
+  },
+  [theme.breakpoints.down('md')]: {
+    gridTemplateColumns: '1fr'
   }
 }));
 
@@ -82,13 +87,31 @@ const TradingSection = styled(Box)(({ theme }) => ({
 
 const OrderFormContainer = styled(Box)(({ theme }) => ({
   width: '400px',
-  maxWidth: '400px',
+  // maxWidth: '400px',
   height: '100%',
   backgroundColor: '#18191D',
   [theme.breakpoints.down('desktop')]: {
-    order: 2
+    order: 2,
+    // maxWidth: '500px',
+    width: '100%'
   },
   [theme.breakpoints.down('md')]: {
     order: 2
+  }
+}));
+
+const PairTableContainer = styled(Box)(({ theme }) => ({
+  minWidth: '400px',
+  width: '100%',
+  height: '100%',
+  minHeight: '560px',
+  backgroundColor: '#18191D',
+  display: 'none',
+  [theme.breakpoints.down('desktop')]: {
+    display: 'block',
+    order: 2
+  },
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
   }
 }));
