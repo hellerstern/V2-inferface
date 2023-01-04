@@ -81,6 +81,9 @@ export const Chatbox = () => {
       // Get the total height of the messages list
       const totalHeightAfter = messagesListRef.current.scrollHeight;
       messagesListRef.current.scrollTop = totalHeightAfter - totalHeightBefore.current;
+      if (messageTracker.current <= 21) {
+        scrollToBottom();
+      }
     }
     return() => {
       setIsHistoryFetched(false);
@@ -172,6 +175,7 @@ export const Chatbox = () => {
   }, [messages])
 
   const scrollToBottom = () => {
+    messagesEnd.current.scrollTop = 2;
     messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
   }
 
@@ -179,8 +183,9 @@ export const Chatbox = () => {
     if (messagesListRef.current.scrollHeight - messagesListRef.current.scrollTop - messagesListRef.current.clientHeight <= 2) {
       messagesListRef.current.scrollTop -= 0.5;
     }
-    if (messagesListRef.current.scrollTop === 0) {
-      messagesListRef.current.scrollTop = 0.5;
+    if (messagesListRef.current.scrollTop <= 2) {
+      // eslint-disable-next-line
+      messagesListRef.current.scrollTop += 0.5;
     }
     if (fetchTimeout > Date.now()) return;
     if (!messagesFinished.current) {
@@ -276,7 +281,8 @@ export const Chatbox = () => {
       });
     }
     if (!isClosed) {
-      messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
+      messagesListRef.current.scrollTop = 3;
+      scrollToBottom();
     }
   }, [isClosed]);
 
