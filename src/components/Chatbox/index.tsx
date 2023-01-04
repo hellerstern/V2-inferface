@@ -138,6 +138,15 @@ export const Chatbox = () => {
       });
       setMessage('');
       userSent.current = true;
+      setMessages([...messages,
+        {
+          username: profile.username,
+          profilePicture: profile.profilePicture,
+          date: new Date().toISOString().slice(0, 10),
+          time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
+          message: message
+        }
+      ]);
     }
   };
 
