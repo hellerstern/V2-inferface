@@ -46,13 +46,20 @@ export const Chatbox = () => {
   // ================================================================================================================
   // MESSAGES
   // ================================================================================================================
-  const messageTracker = useRef(-1);
+  const messageTracker = useRef(0);
   const messagesFinished = useRef(false);
+  const latest = useRef(0);
 
   useEffect(() =>{
-    if (messageTracker.current >= 0) return;
-    messageTracker.current += 1;
-    fetchMessages();
+    const x = async () => {
+      if (messageTracker.current > 0) return;
+      const result = await fetch('https://chatbox-server-l9yj9.ondigitalocean.app/latest');
+      const res = await result.json();
+      messageTracker.current = parseInt(res.id);
+      latest.current = parseInt(res.id);
+      fetchMessages();      
+    }
+    x();
   }, []);
 
   const [fetchTimeout, setFetchTimeout] = useState(0);
@@ -61,10 +68,11 @@ export const Chatbox = () => {
   const [messages, setMessages] = useState<any[]>([]);
 
   async function fetchMessages() {
+    console.log("LATEST MESSAGE");
     if (fetchTimeout > Date.now()) return;
     setFetchTimeout(Date.now() + 200);
-    const toFetch = 'https://chatbox-server-l9yj9.ondigitalocean.app/messages?start='+(messageTracker.current.toString())+'&end='+((messageTracker.current + 20).toString());
-    messageTracker.current += 20;
+    const toFetch = 'https://chatbox-server-l9yj9.ondigitalocean.app/messages?start='+((messageTracker.current - 19).toString())+'&end='+((messageTracker.current + 1).toString());
+    messageTracker.current -= 20;
     const response = await fetch(toFetch);
     const newMessages = await response.json();
     if (newMessages.length === 0) messagesFinished.current = true;
@@ -81,6 +89,9 @@ export const Chatbox = () => {
       // Get the total height of the messages list
       const totalHeightAfter = messagesListRef.current.scrollHeight;
       messagesListRef.current.scrollTop = totalHeightAfter - totalHeightBefore.current;
+      if (messageTracker.current === latest.current) {
+        scrollToBottom();
+      }
     }
     return() => {
       setIsHistoryFetched(false);
@@ -138,6 +149,15 @@ export const Chatbox = () => {
       });
       setMessage('');
       userSent.current = true;
+      setMessages([...messages,
+        {
+          username: profile.username,
+          profilePicture: profile.profilePicture,
+          date: new Date().toISOString().slice(0, 10),
+          time: ((new Date().getHours().toString()) + ":" + (new Date().getMinutes().toString())),
+          message: message
+        }
+      ]);
     }
   };
 
@@ -163,6 +183,7 @@ export const Chatbox = () => {
   }, [messages])
 
   const scrollToBottom = () => {
+    messagesEnd.current.scrollTop = 2;
     messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
   }
 
@@ -170,8 +191,9 @@ export const Chatbox = () => {
     if (messagesListRef.current.scrollHeight - messagesListRef.current.scrollTop - messagesListRef.current.clientHeight <= 2) {
       messagesListRef.current.scrollTop -= 0.5;
     }
-    if (messagesListRef.current.scrollTop === 0) {
-      messagesListRef.current.scrollTop = 0.5;
+    if (messagesListRef.current.scrollTop <= 2) {
+      // eslint-disable-next-line
+      messagesListRef.current.scrollTop += 0.5;
     }
     if (fetchTimeout > Date.now()) return;
     if (!messagesFinished.current) {
@@ -267,7 +289,8 @@ export const Chatbox = () => {
       });
     }
     if (!isClosed) {
-      messagesEnd.current.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
+      messagesListRef.current.scrollTop = 3;
+      scrollToBottom();
     }
   }, [isClosed]);
 
