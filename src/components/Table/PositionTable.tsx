@@ -285,6 +285,8 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
               <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
+                  {
+                  tableType === 0 ?
                   <EditButton onClick={(e) => {
                     handleClickEditOpen(position.id);
                     e.stopPropagation();
@@ -292,6 +294,9 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
                     <SmallText>Edit</SmallText>
                     <Edit sx={{ fontSize: '18px' }} />
                   </EditButton>
+                  :
+                  <></>
+                  }
                   <CloseButton onClick={(e) => {
                     tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id);
                     e.stopPropagation();
