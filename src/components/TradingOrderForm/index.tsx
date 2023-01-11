@@ -64,8 +64,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   useEffect(() => {
     currentPairIndex.current = pairIndex;
-    setOpenPrice(((oracleData[currentPairIndex.current] as any).price / 1e18).toString());
-    setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));
+    try {
+      setOpenPrice(((oracleData[currentPairIndex.current] as any).price / 1e18).toPrecision(5));
+      setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));      
+    } catch {}
   }, [pairIndex]);
 
   const [isLong, setLong] = useState(true);
