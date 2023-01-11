@@ -3,6 +3,7 @@ import { useStore } from '../../src/context/StoreContext';
 import { Governance } from './Governance';
 import { Referral } from './Referral';
 import { Trade } from './Trade';
+import { Vault } from './Vault';
 
 export const Home = () => {
   const { page } = useStore();
@@ -12,7 +13,7 @@ export const Home = () => {
         <Trade />
       </TabPanel>
       <TabPanel value={page} index={1}>
-        Vault
+        <Vault />
       </TabPanel>
       <TabPanel value={page} index={2}>
         <Governance />

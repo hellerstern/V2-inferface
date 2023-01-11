@@ -35,6 +35,7 @@ import uniLogo from '../assets/images/CoinImage/uniLogo.svg';
 import xmrLogo from '../assets/images/CoinImage/xmrLogo.svg';
 import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
 import PolygonSvg from '../assets/images/CoinImage/Polygon.svg';
+import DAISvg from "../assets/images/CoinImage/DAI.svg"
 
 export {
   LOGO,
@@ -71,5 +72,6 @@ export {
   xmrLogo,
   xrpLogo,
   ArbiScanSvg,
-  PolygonSvg
+  PolygonSvg,
+  DAISvg
 };

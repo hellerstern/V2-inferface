@@ -144,6 +144,51 @@ export const InputField = (props: InputLabelProps) => {
   );
 };
 
+interface VaultInputProps {
+  value: number;
+  setValue: any;
+  type: string;
+  name: string;
+  placeholder: string;
+  component: React.ReactNode;
+}
+
+export const VaultInput = (props: VaultInputProps) => {
+    const { value, setValue, type, name, placeholder, component } = props;
+    const [isVisit, setVisit] = useState(false);
+    const inputRef = useRef<HTMLDivElement>(null);
+    const valueRef = useRef<HTMLInputElement>(null);
+    const handleClickOutside = (event: React.MouseEvent<HTMLElement>) => {
+      if (inputRef.current && !inputRef.current.contains(event.target as any)) {
+        setVisit(false);
+      }
+    };
+
+    const handleClickInside = () => {
+      setVisit(true);
+      valueRef.current?.focus();
+    };
+
+    useEffect(() => {
+      document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
+    }, [inputRef]);
+    return (
+    <InputFieldContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
+      <InputFieldArea>
+        <InputFieldValue
+          value={value === 0 ? '' : value}
+          type={type}
+          name={name}
+          ref={valueRef}
+          placeholder={placeholder}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(name, e.currentTarget.value)}
+        />
+        {component}
+        </InputFieldArea>
+      </InputFieldContainer>
+     );
+}
+
 const InputContainer = styled(Box)<containerProps>(({ visited, theme }) => ({
   width: '100%',
   height: '36px',
@@ -197,7 +242,7 @@ const InputFieldContainer = styled(Box)<containerProps>(({ visited, theme }) => 
   width: '100%',
   height: '36px',
   backgroundColor: '#222630',
-  padding: '8px 16px',
+  padding: '4px 9px',
   borderRadius: '2px',
   border: visited === 1 ? '1px solid #3772FF' : '1px solid #222630',
   [theme.breakpoints.down('xs')]: {
@@ -207,6 +252,7 @@ const InputFieldContainer = styled(Box)<containerProps>(({ visited, theme }) => 
 
 const InputFieldArea = styled(Box)(({ theme }) => ({
   display: 'flex',
+  height: '100%',
   gap: '2px',
   fontSize: '12px',
   color: 'rgba(255, 255, 255, 0.16)'
