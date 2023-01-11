@@ -1,14 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Divider, IconButton, Avatar, Badge } from '@mui/material';
-import { AddPhotoAlternate } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import './css/profile.css';
-import { TraderProfile } from 'src/context/profile';
-import { Dayjs } from 'dayjs';
+import './css/loading.css';
+import { TraderProfile, getProfileData } from 'src/context/profile';
 
 export const Profile = () => {
-  const [value, setValue] = useState<Dayjs | null>(null);
   const [avatar, setAvatar] = useState(TraderProfile().profilePicture);
   const handleChange = (event: any) => {
     if (event.target.files.length > 0) {
@@ -17,74 +15,92 @@ export const Profile = () => {
     }
   };
 
+  const [isLoading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  useEffect(() => {
+    const x = async () => {
+      let _profile = await getProfileData();
+      if (_profile === "NoProfile") {
+        _profile = TraderProfile();
+      }
+      setProfile(_profile);
+      setLoading(false);
+    }
+    x();
+  }, [])
+
   return (
-    <Container>
-      <ProfileContainer>
-        <Wrapper>
-          <ProfileSection>
-            {/* <SectionHeader>Trader Profile</SectionHeader> */}
-            <SectionContent>
-              <AvatarUpload>
-                <input type="file" onChange={handleChange} id="upload" accept="image/*" style={{ display: 'none' }} />
-                <label htmlFor="upload">
-                  <IconButton color="primary" aria-label="upload picture" component="span">
-                    <Badge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      badgeContent={
-                        <Avatar sx={{ bgcolor: '#D9DBDC', width: '35px', height: '35px' }}>
-                          <AddPhotoAlternate sx={{ color: '#555961' }} />
-                        </Avatar>
-                      }
-                    >
-                      <Avatar
-                        id="avatar"
-                        src={avatar}
-                        style={{
-                          width: '150px',
-                          height: '150px'
-                        }}
-                      />
-                    </Badge>
-                  </IconButton>
-                </label>
-                <label htmlFor="avatar" />
-              </AvatarUpload>
-              <UserDetail>
-                <UserName>{TraderProfile().username}</UserName>
-                <UserDescription>{TraderProfile().description}</UserDescription>
-              </UserDetail>
-            </SectionContent>
-          </ProfileSection>
-          <OverviewSection>
-            {/* <SectionHeader>Public Stats</SectionHeader> */}
-            <OverviewWrapper>
-              <OverviewContent>
-                <OverviewSeparator>
-                  <OverviewItem title={'Total PNL ($)'} value="12300.45" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Biggest win ($)'} value="6000.23" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Biggest win %'} value="453.15%" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Total trades'} value="1243" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Winrate %'} value="52.7%" colorValue="rgba(255, 255, 255, 0.6)" />
-                </OverviewSeparator>
-                <ResponsiveDevider1 />
-                <ResponsiveDevider2 />
-                <OverviewSeparator>
-                  <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#58BD7D" />
-                  <OverviewItem title={'Entry price'} value="0.29039402" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Exit Price'} value="0.4598948585" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Stop limit price'} value="0.4590594" colorValue="rgba(255, 255, 255, 0.6)" />
-                  <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#D33535" />
-                  <ResponsiveDevider2 />
-                  <OverviewItem title={'Total volume traded'} value="8,3million" colorValue="#777E90" />
-                  <OverviewItem title={'Number of trades'} value="Number of trades" colorValue="#777E90" />
-                </OverviewSeparator>
-              </OverviewContent>
-            </OverviewWrapper>
-          </OverviewSection>
-        </Wrapper>
-      </ProfileContainer>
-    </Container>
+    <>
+      {
+        isLoading ? 
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <div className="loading-background"></div>
+        </div>
+        :
+        <div style={{background: 'linear-gradient(#9198e5, #e66465)', height: window.innerHeight}}>
+          <Container>
+            <ProfileContainer>
+              <Wrapper>
+                <ProfileSection>
+                  <SectionContent>
+                    <AvatarUpload>
+                      <label htmlFor="upload">
+                        <IconButton color="primary" aria-label="upload picture" component="span">
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          >
+                            <Avatar
+                              id="avatar"
+                              src={avatar}
+                              style={{
+                                width: '150px',
+                                height: '150px'
+                              }}
+                            />
+                          </Badge>
+                        </IconButton>
+                      </label>
+                      <label htmlFor="avatar" />
+                    </AvatarUpload>
+                    <UserDetail>
+                      <UserName>{profile.username}</UserName>
+                      <UserDescription>{profile.description}</UserDescription>
+                    </UserDetail>
+                  </SectionContent>
+                </ProfileSection>
+                <OverviewSection>
+                  <OverviewWrapper>
+                    <OverviewContent>
+                      <OverviewSeparator>
+                        <OverviewItem title={'Total PNL ($)'} value="12300.45" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Biggest win ($)'} value="6000.23" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Biggest win %'} value="453.15%" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Total trades'} value="1243" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Winrate %'} value="52.7%" colorValue="rgba(255, 255, 255, 0.6)" />
+                      </OverviewSeparator>
+                      <ResponsiveDevider1 />
+                      <ResponsiveDevider2 />
+                      <OverviewSeparator>
+                        <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#58BD7D" />
+                        <OverviewItem title={'Entry price'} value="0.29039402" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Exit Price'} value="0.4598948585" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Stop limit price'} value="0.4590594" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#D33535" />
+                        <ResponsiveDevider2 />
+                        <OverviewItem title={'Total volume traded'} value="8,3million" colorValue="#777E90" />
+                        <OverviewItem title={'Number of trades'} value="Number of trades" colorValue="#777E90" />
+                      </OverviewSeparator>
+                    </OverviewContent>
+                  </OverviewWrapper>
+                </OverviewSection>
+              </Wrapper>
+            </ProfileContainer>
+          </Container>
+        </div>
+      }
+    </>
   );
 };
 
@@ -115,28 +131,15 @@ const OverviewSection = styled(Box)(({ theme }) => ({
   width: '100%'
 }));
 
-const SectionHeader = styled(Box)(({ theme }) => ({
-  width: '100%',
-  padding: '9px 27px',
-  display: 'flex',
-  gap: '17px',
-  alignItems: 'center',
-  fontSize: '12px',
-  lineHeight: '20px',
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  fontWeight: '700',
-  backgroundColor: '#18191D'
-}));
-
 const SectionContent = styled(Box)(({ theme }) => ({
   width: '100%',
   padding: '22px 27px',
-  backgroundColor: '#18191D',
+  background: 'rgba(0, 0, 0, 0.25)',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '20px'
+  gap: '20px',
+  borderRadius: '10px'
 }));
 
 const AvatarUpload = styled(Box)(({ theme }) => ({}));
@@ -156,7 +159,7 @@ const UserDescription = styled(Box)(({ theme }) => ({
 }));
 
 const ItemTitle = styled(Box)(({ theme }) => ({
-  color: '#777E90',
+  color: '#FFFFFF',
   fontSize: '12px',
   lineHeight: '20px'
 }));
@@ -204,13 +207,14 @@ const OverviewContent = styled(Box)(({ theme }) => ({
   gap: '16px',
   width: '100%',
   height: '100%',
-  backgroundColor: '#18191D',
+  background: 'rgba(0, 0, 0, 0.25)',
   [theme.breakpoints.down(1440)]: {
     flexDirection: 'row'
   },
   [theme.breakpoints.down(768)]: {
     flexDirection: 'column'
-  }
+  },
+  borderRadius: '10px'
 }));
 
 const OverviewSeparator = styled(Box)(({ theme }) => ({

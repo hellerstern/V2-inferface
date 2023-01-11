@@ -181,7 +181,10 @@ export const PositionData = () => {
                 slPrice: data.tradeInfo.slPrice,
                 direction: data.tradeInfo.direction,
                 id: data.id,
-                asset: data.tradeInfo.asset
+                asset: data.tradeInfo.asset,
+                accInterest: 0,
+                liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
+                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
               }
             );
             toast.success((

@@ -449,10 +449,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getOpenPrice() {
     let _openPrice;
     if (isLong) {
-      _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * parseFloat(spread);
+      _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * (orderType === "Market" ? parseFloat(spread) : 0);
       return _openPrice.toPrecision(7);
     } else {
-      _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * parseFloat(spread);
+      _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * (orderType === "Market" ? parseFloat(spread) : 0);
       return _openPrice.toPrecision(7);
     }
   }
@@ -520,7 +520,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const s = getTradeStatus();
     s === "Approve" ? approveToken() :
       s === "Proxy" ? approveProxy() :
-        s === "Ready" ? initiateMarketOrder() :
+        s === "Ready" ? (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder()) :
           console.log("Oops");
   }
 
@@ -708,6 +708,87 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           if (receipt.status === 0) {
             toast.error(
               'Opening position failed!'
+            );
+          }
+        }, 1000);
+
+      } catch (err: any) {
+        console.log(err);
+      }
+
+    } catch (err: any) {
+      console.log(err);
+    }
+  }
+
+  async function initiateLimitOrder() {
+
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+
+    const _margin = ethers.utils.parseEther(margin);
+    const _leverage = ethers.utils.parseEther(leverage);
+    const _openPrice = ethers.utils.parseEther(openPrice);
+
+    let _tp: any = ethers.utils.parseEther(getTakeProfitPrice());
+    if (parseFloat(_tp.toString()) < 0) {
+      _tp = 0;
+    }
+    const _sl = ethers.utils.parseEther(getStopLossPrice());
+
+    // TODO referral cookie
+    const _ref = ethers.constants.HashZero;
+
+    const _tradeInfo = [
+      _margin,
+      currentMargin.marginAssetDrop.address,
+      currentMargin.marginAssetDrop.stablevault,
+      _leverage,
+      pairIndex,
+      isLong,
+      _tp,
+      _sl,
+      _ref
+    ];
+
+    try {
+      if (isLong && parseInt(_sl.toString()) > parseInt(_openPrice.toString()) && parseInt(_sl.toString()) !== 0) {
+        toast.warn(
+          "Stop loss too high"
+        );
+        return;
+      } else if (!isLong && parseInt(_sl.toString()) < parseInt(_openPrice.toString()) && parseInt(_sl.toString()) !== 0) {
+        toast.warn(
+          "Stop loss too low"
+        );
+        return;
+      }
+
+      try {
+        const tradingContract = await getTradingContract();
+        const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
+
+        const tx = tradingContract.initiateLimitOrder(
+          _tradeInfo,
+          (orderType === "Limit" ? 1 : 2),
+          _openPrice,
+          [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
+          address,
+          { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
+        );
+        const response: any = await toast.promise(
+          tx,
+          {
+            pending: orderType === "Limit" ? 'Creating limit order...' : 'Creating stop order...',
+            success: undefined,
+            error: orderType === "Limit" ? 'Creating limit order failed!' : 'Creating stop order failed!'
+          }
+        );
+        // eslint-disable-next-line
+        setTimeout(async () => {
+          const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+          if (receipt.status === 0) {
+            toast.error(
+              orderType === "Limit" ? 'Creating limit order failed!' : 'Creating stop order failed!'
             );
           }
         }, 1000);
