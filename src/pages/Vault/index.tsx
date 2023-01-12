@@ -4,18 +4,130 @@ import { useState } from "react";
 import { Container } from "src/components/Container"
 import { VaultInput } from "src/components/Input";
 import { DAISvg, LOGO } from "src/config/images";
-import {LockOutlined, SwapHoriz , HelpOutline } from '@mui/icons-material'
+import {LockOutlined, SwapHoriz , HelpOutline, MoreHoriz } from '@mui/icons-material'
+
+const TigUSDList = () => {
+    return(
+        <TigUSDListContainer>
+            <Img src={LOGO} alt='tigusd-logo' />
+            TigUSD
+        </TigUSDListContainer>
+    )
+}
+
+const TigUSDListContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    gap: "11px",
+    fontSize: '12px',
+    lineHeight: '24px',
+    alignItems: 'center',
+    color: "#B1B5C3"
+}))
+
+const Img = styled('img')(({ theme }) => ({
+    width: "20px",
+    height: '20px'
+}))
+
+interface LockArrProps {
+    id: number;
+    stakeItem: React.ReactNode;
+    yourStake: string;
+    dateEnd: string;
+    projectApr: string;
+    shareAmount: string;
+    pendingRewards: string;
+}
+
+// const LockArr: LockArrProps[] = [];
+
+const LockArr: LockArrProps[] = [
+    {
+        id: 1,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 2,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 3,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 4,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 5,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 6,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 7,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    },
+    {
+        id: 8,
+        stakeItem: <TigUSDList />,
+        yourStake: "0.49031 tigUSD",
+        dateEnd: "24 Dec, 2022",
+        projectApr: "0.453984%",
+        shareAmount: "1.3478420",
+        pendingRewards: "0.39572498"
+    }
+]
 
 export const Vault = () => {
     const [editState, setEditState] = useState({
         daiValue: 0,
         tigValue: 0,
         tigBalance: 0.7894,
-        days: 18
+        days: 18,
+        isMyLock: false 
     });
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
   };
+
     return(
         <Container>
             <GovernanceContainer>
@@ -83,66 +195,92 @@ export const Vault = () => {
                     </VaultSection>
                     <VaultLabel>TigUSD STAKING</VaultLabel>
                     <VaultSection>
-                        <LockButtonGroup>
-                            <LockButton variant="outlined" borderColor="#3772FF">
-                                <LockIcon style={{ color: "#3772FF" }} />
-                                New Lock
-                            </LockButton>
-                            <LockButton variant="outlined" borderColor="#FFFFFF">
-                                <LockIcon style={{ color: "#FFFFFF" }} />
-                                My Locks
-                            </LockButton>
-                        </LockButtonGroup>
-                        <VaultInputBox>
-                            <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<TigUsDMax />} />
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Asset balance</VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.57489 TigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                        </VaultInputBox>
-                         <VaultInputBox> 
-                            <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<Max>Max</Max>} />
-                            <VaultInputLabel>
-                                <VaultInputPrimary>7-365 days Max</VaultInputPrimary>
-                            </VaultInputLabel>
-                        </VaultInputBox>
-                        <VaultInputBox> 
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Your Stake</VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.49031 tigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Total Staked <HelpOutline sx={{ width: '15px',  height: '15px' }} /></VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.49031 tigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Share amount <HelpOutline sx={{ width: '15px',  height: '15px' }} /></VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.49031 tigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Projected APR %</VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.49031 tigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                            <VaultInputLabel>
-                                <VaultInputPrimary>Total shares</VaultInputPrimary>
-                                <VaultInputSecondary>
-                                    0.49031 tigUSD
-                                </VaultInputSecondary>
-                            </VaultInputLabel>
-                        </VaultInputBox>
-                        <ApproveTigUSDButton>
-                            Approve tigUSD
-                        </ApproveTigUSDButton>
+                        <VaultButtonGroup>
+                            <LockButtonGroup>
+                                <LockButton variant="outlined" borderColor={editState.isMyLock ? "#FFFFFF" : "#3772FF" } onClick={() => handleEditState("isMyLock", false)}>
+                                    <LockIcon style={{ color: editState.isMyLock ? "#FFFFFF" : "#3772FF" }} />
+                                    New Lock
+                                </LockButton>
+                                <LockButton variant="outlined" borderColor={editState.isMyLock ? "#3772FF" : "#FFFFFF"} onClick={() => handleEditState("isMyLock", true)}>
+                                    <LockIcon style={{ color: editState.isMyLock ? "#3772FF" : "#FFFFFF" }} />
+                                    My Locks
+                                </LockButton> 
+                            </LockButtonGroup>
+                            { editState.isMyLock &&
+                                <ClaimRewardButton variant="outlined">
+                                    Claim all rewards 
+                                </ClaimRewardButton>
+                            }
+                        </VaultButtonGroup>
+                        { !editState.isMyLock ?
+                            <>
+                                <VaultInputBox>
+                                    <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<TigUsDMax />} />
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>Asset balance</VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.57489 TigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                </VaultInputBox>
+                                <VaultInputBox> 
+                                    <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<Max>Max</Max>} />
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>7-365 days Max</VaultInputPrimary>
+                                    </VaultInputLabel>
+                                </VaultInputBox>
+                                <VaultInputBox> 
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>Your Stake</VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.49031 tigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>Total Staked <HelpOutline sx={{ width: '15px',  height: '15px' }} /></VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.49031 tigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>Share amount <HelpOutline sx={{ width: '15px',  height: '15px' }} /></VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.49031 tigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                    <VaultInputLabel>
+                                        <VaultInputPrimary>Projected APR %</VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.49031 tigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                    <VaultInputLabel> 
+                                        <VaultInputPrimary>Total shares</VaultInputPrimary>
+                                        <VaultInputSecondary>
+                                            0.49031 tigUSD
+                                        </VaultInputSecondary>
+                                    </VaultInputLabel>
+                                </VaultInputBox>
+                                <ApproveTigUSDButton>
+                                    Approve tigUSD
+                                </ApproveTigUSDButton>
+                            </> : 
+                            LockArr.length === 0 ? <NothingLocks />:
+                            <>
+                                <StakingList>
+                                    <StakingListItem type="header" stakeItem="Staking item" yourStake="Your stake" dateEnd="Date end" projectApr="Projected APR %" shareAmount="Share amount" pendingRewards="Pending rewards" />
+                                    {
+                                        LockArr.map((item) => (
+                                            <>
+                                                <StakingListItem type="item" stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} />
+                                                <MobileStakingListitem idx={item.id} stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} />
+                                            </>
+                                        ))
+                                    }
+                                </StakingList>
+                            </>
+                        }
+                        
                     </VaultSection>
                 </Wrapper>
             </GovernanceContainer>
@@ -204,11 +342,6 @@ const VaultCardTitle = styled(Box)(({ theme }) => ({
     fontSize: "20px",
     lineHeight: '26px',
     alignItems: 'center'
-}))
-
-const Img = styled('img')(({ theme }) => ({
-    width: "20px",
-    height: '20px'
 }))
 
 const VaultCardContent = styled(Box)(({ theme }) => ({
@@ -338,9 +471,28 @@ const LockButton = styled(Button)<LockProps>(({ theme, borderColor }) => ({
     "&: hover": {
         borderColor: borderColor
     },
+    [theme.breakpoints.down(640)]: {
+        width: '100%'
+    },
     [theme.breakpoints.down(390)]: {
         gap: "6px",
         fontSize: '11px'
+    }
+}))
+
+const ClaimRewardButton = styled(Button)(({ theme }) => ({
+    padding: '11px 21px',
+    width: '180px',
+    height: '40px',
+    display: "flex",
+    gap: '14px',
+    borderColor: "#FFFFFF",
+    textTransform: 'none',
+    "&: hover": {
+        borderColor: "#FFFFFF"
+    },
+    [theme.breakpoints.down(640)]: {
+        width: "100%"
     }
 }))
 
@@ -385,5 +537,240 @@ const ApproveTigUSDButton = styled(Button)(({ theme }) => ({
     textTransform: "none",
     "&: hover": {
         backgroundColor: "none"
+    }
+}))
+
+const VaultButtonGroup = styled(Box)(({ theme }) => ({
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    [theme.breakpoints.down(640)]: {
+        flexDirection: 'column',
+        gap: "14px"
+    }
+}))
+
+const StakingList = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: "7px"
+}))
+
+interface StakingProps {
+    type: string;
+    stakeItem: React.ReactNode | string;
+    yourStake: string;
+    dateEnd: string;
+    projectApr: string;
+    shareAmount: string;
+    pendingRewards: string;
+}
+
+const StakingListItem = (props: StakingProps) => {
+    const { type, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards } = props;
+    return(
+        <StakingListItemContainer type={type}>
+            <StakeListItem width={90}>{stakeItem}</StakeListItem>
+            <StakeListItem width={110}>{yourStake}</StakeListItem>
+            <StakeListItem width={110}>{dateEnd}</StakeListItem>
+            <StakeListItem width={110}>{projectApr}</StakeListItem>
+            <StakeListItem width={110}>{shareAmount}</StakeListItem>
+            <StakeListItem width={110}>{pendingRewards}</StakeListItem>
+            <StakeListItem width={30}>{type !== 'header' && <BlaBox><MoreHoriz /></BlaBox>}</StakeListItem> 
+        </StakingListItemContainer>
+    )
+}
+
+interface StakeContainerProps {
+    type: string;
+}
+
+const StakingListItemContainer = styled(Box)<StakeContainerProps>(({ theme, type }) => ({
+    borderRadius: '5px',
+    backgroundColor: type !== "header" ? "#23262F" : "none",
+    padding: '14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: "space-between",
+    [theme.breakpoints.down(768)]: {
+        display: 'none'
+    }
+}))
+
+const StakeListItem = styled(Box)(({ theme }) => ({
+    fontSize: "12px",
+    lineHeight: "24px",
+    fontWeight: "400",
+    color: "#B1B5C3",
+    textAlign: 'left'
+}))
+
+const BlaBox = styled(Box)(({ theme }) => ({
+    width: '24px',
+    height: "24px",
+    borderRadius: '3px',
+    backgroundColor: "#18191D",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer'
+}))
+
+interface MobileStakingProps {
+    idx: number;
+    stakeItem: React.ReactNode | string;
+    yourStake: string;
+    dateEnd: string;
+    projectApr: string;
+    shareAmount: string;
+    pendingRewards: string;
+}
+
+const MobileStakingListitem = (props: MobileStakingProps) => {
+    const { idx, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards } = props;
+    return(
+        <MobileStakingListitemContainer>
+            <MobileStakingListHeader>
+                <MyLockIdx>My lock {idx}</MyLockIdx>
+                <BlaBox><MoreHoriz /></BlaBox>
+            </MobileStakingListHeader>
+            <MobileStakingListBody>
+                <MobileStakingListItem>
+                    <ItemTitle>Staking item</ItemTitle>
+                    <ItemContent>{stakeItem}</ItemContent>
+                </MobileStakingListItem>
+                <MobileStakingListItem>
+                    <ItemTitle>Your Stake</ItemTitle>
+                    <ItemContent>{yourStake}</ItemContent>
+                </MobileStakingListItem>
+                <MobileStakingListItem>
+                    <ItemTitle>Date ended</ItemTitle>
+                    <ItemContent>{dateEnd}</ItemContent>
+                </MobileStakingListItem>
+                <MobileStakingListItem>
+                    <ItemTitle>Project APR %</ItemTitle>
+                    <ItemContent>{projectApr}</ItemContent>
+                </MobileStakingListItem>
+                <MobileStakingListItem>
+                    <ItemTitle>Share Amount</ItemTitle>
+                    <ItemContent>{shareAmount}</ItemContent>
+                </MobileStakingListItem>
+                <MobileStakingListItem>
+                    <ItemTitle>Pending rewards </ItemTitle>
+                    <ItemContent>{pendingRewards}</ItemContent>
+                </MobileStakingListItem>
+            </MobileStakingListBody>
+        </MobileStakingListitemContainer>
+    )
+}
+
+const MobileStakingListitemContainer = styled(Box)(({ theme }) => ({
+    display: 'none',
+    flexDirection: "column",
+    backgroundColor: "#23262F",
+    borderRadius: '5px',
+    padding: "19px 15px",
+    gap: '22px',
+    [theme.breakpoints.down(768)]: {
+        display: 'flex'
+    }
+}))
+
+const MobileStakingListHeader = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+}))
+
+const MobileStakingListItem = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+}))
+
+const MobileStakingListBody = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: "17px"
+}))
+
+const MyLockIdx = styled(Box)(({ theme }) => ({
+    fontSize: "12px",
+    lineHeight: '24px',
+    color: "#FFFFFF"
+}))
+
+const ItemTitle = styled(Box)(({ theme }) => ({
+    fontWeight: '400',
+    fontSize: '12px',
+    lineHeight: '20px',
+    color: "#777E90"
+}))
+
+const ItemContent = styled(Box)(({ theme }) => ({
+    fontWeight: '400',
+    fontSize: '12px',
+    lineHeight: '24px',
+    color: "#FFFFFF"
+}))
+
+const NothingLocks = () => {
+    return(
+        <NothingLocksContainer>
+            <NothingLocksLabel>You don`t have any locks</NothingLocksLabel>
+            <NothingLocksContent>When you will create a Lock , you'll see it here. Time to get to work.</NothingLocksContent>
+            <CreateFirstLockButton variant="outlined">
+                Create first lock
+            </CreateFirstLockButton>
+        </NothingLocksContainer>
+    )
+}
+
+const NothingLocksContainer = styled(Box)(({ theme }) => ({
+    background: "linear-gradient(180deg, #141416 0%, rgba(20, 20, 22, 0.02) 75.18%)",
+    borderRadius: "8px",
+    display: 'flex',
+    width: '100%',
+    height: '290px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    gap: "19px",
+    padding: '38px'
+}))
+
+const NothingLocksLabel = styled(Box)(({ theme }) => ({
+    fontWeight: '700',
+    fontSize: '12px',
+    lineHeight: '20px',
+    letterSpacing: "0.1em",
+    textTransform : "uppercase",
+    color: "#FFFFFF",
+    [theme.breakpoints.down(390)]: {
+        fontSize: '11px'
+    }
+}))
+
+const NothingLocksContent = styled(Box)(({ theme }) => ({
+    fontWeight: '400',
+    fontSize: '15px',
+    lineHeight: '24px',
+    color: "#B1B5C3",
+    textAlign: 'center',
+    [theme.breakpoints.down(390)]: {
+        fontSize: '11px'
+    }
+}))
+
+const CreateFirstLockButton = styled(Button)(({ theme }) => ({
+    padding: '11px 21px',
+    width: '180px',
+    height: '40px',
+    display: "flex",
+    gap: '14px',
+    borderColor: "#FFFFFF",
+    textTransform: 'none',
+    "&: hover": {
+        borderColor: "#FFFFFF"
     }
 }))
