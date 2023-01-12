@@ -1,14 +1,27 @@
 import { createContext } from "react";
+const { ethereum } = window;
 
 export const TraderProfile = () => {
     getTraderProfile().then((result) => {
         return result;
     });
-    return JSON.parse(localStorage.getItem("TraderProfile"));
+    return JSON.parse(localStorage.getItem("DefaultTraderProfile"));
+}
+
+export async function getProfileData() {
+    const username = localStorage.getItem("DefaultTraderProfile") === null ? "NoProfile" : JSON.parse(localStorage.getItem("DefaultTraderProfile")).username;
+    const response = await fetch(`http://localhost:8080/profile/`+username.toString());
+    const data = await response.json();
+    console.log(data);
+    if (data.error) {
+        return "NoProfile";
+    } else {
+        return data;
+    }
 }
 
 async function getTraderProfile() {
-    const profile = localStorage.getItem("TraderProfile") !== null ? JSON.parse(localStorage.getItem("TraderProfile")) : {};
+    const profile = localStorage.getItem("DefaultTraderProfile") !== null ? JSON.parse(localStorage.getItem("DefaultTraderProfile")) : {};
     let isProfileChanged = false;
     if (!profile.username) {
         profile.username = await generateUsername();
@@ -23,7 +36,7 @@ async function getTraderProfile() {
         isProfileChanged = true;
     }
     if (isProfileChanged) {
-        localStorage.setItem("TraderProfile", JSON.stringify(profile));
+        localStorage.setItem("DefaultTraderProfile", JSON.stringify(profile));
     }
     return profile;
 }
