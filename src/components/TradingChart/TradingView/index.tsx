@@ -60,7 +60,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		overrides: {
 			"paneProperties.background": "#17191D",
 			"paneProperties.backgroundType": "solid",
-			"scalesProperties.showSymbolLabels": true,
+			"scalesProperties.showSymbolLabels": false,
 			"rightOffset": 10
 
 		},
