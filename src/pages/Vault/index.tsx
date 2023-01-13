@@ -5,6 +5,7 @@ import { Container } from "src/components/Container"
 import { VaultInput } from "src/components/Input";
 import { DAISvg, LOGO } from "src/config/images";
 import {LockOutlined, SwapHoriz , HelpOutline, MoreHoriz } from '@mui/icons-material'
+import { ClaimModal } from "src/components/Modal/VaultClaimModal";
 
 const TigUSDList = () => {
     return(
@@ -122,11 +123,12 @@ export const Vault = () => {
         tigValue: 0,
         tigBalance: 0.7894,
         days: 18,
-        isMyLock: false 
+        isMyLock: false
     });
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
   };
+  const [ isModalOpen, setModalOpen ] = useState(false);
 
     return(
         <Container>
@@ -197,11 +199,11 @@ export const Vault = () => {
                     <VaultSection>
                         <VaultButtonGroup>
                             <LockButtonGroup>
-                                <LockButton variant="outlined" borderColor={editState.isMyLock ? "#FFFFFF" : "#3772FF" } onClick={() => handleEditState("isMyLock", false)}>
+                                <LockButton variant="outlined" bcolor={editState.isMyLock ? "#FFFFFF" : "#3772FF" } onClick={() => handleEditState("isMyLock", false)}>
                                     <LockIcon style={{ color: editState.isMyLock ? "#FFFFFF" : "#3772FF" }} />
                                     New Lock
                                 </LockButton>
-                                <LockButton variant="outlined" borderColor={editState.isMyLock ? "#3772FF" : "#FFFFFF"} onClick={() => handleEditState("isMyLock", true)}>
+                                <LockButton variant="outlined" bcolor={editState.isMyLock ? "#3772FF" : "#FFFFFF"} onClick={() => handleEditState("isMyLock", true)}>
                                     <LockIcon style={{ color: editState.isMyLock ? "#3772FF" : "#FFFFFF" }} />
                                     My Locks
                                 </LockButton> 
@@ -270,17 +272,17 @@ export const Vault = () => {
                                 <StakingList>
                                     <StakingListItem type="header" stakeItem="Staking item" yourStake="Your stake" dateEnd="Date end" projectApr="Projected APR %" shareAmount="Share amount" pendingRewards="Pending rewards" />
                                     {
-                                        LockArr.map((item) => (
-                                            <>
-                                                <StakingListItem type="item" stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} />
-                                                <MobileStakingListitem idx={item.id} stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} />
-                                            </>
+                                        LockArr.map((item, index) => (
+                                            <StakingList key={index}>
+                                                <StakingListItem type="item" stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} onClick={() => setModalOpen(true)} />
+                                                <MobileStakingListitem idx={item.id} stakeItem={item.stakeItem} yourStake={item.yourStake} dateEnd={item.dateEnd} projectApr={item.projectApr} shareAmount={item.shareAmount} pendingRewards={item.pendingRewards} onClick={() => setModalOpen(true)} />
+                                            </StakingList>
                                         ))
                                     }
                                 </StakingList>
                             </>
                         }
-                        
+                        <ClaimModal isState={isModalOpen} setState={setModalOpen} />
                     </VaultSection>
                 </Wrapper>
             </GovernanceContainer>
@@ -370,7 +372,7 @@ const VaultSection = styled(Box)(({ theme }) => ({
 }))
 
 const Max = styled(Box)(({ theme }) => ({
-    width: '70px',
+    minWidth: '70px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -457,19 +459,19 @@ const ApproveButton = styled(Button)(({ theme }) => ({
 }))
 
 interface LockProps {
-    borderColor: string;
+    bcolor: string;
 }
 
-const LockButton = styled(Button)<LockProps>(({ theme, borderColor }) => ({
+const LockButton = styled(Button)<LockProps>(({ theme, bcolor }) => ({
     padding: '11px 21px',
     width: '150px',
     height: '40px',
     display: "flex",
     gap: '14px',
-    borderColor: borderColor,
+    borderColor: bcolor,
     textTransform: 'none',
     "&: hover": {
-        borderColor: borderColor
+        borderColor: bcolor
     },
     [theme.breakpoints.down(640)]: {
         width: '100%'
@@ -508,7 +510,7 @@ const LockButtonGroup = styled(Box)(({ theme }) => ({
     gap: '16px'
 }))
 
-const TigUsDMax = () => {
+export const TigUsDMax = () => {
     return(
         <TigUsDMaxContainer>
             <TigUSD />
@@ -564,12 +566,13 @@ interface StakingProps {
     projectApr: string;
     shareAmount: string;
     pendingRewards: string;
+    onClick?: () => void;
 }
 
 const StakingListItem = (props: StakingProps) => {
-    const { type, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards } = props;
+    const { type, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards, onClick } = props;
     return(
-        <StakingListItemContainer type={type}>
+        <StakingListItemContainer type={type} onClick={onClick}>
             <StakeListItem width={90}>{stakeItem}</StakeListItem>
             <StakeListItem width={110}>{yourStake}</StakeListItem>
             <StakeListItem width={110}>{dateEnd}</StakeListItem>
@@ -591,6 +594,7 @@ const StakingListItemContainer = styled(Box)<StakeContainerProps>(({ theme, type
     padding: '14px',
     display: 'flex',
     alignItems: 'center',
+    cursor: 'pointer',
     justifyContent: "space-between",
     [theme.breakpoints.down(768)]: {
         display: 'none'
@@ -624,12 +628,13 @@ interface MobileStakingProps {
     projectApr: string;
     shareAmount: string;
     pendingRewards: string;
+    onClick?: () => void;
 }
 
 const MobileStakingListitem = (props: MobileStakingProps) => {
-    const { idx, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards } = props;
+    const { idx, stakeItem, yourStake, dateEnd, projectApr, shareAmount, pendingRewards, onClick } = props;
     return(
-        <MobileStakingListitemContainer>
+        <MobileStakingListitemContainer onClick={onClick}>
             <MobileStakingListHeader>
                 <MyLockIdx>My lock {idx}</MyLockIdx>
                 <BlaBox><MoreHoriz /></BlaBox>
@@ -671,6 +676,7 @@ const MobileStakingListitemContainer = styled(Box)(({ theme }) => ({
     borderRadius: '5px',
     padding: "19px 15px",
     gap: '22px',
+    cursor: 'pointer',
     [theme.breakpoints.down(768)]: {
         display: 'flex'
     }
