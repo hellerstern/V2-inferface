@@ -137,6 +137,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const SaveChangeButton = styled(Button)(({ theme }) => ({
+  minWidth: '185px',
   backgroundColor: '#3772FF',
   borderRadius: '4px',
   color: '#FFF',
@@ -294,6 +295,7 @@ const Max = styled(Box)(({ theme }) => ({
 
 const ReleaseLockButton = styled(Button)(({ theme }) => ({
   backgroundColor: 'none',
+  minWidth: '185px',
   borderRadius: '4px',
   color: '#FFFFFF',
   height: '40px',
