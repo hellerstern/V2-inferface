@@ -32,18 +32,20 @@ export const PositionData = () => {
     const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, provider);
 
     const userTrades = await positionContract.userTrades(address);
+    const loops = parseInt((userTrades.length/10).toString());
+    const remainder = userTrades.length%10;
 
     // Get liq prices
     const liqPrices: any[] = [];
-    {
+    for (let x = 0; x <= loops; x++) {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i = 0; i < userTrades.length; i++) {
+      for (let i = 0; i < (x===loops ? remainder : 10); i++) {
         _calls.push(
           {
             reference: userTrades[i].toString(),
             methodName: 'getLiqPrice(address,uint256,uint256)',
-            methodParameters: [currentNetwork.addresses.positions, userTrades[i].toString(), 9000000000]
+            methodParameters: [currentNetwork.addresses.positions, userTrades[x*10+i].toString(), 9000000000]
           }
         )
       }
@@ -73,15 +75,15 @@ export const PositionData = () => {
     // Get position data
     const openP: any[] = [];
     const limitO: any[] = [];
-    {
+    for (let x = 0; x <= loops; x++) {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i = 0; i < userTrades.length; i++) {
+      for (let i = 0; i < (x===loops ? remainder : 10); i++) {
         _calls.push(
           {
             reference: userTrades[i].toString(),
             methodName: 'trades(uint256)',
-            methodParameters: [userTrades[i]]
+            methodParameters: [userTrades[x*10+i]]
           }
         )
       }
@@ -123,9 +125,9 @@ export const PositionData = () => {
           limitO.push(pos);
         }
       });
-      setOpenPositions(openP);
-      setLimitOrders(limitO);
     }
+    setOpenPositions(openP);
+    setLimitOrders(limitO);
     isGettingPositions.value = false;
   }
 
