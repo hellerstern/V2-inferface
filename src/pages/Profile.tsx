@@ -38,7 +38,7 @@ export const Profile = () => {
           <div className="loading-background"></div>
         </div>
         :
-        <div style={{background: 'linear-gradient(#9198e5, #e66465)', height: window.innerHeight}}>
+        <div style={{background: 'linear-gradient(#1f2067, #630780)', height: window.innerHeight}}>
           <Container>
             <ProfileContainer>
               <Wrapper>

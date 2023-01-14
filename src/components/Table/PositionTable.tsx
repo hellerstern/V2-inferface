@@ -60,8 +60,10 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
     setForceRerender(Math.random());
   }, [positionData]);
 
+  const [clickedPosition, setClickedPosition] = useState<any>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const handleClickEditOpen = (position: any) => {
+    setClickedPosition(position);
     setEditModalOpen(true);
   };
 
@@ -288,7 +290,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
                   {
                   tableType === 0 ?
                   <EditButton onClick={(e) => {
-                    handleClickEditOpen(position.id);
+                    handleClickEditOpen(position);
                     e.stopPropagation();
                   }}>
                     <SmallText>Edit</SmallText>
@@ -310,7 +312,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
           ))}
         </CustomTableBody>
       </Table>
-      <EditModal isState={isEditModalOpen} setState={setEditModalOpen} />
+      <EditModal isState={isEditModalOpen} setState={setEditModalOpen} position={clickedPosition}/>
     </TableContainer>
   );
 };

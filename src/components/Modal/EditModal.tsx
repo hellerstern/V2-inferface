@@ -4,36 +4,24 @@ import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/system';
-import { InputField } from '../Input';
+import { TigrisInput } from '../Input';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { LOGO } from '../../../src/config/images';
+import { tigusdLogo, daiLogo, usdtLogo } from '../../../src/config/images';
 import { CommonDropDown } from '../Dropdown';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
+import { ethers } from 'ethers';
+import { getNetwork } from 'src/constants/networks';
+import { getShellWallet, getShellNonce } from 'src/shell_wallet';
+import { toast } from 'react-toastify';
+import { oracleData } from 'src/context/socket';
 
-const partialArr = [
-  {
-    icon: LOGO,
-    name: 'tigUSD'
-  },
-  {
-    icon: LOGO,
-    name: 'btcUSD'
-  },
-  {
-    icon: LOGO,
-    name: 'bscUSD'
-  },
-  {
-    icon: LOGO,
-    name: 'ethUSD'
-  }
-];
+declare const window: any
+const { ethereum } = window;
 
-const marginArr = ['Add', 'Duplicate', 'Archive', 'More'];
+const marginArr = ['Add', 'Remove'];
 
 export interface DialogTitleProps {
   id: string;
@@ -71,47 +59,295 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 interface EditModalProps {
   isState: boolean;
   setState: (value: boolean) => void;
+  position: any;
 }
 
 export const EditModal = (props: EditModalProps) => {
-  const { isConnected } = useAccount();
-  const { isState, setState } = props;
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { isState, setState, position } = props;
+  const partialArr = getNetwork(chain === undefined ? 0 : chain.id).marginAssets;
+  const initialState = {
+    stopLoss: '',
+    profit: '',
+    partial: partialArr[0],
+    addMenu: partialArr[0],
+    partialPro: '100',
+    addNum: '',
+    addDrop: 'Add',
+    posDrop: partialArr[0],
+    position: ''
+  };
+  const [editState, setEditState] = React.useState(initialState);
   const handleClose = () => {
     setState(false);
   };
 
-  const initialState = {
-    stopLoss: '',
-    profit: '',
-    partial: {
-      icon: LOGO,
-      name: 'tigUSD'
-    },
-    addMenu: {
-      icon: LOGO,
-      name: 'tigUSD'
-    },
-    partialPro: '',
-    addNum: '',
-    addDrop: 'Add',
-    posDrop: {
-      icon: LOGO,
-      name: 'tigUSD'
-    },
-    position: ''
-  };
-
-  const [editState, setEditState] = React.useState(initialState);
-
-  const isChanged = JSON.stringify(editState) === JSON.stringify(initialState);
-
   React.useEffect(() => {
-    console.log('isChanged: ', isChanged);
-  }, [editState]);
+    if (isState) {
+      setEditState({
+        ...editState,
+        'stopLoss': position?.slPrice === "0" ? '' : (parseFloat(position?.slPrice)/1e18).toPrecision(7),
+        'profit': position?.tpPrice === "0" ? '' : (parseFloat(position?.tpPrice)/1e18).toPrecision(7),
+        'partialPro': '100',
+        'addNum': '',
+        'partial': partialArr[0],
+        'addMenu': partialArr[0],
+        'posDrop': partialArr[0],
+        'position': ''
+      });      
+    }
+  }, [isState]);
 
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
   };
+
+  const handleEditSL = (value: any) => {
+    setEditState({ ...editState, 'stopLoss': value });
+  };
+
+  const handleEditTP = (value: any) => {
+    setEditState({ ...editState, 'profit': value });
+  };
+
+  const handleEditPartialPro = (value: any) => {
+    setEditState({ ...editState, 'partialPro': value });
+  };
+
+  const handleEditAddNum = (value: any) => {
+    setEditState({ ...editState, 'addNum': value });
+  };
+
+  const handleEditPosition = (value: any) => {
+    setEditState({ ...editState, 'position': value });
+  };
+
+  // =======
+  // TRADING
+  // =======
+  async function getTradingContract() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const signer = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+  }
+
+  function handleUpdateSL() {
+    updateSL();
+  }
+  async function updateSL() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const slInput = ethers.utils.parseEther(editState.stopLoss === '' ? "0" : editState.stopLoss);
+
+    const _oracleData: any = oracleData[position.asset];
+
+    const priceData = [
+      _oracleData.provider,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp,
+      _oracleData.isClosed
+    ];
+
+    if (position.direction && parseInt(slInput.toString()) > parseInt(_oracleData.price) && parseInt(slInput.toString()) !== 0) {
+      toast.warn(
+        "Stop loss too high"
+      );
+      return;
+    } else if (!position.direction && parseInt(slInput.toString()) < parseInt(_oracleData.price) && parseInt(slInput.toString()) !== 0) {
+      toast.warn(
+        "Stop loss too low"
+      );
+      return;
+    }
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+    const tx = tradingContract.updateTpSl(false, position.id, slInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Updating stop loss...',
+        success: undefined,
+        error: 'Updating stop loss failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Updating stop loss failed!'
+        );
+      }
+    }, 1000);
+	}
+
+  function handleUpdateTP() {
+    updateTP();
+  }
+  async function updateTP() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const tpInput = ethers.utils.parseEther(editState.profit === '' ? "0" : editState.profit);
+
+    const _oracleData: any = oracleData[position.asset];
+
+    const priceData = [
+      _oracleData.provider,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp,
+      _oracleData.isClosed
+    ];
+
+    if (position.direction && parseInt(tpInput.toString()) < parseInt(_oracleData.price) && parseInt(tpInput.toString()) !== 0) {
+      toast.warn(
+        "Take profit too low"
+      );
+      return;
+    } else if (!position.direction && parseInt(tpInput.toString()) > parseInt(_oracleData.price) && parseInt(tpInput.toString()) !== 0) {
+      toast.warn(
+        "Take profit too high"
+      );
+      return;
+    }
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+    const tx = tradingContract.updateTpSl(true, position.id, tpInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Updating take profit...',
+        success: undefined,
+        error: 'Updating take profit failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Updating take profit failed!'
+        );
+      }
+    }, 1000);
+	}
+
+  function handlePartialClose() {
+    partialClose();
+  }
+  async function partialClose() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const _oracleData: any = oracleData[position.asset];
+    if (_oracleData.isClosed) {
+      toast.warn(
+        "Cannot trade while market is closed"
+      );
+    }
+
+    const priceData = [
+      _oracleData.provider,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp,
+      _oracleData.isClosed
+    ];
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+		const tx = tradingContract.initiateCloseOrder(position.id, parseFloat(editState.partialPro)*1e8, priceData, _oracleData.signature, editState.partial.stablevault, editState.partial.address, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Closing position...',
+        success: undefined,
+        error: 'Closing position failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Closing position failed!'
+        );
+      }
+    }, 1000);
+	}
+
+  function handleModifyMargin() {
+    editState.addDrop === "Add" ? addMargin() : removeMargin();
+  }
+  async function addMargin() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const addMarginInput = ethers.utils.parseEther(editState.addNum === '' ? "0" : editState.addNum);
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+		const tx = tradingContract.addMargin(position.id, editState.addMenu.address, editState.addMenu.stablevault, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Adding margin...',
+        success: undefined,
+        error: 'Adding margin failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Adding margin failed!'
+        );
+      }
+    }, 1000);
+	}
+  async function removeMargin() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const removeMarginInput = ethers.utils.parseEther(editState.addNum === '' ? "0" : editState.addNum);
+
+    const _oracleData: any = oracleData[position.asset];
+
+    const priceData = [
+      _oracleData.provider,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp,
+      _oracleData.isClosed
+    ];
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+		const tx = tradingContract.removeMargin(position.id, editState.addMenu.stablevault, editState.addMenu.address, removeMarginInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Removing margin...',
+        success: undefined,
+        error: 'Removing margin failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Removing margin failed!'
+        );
+      }
+    }, 1000);
+	}
 
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={isState}>
@@ -121,24 +357,33 @@ export const EditModal = (props: EditModalProps) => {
       <EditDialogContent>
         <FeeLabelGroup>
           <FeeLabel>
-            <TextLabel>Payout after fees</TextLabel>
+            <TextLabel>Payout before fees</TextLabel>
             <FeeLabelValue>$15.01</FeeLabelValue>
           </FeeLabel>
           <FeeLabel>
             <TextLabel>Payout after fees</TextLabel>
             <FeeLabelValue>$15.01</FeeLabelValue>
           </FeeLabel>
+          <FeeLabel>
+            <TextLabel>Funding fees paid</TextLabel>
+            <FeeLabelValue>{(-parseFloat(position?.accInterest)/1e18).toFixed(2)}</FeeLabelValue>
+          </FeeLabel>
         </FeeLabelGroup>
         <EditField>
           <TextLabel>Stop loss</TextLabel>
           <StopLossAction>
-            <InputField name="stopLoss" type="number" value={editState.stopLoss} setValue={handleEditState} />
+            <TigrisInput label="Stop Loss" placeholder="None" value={editState.stopLoss} setValue={handleEditSL} />
             {isConnected ? (
               <>
-                <ApplyButton disabled={editState.stopLoss === ''} variant="contained">
+                <ApplyButton disabled={
+                  editState.stopLoss === '' && position?.slPrice === "0" ? true :
+                  editState.stopLoss === (parseFloat(position?.slPrice)/1e18).toPrecision(7)
+                  }
+                  variant="contained"
+                  onClick={() => handleUpdateSL()}
+                  >
                   Apply
                 </ApplyButton>
-                <CancelButton>Cancel</CancelButton>
               </>
             ) : (
               ''
@@ -146,21 +391,25 @@ export const EditModal = (props: EditModalProps) => {
           </StopLossAction>
         </EditField>
         <EditField>
-          <FieldLabel>
-            <TextLabel>Take profit</TextLabel>
-            <PrimaryLabel>Edit</PrimaryLabel>
-          </FieldLabel>
-          <FieldAction>
-            <Box sx={{ width: '100%', gridColumn: '1 / 4' }}>
-              <InputField
-                name="profit"
-                type="number"
-                placeholder="2.48309480"
-                value={editState.profit}
-                setValue={handleEditState}
-              />
-            </Box>
-          </FieldAction>
+          <TextLabel>Take profit</TextLabel>
+          <StopLossAction>
+            <TigrisInput label="Take Profit" placeholder="None" value={editState.profit} setValue={handleEditTP} />
+            {isConnected ? (
+              <>
+                <ApplyButton disabled={
+                  editState.profit === '' && position?.tpPrice === "0" ? true :
+                  editState.profit === (parseFloat(position?.tpPrice)/1e18).toPrecision(7)
+                  }
+                  variant="contained"
+                  onClick={() => handleUpdateTP()}
+                  >
+                  Apply
+                </ApplyButton>
+              </>
+            ) : (
+              ''
+            )}
+          </StopLossAction>
         </EditField>
         <EditField>
           <FieldLabel>
@@ -173,14 +422,12 @@ export const EditModal = (props: EditModalProps) => {
               state={editState.partial}
               setState={handleEditState}
             />
-            <InputField
-              name="profitPro"
-              type="number"
-              placeholder="100%"
+            <TigrisInput
+              label="%"
               value={editState.partialPro}
-              setValue={handleEditState}
+              setValue={handleEditPartialPro}
             />
-            <ClosePositionButton>Close Position</ClosePositionButton>
+            <ClosePositionButton onClick={() => handlePartialClose()}>Close Position</ClosePositionButton>
           </FieldAction>
         </EditField>
         <EditField>
@@ -195,26 +442,48 @@ export const EditModal = (props: EditModalProps) => {
               setState={handleEditState}
             />
             <CommonDropDown arrayData={marginArr} name="addDrop" state={editState.addDrop} setState={handleEditState} />
-            <InputFieldContainer>
-              <InputField
-                name="addNum"
-                type="number"
-                placeholder="5"
+            <TigrisInputContainer>
+              <TigrisInput
+                label="Margin"
                 value={editState.addNum}
-                setValue={handleEditState}
+                setValue={handleEditAddNum}
               />
-            </InputFieldContainer>
+            </TigrisInputContainer>
           </FieldAction>
         </EditField>
         <FieldLabel>
           <TextLabel>New margin</TextLabel>
-          <SecondaryLabel>20.00</SecondaryLabel>
+          <SecondaryLabel>
+          {
+            isState ?
+              editState.addNum !== "" ? 
+                (editState.addDrop === "Add" ? (parseFloat(position.margin)/1e18 + parseFloat(editState.addNum)) : (parseFloat(position.margin)/1e18 - parseFloat(editState.addNum))).toFixed(2)
+              :
+                (parseFloat(position.margin)/1e18).toFixed(2)
+            :
+              ""
+          }
+          </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New leverage</TextLabel>
-          <SecondaryLabel>100.00</SecondaryLabel>
+          <SecondaryLabel>
+          {
+            isState ?
+              editState.addNum !== "" ? 
+                (editState.addDrop === "Add" ?
+                  ((parseFloat(position.margin)/1e18)*(parseFloat(position.leverage)/1e18)/((parseFloat(position.margin)/1e18)+parseFloat(editState.addNum))).toFixed(2)
+                    :
+                  ((parseFloat(position.margin)/1e18)*(parseFloat(position.leverage)/1e18)/((parseFloat(position.margin)/1e18)-parseFloat(editState.addNum))).toFixed(2)
+                )
+              :
+                (parseFloat(position.leverage)/1e18).toFixed(2)
+            :
+              ""
+          }
+          </SecondaryLabel>
         </FieldLabel>
-        <AddMarginButton variant="outlined">Add margin</AddMarginButton>
+        <AddMarginButton variant="outlined" onClick={() => handleModifyMargin()}>{editState.addDrop + " margin"}</AddMarginButton>
         <EditField>
           <FieldLabel>
             <TextLabel>Add to position</TextLabel>
@@ -226,12 +495,10 @@ export const EditModal = (props: EditModalProps) => {
               state={editState.posDrop}
               setState={handleEditState}
             />
-            <InputField
-              name="position"
-              type="number"
-              placeholder="0"
+            <TigrisInput
+              label="Margin"
               value={editState.position}
-              setValue={handleEditState}
+              setValue={handleEditPosition}
             />
             <OpenButton variant="outlined">Open</OpenButton>
           </FieldAction>
@@ -249,11 +516,6 @@ export const EditModal = (props: EditModalProps) => {
           <SecondaryLabel>$19,177.42</SecondaryLabel>
         </FieldLabel>
       </EditDialogContent>
-      <DialogActions>
-        <SaveChangeButton disabled={isChanged} variant="contained" onClick={handleClose}>
-          Save changes
-        </SaveChangeButton>
-      </DialogActions>
     </BootstrapDialog>
   );
 };
@@ -261,7 +523,8 @@ export const EditModal = (props: EditModalProps) => {
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: '0 24px',
-    width: '100%'
+    width: '100%',
+    paddingBottom: '24px'
   },
   '& .MuiDialogActions-root': {
     padding: '24px'
@@ -269,18 +532,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundImage: 'none',
     backgroundColor: '#18191D'
-  }
-}));
-
-const SaveChangeButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#3772FF',
-  borderRadius: '4px',
-  color: '#FFF',
-  height: '40px',
-  width: '100%',
-  textTransform: 'none',
-  '&:hover': {
-    backgroundColor: '#3772FF'
   }
 }));
 
@@ -425,7 +676,7 @@ const OpenButton = styled(Button)(({ theme }) => ({
   }
 }));
 
-const InputFieldContainer = styled(Box)(({ theme }) => ({
+const TigrisInputContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.down('sm')]: {
     gridColumn: '1 / 3',

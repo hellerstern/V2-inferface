@@ -55,11 +55,13 @@ interface InputProps {
   label: string;
   value: string;
   unit?: string;
+  placeholder?: string;
+  defaultValue?: string;
   setValue: (value: any) => void;
 }
 
 export const TigrisInput = (props: InputProps) => {
-  const { label, value, unit, setValue } = props;
+  const { label, value, unit, setValue, placeholder, defaultValue } = props;
   const inputRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
   const [isVisit, setVisit] = useState(false);
@@ -86,6 +88,8 @@ export const TigrisInput = (props: InputProps) => {
           value={value}
           type="text"
           ref={valueRef}
+          placeholder={placeholder !== undefined ? placeholder : ""}
+          defaultValue={defaultValue}
           onChange={(e: React.FormEvent<HTMLInputElement>) =>
             setValue(
               e.currentTarget.value

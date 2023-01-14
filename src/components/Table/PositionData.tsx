@@ -117,7 +117,6 @@ export const PositionData = () => {
           accInterest: parseInt(returnValue.returnValues[11].hex, 16).toString(),
           liqPrice: liqPrices[index]
         }
-        console.log(pos);
         if (parseInt(returnValue.returnValues[7].hex, 16) === 0) {
           openP.push(pos);
         } else {
@@ -242,7 +241,7 @@ export const PositionData = () => {
               else {
                 const modP = {
                   trader: openP[i].trader,
-                  margin: parseInt((openP[i].margin * (10000000000 - data.percent) / 10000000000).toString()).toString(),
+                  margin: (parseFloat(openP[i].margin) * (1e10 - data.percent) / 1e10).toString(),
                   leverage: openP[i].leverage,
                   price: openP[i].price,
                   tpPrice: openP[i].tpPrice,
@@ -257,7 +256,7 @@ export const PositionData = () => {
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                   currentNetwork.assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
-                  (data.percent / 10000000000).toFixed(2) +
+                  (data.percent / 1e8).toFixed(2) +
                   "% closed @ " +
                   (parseFloat(data.price) / 1e18).toPrecision(6)
                 ));
@@ -341,7 +340,6 @@ export const PositionData = () => {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
-              console.log(data);
               const modP = {
                 trader: openP[i].trader,
                 margin: data.newMargin,
@@ -358,7 +356,6 @@ export const PositionData = () => {
                   // _tradePrice - ((_tradePrice*1e18/_leverage) * uint(int(_margin)+_accInterest) / _margin) * _liqPercent / 1e10;
                   : (parseFloat(openP[i].price) + (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
               }
-              console.log(modP.liqPrice);
               if (data.isMarginAdded) {
                 toast.success((
                   "Successfully added " +
@@ -429,7 +426,6 @@ export const PositionData = () => {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
-              console.log(openP[i]);
               if (data.isTp) {
                 const modP = {
                   trader: openP[i].trader,
