@@ -174,6 +174,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 			});
 			for (let i = 0; i < positionData.openPositions.length; i++) {
 				if (positionData.openPositions[i].asset === asset) {
+					try {
 					if (parseFloat(positionData.openPositions[i].price) !== 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
@@ -288,6 +289,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
+					} catch {}
 				}
 			}
 		})
