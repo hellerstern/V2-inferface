@@ -52,7 +52,8 @@ export const PositionData = () => {
       const contractCallContext: ContractCallContext[] = [
         {
           reference: 'library',
-          contractAddress: currentNetwork.addresses.tradinglibrary,
+          // TEMPORARY
+          contractAddress: chain.id === 421613 ? "0xB89E5860bc6a4214E5C5F677fecF002021fB5C68" : currentNetwork.addresses.tradinglibrary,
           abi: currentNetwork.abis.tradinglibrary,
           calls: _calls
         }
