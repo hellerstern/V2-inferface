@@ -304,7 +304,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
-              <TableCell>{(data !== null && data[position.asset].price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell>
+              <TableCell>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell>
               <TableCell>
                 <InputStore
                   handleUpdateTPSLChange={handleUpdateTPSLChange}
