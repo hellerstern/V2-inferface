@@ -49,7 +49,7 @@ interface IPositionTable {
 
 export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFees }: IPositionTable) => {
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>(oracleData);
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
       setData(data);
