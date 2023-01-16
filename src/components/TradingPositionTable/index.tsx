@@ -36,7 +36,7 @@ export const TradingPositionTable = ({ setPairIndex, positionData }: IPositionTa
             <TableDropDownMenu state={show} setState={setShow} />
           </TableDropDown>
         </TableAction>
-        <PositionTable tableType={tab} setPairIndex={setPairIndex} positionData={positionData} />
+        <PositionTable tableType={tab} setPairIndex={setPairIndex} positionData={positionData} isAfterFees={show === 'After Closing Fees'}/>
       </TableWrapper>
       <TableMedia>
         <TableMediaLabel>Performance Chart</TableMediaLabel>

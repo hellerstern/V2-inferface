@@ -14,7 +14,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
-import { oracleData } from 'src/context/socket';
+import { oracleData, oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -44,9 +44,17 @@ interface IPositionTable {
   tableType: number; // 0 is your market, 1 is your limit, 2 is all
   setPairIndex: any;
   positionData: any;
+  isAfterFees: boolean;
 }
 
-export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositionTable) => {
+export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFees }: IPositionTable) => {
+
+  const [data, setData] = useState<any>(null);
+  useEffect(() => {
+    oracleSocket.on('data', (data: any) => {
+      setData(data);
+    })
+  }, []);
 
   const openPositions = positionData.openPositions;
   const limitOrders = positionData.limitOrders;
@@ -233,6 +241,33 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
     }
   }
 
+  function pnlPercent(position: any, cPrice: any, isAfterFees: any) {
+
+    const interest = position.accInterest/1e18;
+    const leverage = position.leverage/1e18;
+    const margin = position.margin/1e18;
+    const openPrice = position.price/1e18;
+  
+    let fee:any;
+    if (isAfterFees) {
+        fee = (margin*leverage*cPrice/openPrice) * 0.001;
+    } else {
+        fee = 0;
+    }
+  
+    const payoutAfterFee:number = position.direction ? (margin + (cPrice/openPrice-1)*leverage*margin+interest-fee) : (margin + (openPrice/cPrice-1)*leverage*margin+interest-fee);
+  
+    let pnlPercent = ((payoutAfterFee)/margin-1)*100;
+    if (pnlPercent > 500) {
+        pnlPercent = 500;
+    }
+    return (
+      <div style={{color: pnlPercent >= 0 ? '#26a69a' : '#EF5350'}}>
+      {payoutAfterFee.toFixed(2) + " (" + pnlPercent.toFixed(2) + "%)"}
+      </div>
+    );
+  }
+
   return (
     <TableContainer>
       <Table size="small" aria-label="a dense table">
@@ -245,7 +280,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>Pnl</TableCell>
+            <TableCell>PnL</TableCell>
             <TableCell>Take Profit</TableCell>
             <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
@@ -269,7 +304,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData }: IPositi
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
-              <TableCell>{"0%"}</TableCell>
+              <TableCell>{data ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell>
               <TableCell>
                 <InputStore
                   handleUpdateTPSLChange={handleUpdateTPSLChange}

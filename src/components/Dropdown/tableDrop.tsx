@@ -93,9 +93,7 @@ export const TableDropDownMenu = (props: TableDropProps) => {
         onClose={handleClose}
       >
         <MenuItem onClick={handleMenuClicked}>Before Closing Fees</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>Duplicate</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>Archive</MenuItem>
-        <MenuItem onClick={handleMenuClicked}>More</MenuItem>
+        <MenuItem onClick={handleMenuClicked}>After Closing Fees</MenuItem>
       </StyledMenu>
     </>
   );
