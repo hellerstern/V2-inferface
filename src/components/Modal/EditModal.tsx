@@ -372,7 +372,7 @@ export const EditModal = (props: EditModalProps) => {
         <EditField>
           <TextLabel>Stop loss</TextLabel>
           <StopLossAction>
-            <TigrisInput label="Stop Loss" placeholder="None" value={editState.stopLoss} setValue={handleEditSL} />
+            <TigrisInput label="Stop Loss" placeholder="-" value={editState.stopLoss} setValue={handleEditSL} />
             {isConnected ? (
               <>
                 <ApplyButton disabled={
@@ -393,7 +393,7 @@ export const EditModal = (props: EditModalProps) => {
         <EditField>
           <TextLabel>Take profit</TextLabel>
           <StopLossAction>
-            <TigrisInput label="Take Profit" placeholder="None" value={editState.profit} setValue={handleEditTP} />
+            <TigrisInput label="Take Profit" placeholder="-" value={editState.profit} setValue={handleEditTP} />
             {isConnected ? (
               <>
                 <ApplyButton disabled={
@@ -445,6 +445,7 @@ export const EditModal = (props: EditModalProps) => {
             <TigrisInputContainer>
               <TigrisInput
                 label="Margin"
+                placeholder="-"
                 value={editState.addNum}
                 setValue={handleEditAddNum}
               />
@@ -497,6 +498,7 @@ export const EditModal = (props: EditModalProps) => {
             />
             <TigrisInput
               label="Margin"
+              placeholder="-"
               value={editState.position}
               setValue={handleEditPosition}
             />
