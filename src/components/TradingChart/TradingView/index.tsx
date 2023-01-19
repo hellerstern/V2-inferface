@@ -6,12 +6,11 @@ import {
 	ChartingLibraryWidgetOptions,
 	LanguageCode,
 	ResolutionString,
-	EntityId,
 	IChartWidgetApi,
 	IOrderLineAdapter
 } from '../../../charting_library';
 import Datafeed from './datafeed.js';
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
 import { oracleSocket } from '../../../../src/context/socket';
 import { toast } from 'react-toastify';
@@ -19,7 +18,6 @@ import { getShellWallet, getShellNonce } from '../../../../src/shell_wallet/inde
 import { oracleData } from 'src/context/socket';
 import { useAccount, useNetwork } from 'wagmi';
 import { ethers } from 'ethers';
-import { lineHeight } from '@mui/system';
 
 export interface ChartContainerProps {
 	asset: any;
@@ -173,7 +171,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				} catch (err) { console.log(err) }
 			});
 			for (let i = 0; i < positionData.openPositions.length; i++) {
-				if (positionData.openPositions[i].asset === asset) {
+				if (positionData.openPositions[i].asset === asset && positionData.openPositions[i].isVisible) {
 					try {
 					if (parseFloat(positionData.openPositions[i].price) !== 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
@@ -292,7 +290,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					} catch {}
 				}
 			}
-		})
+		});
 	}, [posData, asset]);
 
 	// Trade functions

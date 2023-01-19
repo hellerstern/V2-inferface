@@ -8,7 +8,7 @@ import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { Close, Edit } from '@mui/icons-material';
-import { AiFillEye } from 'react-icons/ai';
+import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 import { EditModal } from '../Modal/EditModal';
 import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from "../../../src/constants/networks";
@@ -268,6 +268,16 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     );
   }
 
+  const [isPositionVisible, setPositionVisible] = useState<any>({});
+
+  function handleEyeClick(e: any, id: number, is: boolean) {
+    const prevVisible = isPositionVisible;
+    prevVisible[id] = is;
+    setPositionVisible(prevVisible);
+    positionData.setVisible(id, is);
+    e.stopPropagation();
+  }
+
   return (
     <TableContainer>
       <Table size="small" aria-label="a dense table">
@@ -293,7 +303,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
               <TableCell>
                 <TableCellContainer>
                   <VisibilityBox>
-                    <AiFillEye style={{ fontSize: '12px', marginLeft: '0.5px' }} />
+                    {(isPositionVisible[position.id] === true || isPositionVisible[position.id] === undefined) ? <BsEyeFill style={{ fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => {handleEyeClick(e, position.id, false);}}/> : <BsEyeSlashFill style={{ fontSize: '12px', marginLeft: '0.5px' }}  onClick={(e) => {handleEyeClick(e, position.id, true);}}/>}
                   </VisibilityBox>{' '}
                   {position.trader.slice(0, 6)}
                 </TableCellContainer>

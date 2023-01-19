@@ -118,7 +118,8 @@ export const PositionData = () => {
           id: parseInt(returnValue.returnValues[9].hex, 16),
           asset: parseInt(returnValue.returnValues[2].hex, 16),
           accInterest: parseInt(returnValue.returnValues[11].hex, 16).toString(),
-          liqPrice: liqPrices[index]
+          liqPrice: liqPrices[index],
+          isVisible: true
         }
         if (parseInt(returnValue.returnValues[7].hex, 16) === 0) {
           openP.push(pos);
@@ -165,7 +166,8 @@ export const PositionData = () => {
                 asset: data.tradeInfo.asset,
                 accInterest: 0,
                 liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
-                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
+                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString(),
+                isVisible: true
               }
             );
             setOpenPositions(openP);
@@ -186,7 +188,8 @@ export const PositionData = () => {
                 asset: data.tradeInfo.asset,
                 accInterest: 0,
                 liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
-                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
+                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString(),
+                isVisible: true
               }
             );
             toast.success((
@@ -253,7 +256,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: openP[i].asset,
                   accInterest: openP[i].accInterest,
-                  liqPrice: openP[i].liqPrice
+                  liqPrice: openP[i].liqPrice,
+                  isVisible: openP[i].isVisible
                 }
                 toast.success((
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
@@ -303,7 +307,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: data.asset,
                   accInterest: 0,
-                  liqPrice: 0
+                  liqPrice: 0,
+                  isVisible: true
                 }
               );
               limitO.splice(i, 1);
@@ -357,7 +362,8 @@ export const PositionData = () => {
                 liqPrice: openP[i].direction
                   ? (parseFloat(openP[i].price) - (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
                   // _tradePrice - ((_tradePrice*1e18/_leverage) * uint(int(_margin)+_accInterest) / _margin) * _liqPercent / 1e10;
-                  : (parseFloat(openP[i].price) + (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
+                  : (parseFloat(openP[i].price) + (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString(),
+                isVisible: openP[i].isVisible
               }
               if (data.isMarginAdded) {
                 toast.success((
@@ -404,7 +410,8 @@ export const PositionData = () => {
                 id: data.id,
                 asset: openP[i].asset,
                 accInterest: openP[i].accInterest,
-                liqPrice: openP[i].liqPrice
+                liqPrice: openP[i].liqPrice,
+                isVisible: openP[i].isVisible
               }
               toast.success((
                 "Successfully opened " +
@@ -441,7 +448,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: openP[i].asset,
                   accInterest: openP[i].accInterest,
-                  liqPrice: openP[i].liqPrice
+                  liqPrice: openP[i].liqPrice,
+                  isVisible: openP[i].isVisible
                 }
                 if (parseFloat(data.price) === 0) {
                   toast.success((
@@ -473,7 +481,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: openP[i].asset,
                   accInterest: openP[i].accInterest,
-                  liqPrice: openP[i].liqPrice
+                  liqPrice: openP[i].liqPrice,
+                  isVisible: openP[i].isVisible
                 }
                 if (parseFloat(data.price) === 0) {
                   toast.success((
@@ -507,12 +516,39 @@ export const PositionData = () => {
     }
   }, [address, chain, openPositions, limitOrders]);
 
+  const setPositionVisible = (id: number, is: boolean) => {
+    const openP: any[] = openPositions.slice();
+    for (let i = 0; i < openP.length; i++) {
+      if (openP[i].id === id) {
+        const modP = {
+          trader: openP[i].trader,
+          margin: openP[i].margin,
+          leverage: openP[i].leverage,
+          price: openP[i].price,
+          tpPrice: openP[i].tpPrice,
+          slPrice: openP[i].slPrice,
+          direction: openP[i].direction,
+          id: id,
+          asset: openP[i].asset,
+          accInterest: openP[i].accInterest,
+          liqPrice: openP[i].liqPrice,
+          isVisible: is
+        }
+        openP[i] = modP;
+        break;
+      }
+    }
+    setOpenPositions(openP);
+    console.log('Set visibility', id, is);
+  }
+
   return (
     {
       positionData: {
         openPositions: openPositions,
         limitOrders: limitOrders,
-        allPositions: allPositions
+        allPositions: allPositions,
+        setVisible: setPositionVisible
       }
     }
   );

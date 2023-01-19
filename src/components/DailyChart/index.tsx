@@ -8,7 +8,7 @@ import priceData from './btcdata.json';
 import './index.css';
 
 export const DailyPerformanceChart = () => {
-  const [token, setToken] = useState('BTC/USDT');
+  const [token, setToken] = useState('ALL');
 
   const configPrice = {
     yAxis: [

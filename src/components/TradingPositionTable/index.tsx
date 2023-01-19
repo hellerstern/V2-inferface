@@ -18,7 +18,7 @@ interface IPositionTable {
 export const TradingPositionTable = ({ setPairIndex, positionData }: IPositionTable) => {
   const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
-  const [show, setShow] = useState('Before Closing Fees');
+  const [show, setShow] = useState('After Closing Fees');
   return (
     <TableContainer>
       <TableWrapper>

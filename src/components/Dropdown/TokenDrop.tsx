@@ -94,13 +94,13 @@ export const TokenDropMenu = (props: TokenDropProps) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        <CustomMenuItem onClick={handleMenuClicked}>ETH/USDT</CustomMenuItem>
-        <CustomMenuItem onClick={handleMenuClicked}>ADA/USDT</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>BTC/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ETH/USD</CustomMenuItem>
+        <CustomMenuItem onClick={handleMenuClicked}>ADA/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>ALGO/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>ATOM/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>AVAX/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>BCH/USD</CustomMenuItem>
-        <CustomMenuItem onClick={handleMenuClicked}>BNB/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>BNB/USD</CustomMenuItem>
         <CustomMenuItem onClick={handleMenuClicked}>DOGE/USD</CustomMenuItem>
       </StyledMenu>
