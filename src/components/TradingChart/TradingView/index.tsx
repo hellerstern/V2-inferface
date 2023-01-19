@@ -121,7 +121,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							disableSelection: true,
 							overrides: {
 								showPrice: true,
-								linestyle: 2,
+								linestyle: 1,
 								linewidth: 1,
 								linecolor: "#26A69A",
 								showLabel: true,
@@ -144,7 +144,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							disableSelection: true,
 							overrides: {
 								showPrice: true,
-								linestyle: 2,
+								linestyle: 1,
 								linewidth: 1,
 								linecolor: "#EF534F",
 								showLabel: true,

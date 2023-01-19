@@ -63398,7 +63398,7 @@
           r = i("8Uy/");
         class n extends s.a {
           constructor(e) {
-            super(e), (this._lineRendererData.linestyle = r.LINESTYLE_DOTTED);
+            super(e), (this._lineRendererData.linestyle = r.LINESTYLE_DASHED);
           }
           _updateImpl() {
             if (
