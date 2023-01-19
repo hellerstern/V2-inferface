@@ -210,7 +210,7 @@ const InputContainer = styled(Box)<containerProps>(({ visited, theme }) => ({
 
 const InputLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
-  color: '#777E90',
+  color: '#AEB5C8',
   fontWeight: 400
 }));
 
@@ -218,7 +218,7 @@ const InputArea = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '2px',
   fontSize: '12px',
-  color: 'rgba(255, 255, 255, 0.16)',
+  color: 'rgba(230, 230, 255, 0.16)',
   alignItems: 'center'
 }));
 
@@ -229,7 +229,7 @@ const InputValue = styled('input')<containerProps>(({ visited, theme }) => ({
   background: 'none',
   textAlign: 'right',
   border: 'none',
-  color: visited === 1 ? '#FFFFFF' : 'rgba(255, 255, 255, 0.25)',
+  color: visited === 1 ? '#FFFFFF' : 'rgba(230, 230, 255, 0.5)',
   letterSpacing: '0.05em',
 
   [theme.breakpoints.down(390)]: {
@@ -259,7 +259,7 @@ const InputFieldArea = styled(Box)(({ theme }) => ({
   height: '100%',
   gap: '2px',
   fontSize: '12px',
-  color: 'rgba(255, 255, 255, 0.16)'
+  color: 'rgba(230, 230, 255, 0.16)'
 }));
 
 const InputFieldValue = styled('input')(({ theme }) => ({
