@@ -25,17 +25,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child td, &:last-child th': {
     border: 0
   },
-  '.ActionField': {
-    visibility: 'hidden'
-  },
   cursor: 'pointer',
   '&:hover': {
     backgroundColor: '#777E90',
     '.MuiTableCell-root': {
       color: '#FFFFFF'
-    },
-    '.ActionField': {
-      visibility: 'visible'
     }
   }
 }));
