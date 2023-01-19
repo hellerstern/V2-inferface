@@ -246,7 +246,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onClick={() => handleDirectionChange(true)}
             sx={{
               backgroundColor: isLong ? '#26a69a' : '#222630',
-              color: isLong ? '#FFFFFF' : '#AEB5C8',
+              color: isLong ? '#FFFFFF' : '#B1B5C3',
               '&:hover': { backgroundColor: isLong ? '#26a69a' : '#222630', color: isLong ? '#FFFFFF' : '#26a69a' }
             }}
           >
@@ -256,7 +256,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onClick={() => handleDirectionChange(false)}
             sx={{
               backgroundColor: isLong ? '#222630' : '#EF5350',
-              color: isLong ? '#AEB5C8' : '#FFFFFF',
+              color: isLong ? '#B1B5C3' : '#FFFFFF',
               '&:hover': { backgroundColor: isLong ? '#222630' : '#EF5350', color: isLong ? '#EF5350' : '#FFFFFF' }
             }}
           >
@@ -268,7 +268,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onClick={() => setOrderType("Market")}
             sx={{
               backgroundColor: orderType === "Market" ? '#3772ff' : '#222630',
-              color: orderType === "Market" ? '#FFFFFF' : '#AEB5C8',
+              color: orderType === "Market" ? '#FFFFFF' : '#B1B5C3',
               '&:hover': { backgroundColor: orderType === "Market" ? '#3772ff' : '#222630', color: orderType === "Market" ? '#FFFFFF' : '#3772ff' }
             }}
           >
@@ -278,7 +278,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onClick={() => setOrderType("Limit")}
             sx={{
               backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630',
-              color: orderType === "Limit" ? '#FFFFFF' : '#AEB5C8',
+              color: orderType === "Limit" ? '#FFFFFF' : '#B1B5C3',
               '&:hover': { backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630', color: orderType === "Limit" ? '#FFFFFF' : '#3772ff' }
             }}
           >
@@ -288,7 +288,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onClick={() => setOrderType("Stop")}
             sx={{
               backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630',
-              color: orderType === "Stop" ? '#FFFFFF' : '#AEB5C8',
+              color: orderType === "Stop" ? '#FFFFFF' : '#B1B5C3',
               '&:hover': { backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630', color: orderType === "Stop" ? '#FFFFFF' : '#3772ff' }
             }}
           >
