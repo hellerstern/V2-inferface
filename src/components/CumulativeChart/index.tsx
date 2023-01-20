@@ -19,16 +19,10 @@ export const CumulativeChart = () => {
         const toFetch = "https://stats-bg6gz.ondigitalocean.app/"+chain.id.toString()+"/"+address;
         const response = await fetch(toFetch);
         const resData = await response.json();
-        resData.forEach((res: any, index: number) => {
-          resData[index][0] = Date.parse(resData[index][0]);
-        });
         setData(resData);        
       }
     }
     x();
-    setInterval(() => {
-      x();
-    }, 3000);
   }, []);
 
   const configPrice = {

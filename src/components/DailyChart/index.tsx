@@ -10,7 +10,7 @@ import { useNetwork, useAccount } from 'wagmi';
 export const DailyPerformanceChart = () => {
 
   const [token, setToken] = useState('ALL');
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>([]);
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -20,16 +20,10 @@ export const DailyPerformanceChart = () => {
         const toFetch = "https://stats-bg6gz.ondigitalocean.app/"+chain.id.toString()+"/"+address;
         const response = await fetch(toFetch);
         const resData = await response.json();
-        resData.forEach((res: any, index: number) => {
-          resData[index][0] = Date.parse(resData[index][0]);
-        });
         setData(resData);        
       }
     }
     x();
-    setInterval(() => {
-      x();
-    }, 3000);
   }, []);
 
   const configPrice = {
@@ -69,7 +63,7 @@ export const DailyPerformanceChart = () => {
     },
 
     legend: {
-      enabled: true,
+      enabled: false,
       style: {
         backgroundColor: 'red'
       }
