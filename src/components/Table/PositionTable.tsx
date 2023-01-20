@@ -376,7 +376,14 @@ interface IInputStore {
 }
 const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => {
 
-  const [tpsl, setTpsl] = useState(((isTP ? position.tpPrice : position.slPrice) / 1e18).toPrecision(7));
+  const [tpsl, setTpsl] = useState(initTpsl(isTP, position));
+  function initTpsl(isTP: boolean, position: any) {
+    if (isTP) {
+      return position.tpPrice/1e18 === 0 ? "" : (position.tpPrice / 1e18).toPrecision(7);
+    } else {
+      return position.slPrice/1e18 === 0 ? "" : (position.slPrice / 1e18).toPrecision(7);
+    }
+  }
 
   return (
     <Input
@@ -388,9 +395,14 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
       type="text"
       disableUnderline={true}
       placeholder={"None"}
-      value={parseFloat(tpsl) === 0 ? "" : tpsl}
+      value={tpsl}
       onChange={(e: any) => {
-        setTpsl(e.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0'));
+        setTpsl(
+          e.currentTarget.value
+            .replace(/[^0-9.]/g, '')
+            .replace(/(\..*?)\..*/g, '$1')
+            .replace(/^0[^.]/, '0')
+        );
       }}
       onKeyDown={(key) => {
         if (key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
