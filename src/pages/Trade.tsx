@@ -13,6 +13,7 @@ import { Cumulative } from './MiniPage/Cumulative';
 import { PositionData } from 'src/components/Table/PositionData';
 import { TraderProfile } from 'src/context/profile';
 import { PairSelectionTable } from 'src/components/PairSelectionTable';
+import { useAccount } from 'wagmi';
 
 export const Trade = () => {
   const positionData = PositionData().positionData;
@@ -21,6 +22,8 @@ export const Trade = () => {
     localStorage.getItem('LastPairSelected') !== null ? parseInt(localStorage.getItem('LastPairSelected') as string) : 0
   );
   const { miniPage } = useStore();
+
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     if (localStorage.getItem('FavPairs') === null) localStorage.setItem('FavPairs', '["BTC/USD", "ETH/USD"]');
@@ -45,8 +48,13 @@ export const Trade = () => {
                 <PairSelectionTable isMobile={false} setPairIndex={setPairIndex} />
               </PairTableContainer>
             </TradingForm>
-            <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
-            <DailyPerformanceChart />
+            {
+              isConnected && 
+              <>
+                <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
+                <DailyPerformanceChart />
+              </>
+            }
           </Container>
         </>
       )}
