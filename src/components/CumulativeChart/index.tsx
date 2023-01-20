@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { TokenDropMenu } from '../Dropdown/TokenDrop';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
-import priceData from './btcdata.json';
 import './index.css';
 import { useAccount, useNetwork } from 'wagmi';
 
