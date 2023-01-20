@@ -1,14 +1,30 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
-import { useState } from 'react';
 import { TokenDropMenu } from '../Dropdown/TokenDrop';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
-import priceData from './btcdata.json';
 import './index.css';
+import { useEffect, useState } from 'react';
+import { useNetwork, useAccount } from 'wagmi';
 
 export const DailyPerformanceChart = () => {
+
   const [token, setToken] = useState('ALL');
+  const [data, setData] = useState<any>(null);
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+
+  useEffect(() => {
+    const x = async () => {
+      if (address && chain?.id) {
+        const toFetch = "https://stats-bg6gz.ondigitalocean.app/"+chain.id.toString()+"/"+address;
+        const response = await fetch(toFetch);
+        const resData = await response.json();
+        setData(resData);        
+      }
+    }
+    x();
+  }, []);
 
   const configPrice = {
     yAxis: [
@@ -86,9 +102,9 @@ export const DailyPerformanceChart = () => {
     },
     series: [
       {
-        name: 'Price',
+        name: 'PnL',
         type: 'spline',
-        data: priceData,
+        data: data,
         tooltip: {
           valueDecimals: 2
         }
