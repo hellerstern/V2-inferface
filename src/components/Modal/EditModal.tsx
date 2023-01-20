@@ -564,14 +564,14 @@ const FeeLabel = styled(Box)(({ theme }) => ({
 const TextLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '12px',
-  color: '#D2CEDE'
+  color: '#B1B5C3'
 }));
 
 const FeeLabelValue = styled(Box)(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '16px',
   fontWeight: '700',
-  color: '#E5E3EC'
+  color: '#B1B5C3'
 }));
 
 const EditField = styled(Box)(({ theme }) => ({
@@ -629,14 +629,14 @@ const FieldLabel = styled(Box)(({ theme }) => ({
 const PrimaryLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '12px',
-  color: '#3772FF',
+  color: '#B1B5C3',
   cursor: 'pointer'
 }));
 
 const SecondaryLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '12px',
-  color: 'rgba(255, 255, 255, 0.45)',
+  color: '#B1B5C3',
   cursor: 'pointer'
 }));
 
