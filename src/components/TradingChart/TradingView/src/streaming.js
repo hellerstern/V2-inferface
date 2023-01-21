@@ -32,9 +32,8 @@ oracleSocket.on('data', (data) => {
       low: Math.min(lastDailyBar.low, tradePrice),
       close: tradePrice
     };
-    lastDailyBar = bar;
   }
-
+  lastDailyBar = bar;
   callback(bar);
 });
 
