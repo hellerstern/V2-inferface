@@ -131,7 +131,7 @@ export const Chatbox = () => {
 
       // Check if the scroll position is at the bottom of the list
       if ((scrollPosition as number) + (visibleHeight as number) + 300 >= totalHeight) {
-        lastMessage.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+        lastMessage.scrollIntoView({ behavior: "auto", block: "end", inline: "nearest" });
       }
     }
   };
