@@ -352,18 +352,6 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
           {/* No Trading Data */}
         </CustomTableBody>
       </Table>
-      { 
-          tableType === 0 && openPositions.length === 0 && 
-          <NodataLabel>
-              No Trading Data
-          </NodataLabel>
-      }
-      { 
-          tableType !== 0 && limitOrders.length === 0 && 
-          <NodataLabel>
-              No Trading Data
-          </NodataLabel>
-      }
       <EditModal isState={isEditModalOpen} setState={setEditModalOpen} position={clickedPosition}/>
     </TableContainer>
   );
