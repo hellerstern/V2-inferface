@@ -92,7 +92,7 @@ export default {
     console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
     try {
       resolution === "1D" ? resolution = "D" : null;
-      const data = await (await fetch(`https://tigrischarts.net/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`)).json();
+      const data = await (await fetch(`https://tigrischarts.net:8080/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`)).json();
       if ((data.s && data.s != 'ok') || data.time.length === 0) {
         // "noData" should be set if there is no data in the requested period.
         onHistoryCallback([], {
