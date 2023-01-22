@@ -176,13 +176,27 @@ export const Governance = () => {
       <GovernanceContainer>
         <Wrapper>
           <CardGroup>
-            <Card>
+            <Card sx={{position: 'relative'}}>
+              <div style={{bottom: '5px', position: 'absolute'}}>
+                <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '11px' }}>
+                  Dashboard
+                  <OpenInNew sx={{ width: '15px', height: '15px' }} />
+                </CardMedia>
+              </div>
               <CardValue>$0.00</CardValue>
-              <CardMedia>24h trading volume</CardMedia>
+              <CardMedia>
+                24h trading volume
+              </CardMedia>
             </Card>
-            <Card>
-              <CardValue>{(govSupply/1).toString()}</CardValue>
-              <CardMedia>NFT Circulating Supply</CardMedia>
+            <Card sx={{position: 'relative'}}>
+              <div style={{bottom: '5px', position: 'absolute'}}>
+                <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '11px' }}>
+                  OpenSea
+                  <OpenInNew sx={{ width: '15px', height: '15px' }} />
+                </CardMedia>
+              </div>
+              <CardValue>{(govSupply/1).toString()} / 605</CardValue>
+              <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
             </Card>
             <Card>
               <CardValue>$9.4838</CardValue>
@@ -286,7 +300,7 @@ export const Governance = () => {
                         <FormControlLabel
                           key={id}
                           control={<TigrisCheckBox defaultChecked={false} onChange={() => handleCheckbox(id)}/>}
-                          label={<CheckBoxLabel primary="NFT ID" secondary={"#" + id.toString()} />}
+                          label={<CheckBoxLabel primary="GOV NFT" secondary={"#" + id.toString()} />}
                         />
                       ))
                     }
