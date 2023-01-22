@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { Box, Button, FormControlLabel, FormGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { OpenInNew } from '@mui/icons-material';
@@ -11,8 +11,6 @@ import { TigrisCheckBox } from 'src/components/CheckBox';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { getNetwork } from 'src/constants/networks';
-import { AnyFn } from '@react-spring/types';
-import e from 'express';
 
 declare const window: any
 const { ethereum } = window;

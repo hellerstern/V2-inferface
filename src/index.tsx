@@ -40,7 +40,7 @@ const arbitrum: Chain = {
 
 const arbitrumTestnet: Chain = {
   id: 421613,
-  name: 'Arbitrum Goerli',
+  name: 'Arbitrum Görli',
   network: 'arbitrum-goerli',
   iconUrl: './assets/images/arbtest.png',
   iconBackground: 'rgba(0,0,0,0)',
