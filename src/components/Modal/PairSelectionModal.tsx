@@ -35,6 +35,7 @@ const PairTableContainer = styled(Box)(({ theme }) => ({
   minHeight: '560px',
   overflow: 'auto',
   [theme.breakpoints.down(400)]: {
-    maxWidth: '320px'
+    maxWidth: '100%',
+    minHeight: '100%'
   }
 }));
