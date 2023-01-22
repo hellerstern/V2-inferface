@@ -12,7 +12,7 @@ import {
   REF_ABI
 } from '../../abis';
 
-import { tigusdLogo, daiLogo, usdtLogo } from '../../../config/images';
+import { tigusdLogo, daiLogo, usdtLogo, ArbiScanSvg } from '../../../config/images';
 
 function isClosed(asset: any) {
   if (asset == 2 || asset == 32 || asset == 5 || asset == 6 || asset == 7 || asset == 8 || asset == 10) {
@@ -61,7 +61,7 @@ export const NETWORK = {
     staking: STAKING_ABI,
     referrals: REF_ABI
   },
-  icon: 'assets/images/arb.png',
+  icon: ArbiScanSvg,
   gasLimit: 6_000_000,
   assets: [
     {

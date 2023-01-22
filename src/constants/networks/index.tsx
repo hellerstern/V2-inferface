@@ -45,6 +45,7 @@ export const getNetwork = (networkId: any) => {
           tigusdvault: '',
           pairscontract: '',
           referrals: '',
+          nftsale: '',
           govnft: '0x'
         },
         abis: {
@@ -53,7 +54,9 @@ export const getNetwork = (networkId: any) => {
           tradinglibrary: [],
           erc20: [],
           pairscontract: [],
-          referrals: []
+          referrals: [],
+          nftsale: [],
+          govnft: []
         },
         assets: [
           {

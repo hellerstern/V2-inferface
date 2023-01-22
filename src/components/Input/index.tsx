@@ -141,7 +141,7 @@ export const InputField = (props: InputLabelProps) => {
           name={name}
           ref={valueRef}
           placeholder={placeholder}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(name, e.currentTarget.value)}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value)}
         ></InputFieldValue>
       </InputFieldArea>
     </InputFieldContainer>

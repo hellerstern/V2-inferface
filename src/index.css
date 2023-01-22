@@ -17,6 +17,7 @@ body {
   /* base font */
   font-family: 'DM Sans' !important;
   color: #ffffff;
+  overscroll-behavior-y: none;
 }
 
 button {
