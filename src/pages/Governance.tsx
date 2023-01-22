@@ -15,6 +15,39 @@ import { getNetwork } from 'src/constants/networks';
 declare const window: any
 const { ethereum } = window;
 
+const bridgeDict = [
+  {
+      name: "Polygon",
+      icon: PolygonSvg,
+      nft: "5DF98AA475D8815df7cd4fC4549B5c150e8505Be",
+      chainId: 137,
+      layerzero: 109
+  },
+  {
+      name: "Arbitrum",
+      icon: ArbiScanSvg,
+      nft: "303c470c0e0342a1CCDd70b0a17a14b599FF1474",
+      chainId: 42161,
+      layerzero: 110
+  }
+]
+
+const urls = {
+  Arbitrum: {
+    opensea: "https://opensea.io/collection/tigris-trade-arbi",
+    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
+  },
+  Polygon: {
+    opensea: "https://opensea.io/collection/tigris-trade",
+    treasury: "https://polygonscan.com/address/0x4f7046f36B5D5282A94cB448eAdB3cdf9Ff2b051"
+  },
+  "Arbitrum Görli": {
+    opensea: "https://opensea.io/collection/tigris-trade-arbi",
+    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
+  },
+  dune: "https://dune.com/Henrystats/tigris-overview"
+}
+
 export const Governance = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
@@ -28,22 +61,6 @@ export const Governance = () => {
     chainId: currentNetwork.network_id,
     layerzero: currentNetwork.layerzero
   }
-  const bridgeDict = [
-    {
-        name: "Polygon",
-        icon: PolygonSvg,
-        nft: "5DF98AA475D8815df7cd4fC4549B5c150e8505Be",
-        chainId: 137,
-        layerzero: 109
-    },
-    {
-        name: "Arbitrum",
-        icon: ArbiScanSvg,
-        nft: "303c470c0e0342a1CCDd70b0a17a14b599FF1474",
-        chainId: 42161,
-        layerzero: 110
-    }
-  ]
 
   const [editState, setEditState] = useState({
     fromData: defaultBridge,
@@ -167,8 +184,8 @@ export const Governance = () => {
     } else {
         setIsMaxBridgeError(false);
     }
-}
-  
+  }
+
   return (
     <Container>
       <GovernanceContainer>
@@ -179,7 +196,7 @@ export const Governance = () => {
               <CardMedia>
                 24h trading volume
               </CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open(urls.dune, '_blank')}>
                 Advanced Stats
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
@@ -187,7 +204,7 @@ export const Governance = () => {
             <Card>
               <CardValue>{(govSupply/1).toString()} / 606</CardValue>
               <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open(window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank'), '_blank')}>
                 OpenSea
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
@@ -195,7 +212,7 @@ export const Governance = () => {
             <Card>
               <CardValue>$100,000.00</CardValue>
               <CardMedia>{currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }}>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }} onClick={() => window.open(window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank'), '_blank')}>
                 Treasury Balance
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
