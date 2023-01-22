@@ -4,6 +4,7 @@ import { Header } from './header';
 import { Footer } from './footer';
 import { styled } from '@mui/system';
 import { Box } from '@mui/material';
+import './beauty.css';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +14,10 @@ export const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Header />
-      <Wrapper>{children}</Wrapper>
+      <Wrapper>
+        <div className={"beauty"}/>
+        {children}
+      </Wrapper>
       <ToastContainer
         position="top-right"
         autoClose={3000}
