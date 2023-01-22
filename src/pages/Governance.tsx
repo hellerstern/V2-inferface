@@ -187,7 +187,7 @@ export const Governance = () => {
               </CardMedia>
             </Card>
             <Card>
-              <CardValue>{(govSupply/1).toString()} / 605</CardValue>
+              <CardValue>{(govSupply/1).toString()} / 606</CardValue>
               <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
               <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}>
                 OpenSea
