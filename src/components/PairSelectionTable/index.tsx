@@ -36,7 +36,7 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
           <SearchBar onChange={handleSearch} />
           {isMobile && (
             <Box sx={{ cursor: 'pointer' }} onClick={onClose}>
-              Cancel
+              Close
             </Box>
           )}
         </Box>
@@ -58,19 +58,19 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
       </SearchContainer>
     </TradingDetailContainer>
