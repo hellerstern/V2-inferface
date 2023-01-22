@@ -176,30 +176,27 @@ export const Governance = () => {
       <GovernanceContainer>
         <Wrapper>
           <CardGroup>
-            <Card sx={{position: 'relative'}}>
-              <div style={{bottom: '5px', position: 'absolute'}}>
-                <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '11px' }}>
-                  Dashboard
-                  <OpenInNew sx={{ width: '15px', height: '15px' }} />
-                </CardMedia>
-              </div>
+            <Card>
               <CardValue>$0.00</CardValue>
               <CardMedia>
                 24h trading volume
               </CardMedia>
-            </Card>
-            <Card sx={{position: 'relative'}}>
-              <div style={{bottom: '5px', position: 'absolute'}}>
-                <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '11px' }}>
-                  OpenSea
-                  <OpenInNew sx={{ width: '15px', height: '15px' }} />
-                </CardMedia>
-              </div>
-              <CardValue>{(govSupply/1).toString()} / 605</CardValue>
-              <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}>
+                Advanced Stats
+                <OpenInNew sx={{ width: '15px', height: '15px' }} />
+              </CardMedia>
             </Card>
             <Card>
-              <CardValue>$9.4838</CardValue>
+              <CardValue>{(govSupply/1).toString()} / 605</CardValue>
+              <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}>
+                OpenSea
+                <OpenInNew sx={{ width: '15px', height: '15px' }} />
+              </CardMedia>
+            </Card>
+            <Card>
+              <CardValue>$100,000.00</CardValue>
+              <CardMedia>{currentNetwork.name}</CardMedia>
               <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }}>
                 Treasury Balance
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
@@ -383,7 +380,8 @@ const Card = styled(Box)(({ theme }) => ({
 const CardValue = styled(Box)(({ theme }) => ({
   fontSize: '25px',
   lineHeight: '33px',
-  fontWeight: '500'
+  fontWeight: '500',
+  marginBottom: '-5px'
 }));
 
 const CardMedia = styled(Box)(({ theme }) => ({
@@ -393,7 +391,8 @@ const CardMedia = styled(Box)(({ theme }) => ({
   color: '#777E90',
   display: 'flex',
   alignItems: 'center',
-  gap: '10px'
+  gap: '10px',
+  marginBottom: '-3px'
 }));
 
 const GovernanceAction = styled(Box)(({ theme }) => ({
