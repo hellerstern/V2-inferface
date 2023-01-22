@@ -14,6 +14,7 @@ import { PositionData } from 'src/components/Table/PositionData';
 import { TraderProfile } from 'src/context/profile';
 import { PairSelectionTable } from 'src/components/PairSelectionTable';
 import { useAccount } from 'wagmi';
+import './css/beauty.css';
 
 export const Trade = () => {
   const positionData = PositionData().positionData;
@@ -32,6 +33,7 @@ export const Trade = () => {
 
   return (
     <TradeContainer>
+      <div className={"beauty"}/>
       {miniPage === 0 && (
         <>
           <Chatbox />
