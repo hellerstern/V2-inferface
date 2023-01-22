@@ -11,9 +11,6 @@ oracleSocket.on('data', (data) => {
   var tNow = new Date().getTime();
   const tradeTime = tNow - (tNow % 60000);
 
-  if (lastDailyBar === undefined || callback === undefined) {
-    return;
-  }
   const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time);
 
   let bar;
