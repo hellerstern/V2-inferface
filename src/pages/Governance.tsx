@@ -312,7 +312,7 @@ export const Governance = () => {
                         <FormControlLabel
                           key={id}
                           control={<TigrisCheckBox defaultChecked={false} onChange={() => handleCheckbox(id)}/>}
-                          label={<CheckBoxLabel primary="GOV NFT" secondary={"#" + id.toString()} />}
+                          label={<CheckBoxLabel primary="Gov NFT" secondary={"#" + id.toString()} />}
                         />
                       ))
                     }
