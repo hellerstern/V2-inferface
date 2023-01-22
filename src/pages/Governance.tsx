@@ -204,15 +204,15 @@ export const Governance = () => {
             <Card>
               <CardValue>{(govSupply/1).toString()} / 606</CardValue>
               <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open(window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank'), '_blank')}>
-                OpenSea
-                <OpenInNew sx={{ width: '15px', height: '15px' }} />
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank')}>
+                  OpenSea
+                <OpenInNew sx={{ width: '15px', height: '15px' }}/>
               </CardMedia>
             </Card>
             <Card>
               <CardValue>$100,000.00</CardValue>
               <CardMedia>{currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }} onClick={() => window.open(window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank'), '_blank')}>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank')}>
                 Treasury Balance
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
