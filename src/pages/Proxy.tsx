@@ -3,12 +3,13 @@ import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { Notification } from 'src/components/Notification';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useBalance } from 'wagmi';
 import { getShellBalance, getShellAddress, sendGasBack, getShellWallet, unlockShellWallet } from 'src/shell_wallet';
 import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { toast } from 'react-toastify';
 import { VaultInput } from 'src/components/Input';
+import { ArbiScanSvg, PolygonSvg } from 'src/config/images';
 
 const reduceAddress = (address: any) => {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -22,6 +23,12 @@ const { ethereum } = window;
 export const Proxy = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [tokenSymbol, setTokenSymbol] = useState<string | undefined>('ETH')
+  const { data } = useBalance({ address: '0xE6Aa61C88BC4a178E53aD2d2A3BC0b07Fcfd576a' });
+
+  useEffect(() => {
+    setTokenSymbol(data?.symbol);
+  }, [data])
   const [gasBalance, setGasBalance] = useState(0);
   const [shellAddress, setShellAddress] = useState("Loading...");
   const shellExpire = useRef(0);
@@ -198,7 +205,7 @@ export const Proxy = () => {
               <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Eth/Matic" />} />
+              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' component={<TokenUnit symbol={tokenSymbol} />} />
               <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
@@ -464,7 +471,7 @@ const InputFieldContainer = styled(Box)(({ theme }) => ({
 }))
 
 interface LabelProps {
-  content: string
+  content: string | undefined
 }
 
 const InputLabel = ({ content }: LabelProps) => {
@@ -479,6 +486,54 @@ const InputLabelContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  fontSize: '12px',
+    [theme.breakpoints.down(1024)]: {
+    fontSize: '14px'
+  },
+  [theme.breakpoints.down(490)]: {
+    fontSize: '12px'
+  },
+  [theme.breakpoints.down(400)]: {
+    fontSize: '10px'
+  },
+  [theme.breakpoints.down(360)]: {
+    fontSize: '14px'
+  }
+}))
+
+interface TokenUnitProps {
+  symbol?: string
+}
+
+const TokenUnit = ({ symbol }: TokenUnitProps) => {
+  let icon = ArbiScanSvg;
+  if (symbol === 'ETH') {
+    icon = ArbiScanSvg;
+  } else if (symbol === 'MATIC') {
+    icon = PolygonSvg
+  }
+  return(
+    <TokenUnitContainer>
+        <TokenIcon src={icon} alt='token-icon' />
+        <TokenName>
+            { symbol }
+        </TokenName>
+    </TokenUnitContainer>
+  )
+}
+
+const TokenIcon = styled('img')(({ theme }) => ({
+  width: '20px',
+  height: '20px'
+}))
+
+const TokenUnitContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: "center",
+  gap: '10px'
+}))
+
+const TokenName = styled(Box)(({ theme }) => ({
   fontSize: '12px',
     [theme.breakpoints.down(1024)]: {
     fontSize: '14px'
