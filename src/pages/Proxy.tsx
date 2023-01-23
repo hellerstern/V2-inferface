@@ -8,6 +8,7 @@ import { getShellBalance, getShellAddress, sendGasBack, getShellWallet, unlockSh
 import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { toast } from 'react-toastify';
+import { InputField } from 'src/components/Input';
 
 const reduceAddress = (address: any) => {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -25,6 +26,14 @@ export const Proxy = () => {
   const [shellAddress, setShellAddress] = useState("Loading...");
   const shellExpire = useRef(0);
 
+  const [editState, setEditState] = useState({
+    extentValue: 0,
+    fundValue: 0
+  });
+  const handleEditState = (prop: string, value: string | number | boolean) => {
+    setEditState({ ...editState, [prop]: value });
+  };
+  
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -184,8 +193,14 @@ export const Proxy = () => {
           </ApproveContainer>
           <ApproveLabel>Shell Wallet Approval Period</ApproveLabel>
           <ButtonGroup>
-            <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
-            <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
+            <InputFieldContainer>
+              <InputField name='extendValue' type='number' value={editState.extentValue} setValue={handleEditState} placeholder='0' />
+              <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
+            </InputFieldContainer>
+             <InputFieldContainer>
+              <InputField name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' />
+              <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
+            </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
           </ButtonGroup>
         </ShellWalletAction>
@@ -247,7 +262,10 @@ const AddressSection = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '24px',
   color: '#B1B5C3',
-  padding: '0 4px'
+  padding: '0 4px',
+  [theme.breakpoints.down(520)]: {
+    flexDirection: 'column'
+  }
 }));
 
 const CopyAddressButton = styled(Button)(({ theme }) => ({
@@ -358,9 +376,21 @@ const ExtendApproveButton = styled(Button)(({ theme }) => ({
   height: '40px',
   textTransform: 'none',
   border: '1px solid #3772FF',
-  fontSize: '14px',
+  fontSize: '12px',
   lineHeight: '24px',
-  fontWeight: '700'
+  fontWeight: '700',
+  [theme.breakpoints.down(1024)]: {
+    fontSize: '14px'
+  },
+  [theme.breakpoints.down(490)]: {
+    fontSize: '12px'
+  },
+  [theme.breakpoints.down(400)]: {
+    fontSize: '10px'
+  },
+  [theme.breakpoints.down(360)]: {
+    fontSize: '14px'
+  }
 }));
 
 const SendGasButton = styled(Button)(({ theme }) => ({
@@ -371,11 +401,23 @@ const SendGasButton = styled(Button)(({ theme }) => ({
   height: '40px',
   textTransform: 'none',
   border: '1px solid #3772FF',
-  fontSize: '14px',
+  fontSize: '12px',
   lineHeight: '24px',
   fontWeight: '700',
   '&:hover': {
     backgroundColor: '#3772FF'
+  },
+    [theme.breakpoints.down(1024)]: {
+    fontSize: '14px'
+  },
+  [theme.breakpoints.down(490)]: {
+    fontSize: '12px'
+  },
+  [theme.breakpoints.down(400)]: {
+    fontSize: '10px'
+  },
+  [theme.breakpoints.down(360)]: {
+    fontSize: '14px'
   }
 }));
 
@@ -410,3 +452,13 @@ const MobileAddress = styled(Box)(({ theme }) => ({
     display: 'block'
   }
 }));
+
+const InputFieldContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: '20px',
+  alignItems: 'center',
+  [theme.breakpoints.down(360)]: {
+    flexDirection: 'column'
+  }
+})) 
