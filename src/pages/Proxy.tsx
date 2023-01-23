@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { toast } from 'react-toastify';
 import { VaultInput } from 'src/components/Input';
-import { ArbiScanSvg, PolygonSvg } from 'src/config/images';
+import { PolygonSvg, ethLogo } from 'src/config/images';
 
 const reduceAddress = (address: any) => {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -506,9 +506,9 @@ interface TokenUnitProps {
 }
 
 const TokenUnit = ({ symbol }: TokenUnitProps) => {
-  let icon = ArbiScanSvg;
+  let icon = ethLogo;
   if (symbol === 'ETH') {
-    icon = ArbiScanSvg;
+    icon = ethLogo;
   } else if (symbol === 'MATIC') {
     icon = PolygonSvg
   }
