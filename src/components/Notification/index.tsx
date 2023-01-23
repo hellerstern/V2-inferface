@@ -25,7 +25,7 @@ const NotificationContainer = styled(Box)(({ theme }) => ({
 }));
 
 const AlertContent = styled(Box)(({ theme }) => ({
-  color: '#777E90',
+  color: '#B1B5C3',
   fontSize: '14px',
   lineHeight: '24px',
   fontWeight: '400'
