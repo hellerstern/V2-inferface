@@ -27,7 +27,7 @@ export const Proxy = () => {
   const shellExpire = useRef(0);
 
   const [editState, setEditState] = useState({
-    extentValue: 0,
+    extendValue: 0,
     fundValue: 0
   });
   const handleEditState = (prop: string, value: string | number | boolean) => {
@@ -194,7 +194,7 @@ export const Proxy = () => {
           <ApproveLabel>Shell Wallet Approval Period</ApproveLabel>
           <ButtonGroup>
             <InputFieldContainer>
-              <VaultInput name='extendValue' type='number' value={editState.extentValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Days" />} />
+              <VaultInput name='extendValue' type='number' value={editState.extendValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Days" />} />
               <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
