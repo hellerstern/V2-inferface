@@ -26489,7 +26489,6 @@
               return this._activeChangedChangedDelegate;
             }
             changeSymbol(e, t, i) {
-              this._symbolInfo.expired = true;
               r.interval.setValue(b.normalize(t)),
                 r.symbol.setValue(e),
                 i && this.activeChart().onDataLoaded().subscribe(null, i, !0);

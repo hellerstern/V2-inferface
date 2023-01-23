@@ -92,6 +92,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		try {
 			tvWidget.current?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget.current?.symbolInterval().interval as ResolutionString, () => { });
 		} catch (err) {
+			console.log(err);
 			tvWidget.current = new widget(widgetOptions);
 		}
 	}, [asset]);
