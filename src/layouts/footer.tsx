@@ -41,7 +41,7 @@ const FooterContainer = styled(Box)(({ theme }) => ({
   minHeight: '50px',
   backgroundColor: '#18191D',
   alignItems: 'center',
-  marginTop: '5px'
+  marginTop: '0px'
 }));
 
 const FooterWrapper = styled(Box)(({ theme }) => ({
