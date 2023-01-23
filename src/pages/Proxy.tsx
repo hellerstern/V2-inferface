@@ -155,6 +155,20 @@ export const Proxy = () => {
     navigator.clipboard.writeText(shellAddress);
   }
 
+  const handleAddressClick = () => {
+    let newLink = "";
+    if(shellAddress !== undefined) {
+        if(chain?.id === 137) {
+          newLink = "https://polygonscan.com/address/";
+        } else if(chain?.id === 42161) {
+          newLink = "https://arbiscan.io/address/"
+        } else if(chain?.id === 421613) {
+          newLink = "https://goerli.arbiscan.io/address/"
+        }
+        window.open(`${newLink}${shellAddress}`, "_blank");
+    }
+  }
+
   return (
     <Container>
       <ProxyContainer>
@@ -167,10 +181,10 @@ export const Proxy = () => {
             />
             <AddressSection>
               <p>Address</p>
-              <DesktopAddress style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}>
+              <DesktopAddress onClick={() => handleAddressClick()} style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}>
                 {isConnected ? shellAddress : 'Wallet is not connected'}
               </DesktopAddress>
-              <MobileAddress>{isConnected ? shellAddress : 'Wallet is not connected'}</MobileAddress>
+              <MobileAddress onClick={() => handleAddressClick()}>{isConnected ? shellAddress : 'Wallet is not connected'}</MobileAddress>
             </AddressSection>
             <CopyAddressButton onClick={() => copy()}>Copy Shell Wallet Address</CopyAddressButton>
           </MediaContent>
@@ -445,6 +459,7 @@ const DesktopAddress = styled(Box)(({ theme }) => ({
   color: '#3772FF',
   fontSize: '14px',
   textTransform: 'capitalize',
+  cursor: 'pointer',
   [theme.breakpoints.down('sm')]: {
     display: 'none'
   }
@@ -455,6 +470,7 @@ const MobileAddress = styled(Box)(({ theme }) => ({
   fontSize: '14px',
   textTransform: 'capitalize',
   display: 'none',
+  cursor: 'pointer',
   [theme.breakpoints.down('sm')]: {
     display: 'block'
   }
