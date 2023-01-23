@@ -22,6 +22,7 @@ const TradingChart = ({ asset, positionData }: Props) => {
 const Wrapper = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
+  backgroundColor: '#17191D',
   userSelect: 'none',
   MozUserSelect: 'none',
   KhtmlUserSelect: 'none',

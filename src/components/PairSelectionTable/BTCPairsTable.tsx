@@ -69,6 +69,7 @@ const Benefit = ({ percent, value }: BenefitProps) => {
 interface Props {
   setPairIndex: any;
   searchQuery: any;
+  onClose: any;
 }
 
 interface PriceCellProps {
@@ -104,7 +105,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   );
 };
 
-export const BTCPairsTable = ({ setPairIndex, searchQuery }: Props) => {
+export const BTCPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => {
   const [FavPairs, setFavPairs] = useState<string[]>(
     JSON.parse(
       localStorage.getItem('FavPairs') === null
@@ -174,7 +175,7 @@ export const BTCPairsTable = ({ setPairIndex, searchQuery }: Props) => {
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableBody>
             {rows.map((row, index) => (
-              <CustomTableRow key={index} onClick={() => setPairIndex(row.pairIndex)}>
+              <CustomTableRow key={index} onClick={() => {setPairIndex(row.pairIndex); onClose();}}>
                 <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
                 <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex} />
                 <TableCell align="center">{row.profit}</TableCell>

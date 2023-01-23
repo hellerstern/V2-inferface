@@ -59040,7 +59040,7 @@
               (this._resolution = this._interval.value()),
               (this._dwmAligner = n),
               (this._serverTimeOffsetGetter = s),
-              (this._resetCacheTimePeriod = void 0 === o ? 1e4 : o),
+              (this._resetCacheTimePeriod = void 0 === o ? 0 : o),
               (this._sessionSpec = new h.SessionSpec(
                 t.timezone,
                 t.session,

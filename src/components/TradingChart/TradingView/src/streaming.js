@@ -34,7 +34,6 @@ oracleSocket.on('data', (data) => {
     };
   }
   lastDailyBar = bar;
-
   callback(bar);
 });
 

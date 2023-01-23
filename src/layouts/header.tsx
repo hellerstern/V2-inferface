@@ -182,7 +182,8 @@ const SubFix = styled('img')({
 
 const HeaderContainer = styled(Box)({
   height: '60px',
-  borderBottom: '1px solid #2E2E30'
+  borderBottom: '1px solid #2E2E30',
+  backgroundColor: '#141416'
 });
 
 const ContainerWrapper = styled(Box)(({ theme }) => ({

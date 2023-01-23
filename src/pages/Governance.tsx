@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Button, FormControlLabel, FormGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { OpenInNew } from '@mui/icons-material';
@@ -8,60 +8,211 @@ import { Notification } from 'src/components/Notification';
 import { InputField } from 'src/components/Input';
 import { IconDropDownMenu } from 'src/components/Dropdown/IconDrop';
 import { TigrisCheckBox } from 'src/components/CheckBox';
+import { ethers } from 'ethers';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { getNetwork } from 'src/constants/networks';
 
-const arrFromData = [
+declare const window: any
+const { ethereum } = window;
+
+const bridgeDict = [
   {
-    icon: PolygonSvg,
-    name: 'Polygon'
+      name: "Polygon",
+      icon: PolygonSvg,
+      nft: "5DF98AA475D8815df7cd4fC4549B5c150e8505Be",
+      chainId: 137,
+      layerzero: 109
   },
   {
-    icon: LOGO,
-    name: 'TigUSD'
+      name: "Arbitrum",
+      icon: ArbiScanSvg,
+      nft: "303c470c0e0342a1CCDd70b0a17a14b599FF1474",
+      chainId: 42161,
+      layerzero: 110
   }
-];
+]
 
-const arrToData = [
-  {
-    icon: ArbiScanSvg,
-    name: 'Arbitrum'
+const urls = {
+  Arbitrum: {
+    opensea: "https://opensea.io/collection/tigris-trade-arbi",
+    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
   },
-  {
-    icon: LOGO,
-    name: 'TigUSD'
-  }
-];
+  Polygon: {
+    opensea: "https://opensea.io/collection/tigris-trade",
+    treasury: "https://polygonscan.com/address/0x4f7046f36B5D5282A94cB448eAdB3cdf9Ff2b051"
+  },
+  "Arbitrum Görli": {
+    opensea: "https://opensea.io/collection/tigris-trade-arbi",
+    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
+  },
+  dune: "https://dune.com/Henrystats/tigris-overview"
+}
 
 export const Governance = () => {
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+  const [currentNetwork, setCurrentNetwork] = useState(getNetwork(chain?.id));
+
+  const defaultBridge = {
+    name: currentNetwork.name,
+    icon: currentNetwork.icon,
+    nft: (currentNetwork.addresses.govnft).substring(2),
+    chainId: currentNetwork.network_id,
+    layerzero: currentNetwork.layerzero
+  }
+
   const [editState, setEditState] = useState({
-    number: 0,
-    fromData: {
-      icon: PolygonSvg,
-      name: 'Polygon'
-    },
-    toData: {
-      icon: ArbiScanSvg,
-      name: 'Arbitrum'
+    fromData: defaultBridge,
+    toData: bridgeDict[1]
+  });
+
+  const handleEditState = (prop: string, value: any ) => {
+    if (prop === "fromData") {
+      switchNetwork?.(value.chainId);
+    } else {
+      setEditState({ ...editState, [prop]: value });
+      if (value.chainId === editState.fromData.chainId) {
+        setBridgeError(true);
+      } else {
+        setBridgeError(false);
+      }
+    }
+  }
+
+  useSwitchNetwork({
+    onSuccess(data) {
+      const cNetwork = getNetwork(data.id);
+      setCurrentNetwork(cNetwork);
+      setEditState({ ...editState, "fromData": {
+        name: cNetwork.name,
+        icon: cNetwork.icon,
+        nft: (cNetwork.addresses.govnft).substring(2),
+        chainId: cNetwork.network_id,
+        layerzero: cNetwork.layerzero
+      }});
+      if (editState.toData.chainId === cNetwork.network_id) {
+        setBridgeError(true);
+      } else {
+        setBridgeError(false);
+      }
     }
   });
-  const handleEditState = (prop: string, value: string | number | boolean) => {
-    setEditState({ ...editState, [prop]: value });
-  };
+
+  useEffect(() => {
+    const cNetwork = getNetwork(chain?.id);
+    setCurrentNetwork(cNetwork);
+    setEditState({...editState, "fromData": {
+      name: cNetwork.name,
+      icon: cNetwork.icon,
+      nft: (cNetwork.addresses.govnft).substring(2),
+      chainId: cNetwork.network_id,
+      layerzero: cNetwork.layerzero
+    }});
+    if (editState.toData.chainId === editState.fromData.chainId) {
+      setBridgeError(true);
+    } else {
+      setBridgeError(false);
+    }
+    setSelectedNfts([]);
+  }, [chain, address]);
+
+  useEffect(() => {
+    getInfo();
+    if (editState.toData.chainId === editState.fromData.chainId) {
+      setBridgeError(true);
+    } else {
+      setBridgeError(false);
+    }
+  }, [currentNetwork, address]);
+
+  const [number, setNumber] = useState(1);
+  const [available, setAvailable] = useState(0);
+  const [treasuryBalance, setTreasuryBalance] = useState(0);
+  const [govSupply, setGovSupply] = useState(0);
+  const [pending, setPending] = useState(0);
+  const [volume, setVolume] = useState(0);
+  const [isSpendingAllowed, setSpendingAllowed] = useState(false);
+  const [isMaxBridgeError, setIsMaxBridgeError] = useState(false);
+
+  const [ownedNfts, setOwnedNfts] = useState<any[]>([]);
+  const [selectedNfts, setSelectedNfts] = useState<any[]>([]);
+
+  const [isBridgeError, setBridgeError] = useState(false);
+
+  async function getInfo() {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const nftsaleContract = new ethers.Contract(currentNetwork.addresses.nftsale, currentNetwork.abis.nftsale, provider);
+    const govnftContract = new ethers.Contract(currentNetwork.addresses.govnft, currentNetwork.abis.govnft, provider);
+
+    if (currentNetwork.network_id !== 137 ) {
+        setOwnedNfts(await govnftContract.balanceIds(address));
+    } else {
+        setOwnedNfts([]);
+        fetch('https://tigristrade.info/stats/user_nfts/'+address)
+        .then(response => {
+            response.json().then(data => {
+                const ownedNFTs = [];
+                for(let i=0; i<data.nfts.length; i++) ownedNFTs.push(data.nfts[i].id);
+                setOwnedNfts(ownedNFTs);
+            });
+        });
+    }
+
+    const av = await nftsaleContract.available();
+    setAvailable(av);
+
+    const supply = await govnftContract.totalSupply();
+    const contractBalance = await govnftContract.balanceOf(currentNetwork.addresses.nftsale);
+    setGovSupply(supply-contractBalance);
+
+    const pending = await govnftContract.pending(address, currentNetwork.addresses.tigusd);
+    setPending(pending);
+  }
+
+  function handleCheckbox(id: number) {
+    if (!selectedNfts.includes(id)) {
+        selectedNfts.push(id);
+    } else {
+        const index = selectedNfts.indexOf(id);
+        if (index > -1) {
+            selectedNfts.splice(index, 1);
+        }
+    }
+    if (selectedNfts.length > 25) {
+        setIsMaxBridgeError(true);
+    } else {
+        setIsMaxBridgeError(false);
+    }
+  }
+
   return (
     <Container>
       <GovernanceContainer>
         <Wrapper>
           <CardGroup>
             <Card>
-              <CardValue>$38.58409.15</CardValue>
-              <CardMedia>24h trading volume</CardMedia>
+              <CardValue>$0.00</CardValue>
+              <CardMedia>
+                24h trading volume
+              </CardMedia>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open(urls.dune, '_blank')}>
+                Advanced Stats
+                <OpenInNew sx={{ width: '15px', height: '15px' }} />
+              </CardMedia>
             </Card>
             <Card>
-              <CardValue>9.5804</CardValue>
-              <CardMedia>NFT Circulating Supply</CardMedia>
+              <CardValue>{(govSupply/1).toString()} / 606</CardValue>
+              <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank')}>
+                  OpenSea
+                <OpenInNew sx={{ width: '15px', height: '15px' }}/>
+              </CardMedia>
             </Card>
             <Card>
-              <CardValue>$9.4838</CardValue>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }}>
+              <CardValue>$100,000.00</CardValue>
+              <CardMedia>{currentNetwork.name}</CardMedia>
+              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank')}>
                 Treasury Balance
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
@@ -78,7 +229,7 @@ export const Governance = () => {
                 <NFTDetails>
                   <NFTDetailItem>
                     <ItemTitle>Max Supply</ItemTitle>
-                    <ItemValue>10.000</ItemValue>
+                    <ItemValue>10,000</ItemValue>
                   </NFTDetailItem>
                   <NFTDetailItem>
                     <ItemTitle>Network</ItemTitle>
@@ -96,24 +247,24 @@ export const Governance = () => {
                   <NFTDetailItem>
                     <ItemTitle>Available NFTs</ItemTitle>
                     <ItemValue>
-                      0 <span style={{ color: '#808183' }}>/ 200</span>
+                      {available/1} <span style={{ color: '#808183' }}>/ 200</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <NumberController>
                     <ItemTitle>Number</ItemTitle>
                     <InputAction>
                       <InputField
-                        type="number"
+                        type="text"
                         name="number"
                         placeholder="0"
-                        value={editState.number}
-                        setValue={handleEditState}
+                        value={number.toString() === "NaN" ? 0 : number.toString()}
+                        setValue={(v: string) => setNumber(parseInt(v.replace(/[^0-9]/g, "")))}
                       />
-                      <NumberPlusButton onClick={() => handleEditState('number', Number(editState.number) + 1)}>
+                      <NumberPlusButton onClick={() => {number.toString() === '' ? setNumber(1) : setNumber(number + 1)}}>
                         {' '}
                         +{' '}
                       </NumberPlusButton>
-                      <NumberMinusButton onClick={() => handleEditState('number', Number(editState.number) - 1)}>
+                      <NumberMinusButton onClick={() => {if (number > 1) setNumber(number - 1)}}>
                         {' '}
                         -{' '}
                       </NumberMinusButton>
@@ -134,7 +285,7 @@ export const Governance = () => {
                 <FeeCardTitle>Fee distribution</FeeCardTitle>
                 <FeeCardContent>
                   <img src={LOGO} alt="logo" width={30} height={30} />
-                  $0.00 tigUSD
+                  {(pending/1e18).toFixed(2)} tigUSD
                 </FeeCardContent>
                 <PrimaryButton>Claim</PrimaryButton>
               </FeeCard>
@@ -142,39 +293,38 @@ export const Governance = () => {
               <BridgeAction>
                 <BridgeActionLabel>From</BridgeActionLabel>
                 <IconDropDownMenu
-                  arrayData={arrFromData}
+                  arrayData={bridgeDict}
                   name="fromData"
                   state={editState.fromData}
                   setState={handleEditState}
                 />
                 <BridgeActionLabel>To</BridgeActionLabel>
                 <IconDropDownMenu
-                  arrayData={arrToData}
+                  arrayData={bridgeDict}
                   name="toData"
                   state={editState.toData}
                   setState={handleEditState}
                 />
                 <NftIDCheckContainer>
                   <FormGroup>
-                    <FormControlLabel
-                      control={<TigrisCheckBox defaultChecked />}
-                      label={<CheckBoxLabel primary="NFT ID" secondary="# 47832040" />}
-                    />
-                    <FormControlLabel
-                      control={<TigrisCheckBox />}
-                      label={<CheckBoxLabel primary="NFT ID" secondary="# 47832040" />}
-                    />
-                    <FormControlLabel
-                      control={<TigrisCheckBox />}
-                      label={<CheckBoxLabel primary="NFT ID" secondary="# 47832040" />}
-                    />
-                    <FormControlLabel
-                      control={<TigrisCheckBox defaultChecked />}
-                      label={<CheckBoxLabel primary="NFT ID" secondary="# 47832040" />}
-                    />
+                    {
+                      (ownedNfts).map((id:number) => (
+                        <FormControlLabel
+                          key={id}
+                          control={<TigrisCheckBox defaultChecked={false} onChange={() => handleCheckbox(id)}/>}
+                          label={<CheckBoxLabel primary="Gov NFT" secondary={"#" + id.toString()} />}
+                        />
+                      ))
+                    }
                   </FormGroup>
                 </NftIDCheckContainer>
-                <PrimaryButton>Bridge</PrimaryButton>
+                {
+                  isBridgeError ?
+                  <ErrorButton>Bridge networks must be different</ErrorButton> :
+                  isMaxBridgeError ?
+                  <ErrorButton>Max 25 NFTs</ErrorButton> :
+                  <PrimaryButton>Bridge</PrimaryButton>
+                }
               </BridgeAction>
             </ClaimBridgeSection>
           </GovernanceAction>
@@ -245,7 +395,8 @@ const Card = styled(Box)(({ theme }) => ({
 const CardValue = styled(Box)(({ theme }) => ({
   fontSize: '25px',
   lineHeight: '33px',
-  fontWeight: '500'
+  fontWeight: '500',
+  marginBottom: '-5px'
 }));
 
 const CardMedia = styled(Box)(({ theme }) => ({
@@ -255,7 +406,8 @@ const CardMedia = styled(Box)(({ theme }) => ({
   color: '#777E90',
   display: 'flex',
   alignItems: 'center',
-  gap: '10px'
+  gap: '10px',
+  marginBottom: '-3px'
 }));
 
 const GovernanceAction = styled(Box)(({ theme }) => ({
@@ -381,6 +533,16 @@ const PrimaryButton = styled(Button)(({ theme }) => ({
   }
 }));
 
+const ErrorButton = styled(Button)(({ theme }) => ({
+  width: '100%',
+  backgroundColor: '#2F3135',
+  borderRadius: '4px',
+  textTransform: 'none',
+  '&:hover': {
+    backgroundColor: '#2F3135'
+  }
+}));
+
 const ClaimBridgeSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -446,5 +608,6 @@ const NftIDCheckContainer = styled(Box)(({ theme }) => ({
   backgroundColor: '#141416',
   borderRadius: '5px',
   padding: '16px',
-  margin: '18px 0'
+  margin: '18px 0',
+  minHeight: '67px'
 }));

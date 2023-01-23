@@ -36,7 +36,7 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
           <SearchBar onChange={handleSearch} />
           {isMobile && (
             <Box sx={{ cursor: 'pointer' }} onClick={onClose}>
-              Cancel
+              Close
             </Box>
           )}
         </Box>
@@ -49,7 +49,7 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
             onChange={handleChange}
             aria-label="basic tabs example"
             TabIndicatorProps={{ style: { backgroundColor: value === 4 ? '#FABE3C' : '#3772ff', height: '2px' } }}
-            sx={{ height: '30px', overflow: 'auto', '& .MuiTabs-scroller': { overflow: 'auto !important' } }}
+            sx={{ height: '30px', overflow: 'auto', '& .MuiTabs-scroller': {overflowX: 'visible !important', overflowY: 'hidden !important' } }}
           >
             <CustomTab label="USD Pairs" {...a11yProps(0)} />
             <CustomTab label="BTC pairs" {...a11yProps(1)} />
@@ -58,19 +58,19 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
           </Tabs>
         </TabsContainer>
         <TabPanel value={value} index={0}>
-          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <USDPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <BTCPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <ForexPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <CommodityPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} />
+          <FavPairsTable setPairIndex={setPairIndex} searchQuery={searchQuery} onClose={onClose} />
         </TabPanel>
       </SearchContainer>
     </TradingDetailContainer>

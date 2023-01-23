@@ -511,11 +511,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function getTradeStatus() {
     let status;
-    !isTokenAllowed ? status = "Approve" :
-      !isProxyApproved ? status = "Proxy" :
-        parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-          parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
-            (chain === undefined || address === undefined) ? status = "NotConnected" :
+    (chain === undefined || address === undefined) ? status = "NotConnected" :
+      !isTokenAllowed ? status = "Approve" :
+        !isProxyApproved ? status = "Proxy" :
+          parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
+            parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
               status = "Ready";
     return status;
   }

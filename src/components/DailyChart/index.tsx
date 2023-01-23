@@ -10,7 +10,7 @@ import { useNetwork, useAccount } from 'wagmi';
 export const DailyPerformanceChart = () => {
 
   const [token, setToken] = useState('ALL');
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>([]);
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -47,12 +47,23 @@ export const DailyPerformanceChart = () => {
       }
     },
     plotOptions: {
+      spline: {
+          lineWidth: 4,
+          states: {
+              hover: {
+                  lineWidth: 5
+              }
+          },
+          marker: {
+              enabled: true
+          },
+          pointInterval: 3600000, // one hour
+          pointStart: Date.UTC(2022, 5, 13, 0, 0, 0)
+      },
       series: {
-        showInNavigator: true,
-        gapSize: 6,
         animation: false
       }
-    },
+  },
     chart: {
       height: 600,
       animation: false
@@ -63,7 +74,7 @@ export const DailyPerformanceChart = () => {
     },
 
     legend: {
-      enabled: true,
+      enabled: false,
       style: {
         backgroundColor: 'red'
       }
@@ -103,7 +114,10 @@ export const DailyPerformanceChart = () => {
     series: [
       {
         name: 'PnL',
-        type: 'spline',
+        lineWidth: 4,
+        marker: {
+          radius: 4
+        },
         data: data,
         tooltip: {
           valueDecimals: 2
