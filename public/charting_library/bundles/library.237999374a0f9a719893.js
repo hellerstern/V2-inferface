@@ -94752,8 +94752,8 @@
                 ((this._left = 8), (this._bottom = 5));
             const n = () => {
               this._needToShow
-                ? (this._showBranding = !0)
-                : (this._showBranding = !1);
+                ? (this._showBranding = !1)
+                : (this._showBranding = !0);
             };
             (this._resizeHandlerDelayed = Object(s.default)(n, 200)),
               n(),
