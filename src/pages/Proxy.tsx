@@ -205,7 +205,7 @@ export const Proxy = () => {
               <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' component={<TokenUnit symbol={tokenSymbol} />} />
+              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder={tokenSymbol === 'ETH' ? '0.002' : '1'} component={<TokenUnit symbol={tokenSymbol} />} />
               <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
