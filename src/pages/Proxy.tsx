@@ -8,7 +8,7 @@ import { getShellBalance, getShellAddress, sendGasBack, getShellWallet, unlockSh
 import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { toast } from 'react-toastify';
-import { InputField } from 'src/components/Input';
+import { VaultInput } from 'src/components/Input';
 
 const reduceAddress = (address: any) => {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -194,11 +194,11 @@ export const Proxy = () => {
           <ApproveLabel>Shell Wallet Approval Period</ApproveLabel>
           <ButtonGroup>
             <InputFieldContainer>
-              <InputField name='extendValue' type='number' value={editState.extentValue} setValue={handleEditState} placeholder='0' />
+              <VaultInput name='extendValue' type='number' value={editState.extentValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Days" />} />
               <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <InputField name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' />
+              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Eth/Matic" />} />
               <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
@@ -407,7 +407,7 @@ const SendGasButton = styled(Button)(({ theme }) => ({
   '&:hover': {
     backgroundColor: '#3772FF'
   },
-    [theme.breakpoints.down(1024)]: {
+  [theme.breakpoints.down(1024)]: {
     fontSize: '14px'
   },
   [theme.breakpoints.down(490)]: {
@@ -461,4 +461,35 @@ const InputFieldContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down(360)]: {
     flexDirection: 'column'
   }
-})) 
+}))
+
+interface LabelProps {
+  content: string
+}
+
+const InputLabel = ({ content }: LabelProps) => {
+  return(
+    <InputLabelContainer>
+      {content}
+    </InputLabelContainer>
+  )
+}
+
+const InputLabelContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  fontSize: '12px',
+    [theme.breakpoints.down(1024)]: {
+    fontSize: '14px'
+  },
+  [theme.breakpoints.down(490)]: {
+    fontSize: '12px'
+  },
+  [theme.breakpoints.down(400)]: {
+    fontSize: '10px'
+  },
+  [theme.breakpoints.down(360)]: {
+    fontSize: '14px'
+  }
+}))
