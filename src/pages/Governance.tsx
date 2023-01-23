@@ -229,25 +229,25 @@ export const Governance = () => {
                 <NFTDetails>
                   <NFTDetailItem>
                     <ItemTitle>Max Supply</ItemTitle>
-                    <ItemValue>10,000</ItemValue>
+                    <ItemValue sx={{color: '#B1B5C3'}}>10,000</ItemValue>
                   </NFTDetailItem>
                   <NFTDetailItem>
                     <ItemTitle>Network</ItemTitle>
                     <ItemValue>
                       <img src={ArbiScanSvg} alt="arbitrum-icon" width={18} height={18} />
-                      <span style={{ color: '#808183' }}>Arbitrum</span>
+                      <span style={{ color: '#B1B5C3' }}>Arbitrum</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <NFTDetailItem>
                     <ItemTitle>NFT Price</ItemTitle>
                     <ItemValue>
-                      650 <span style={{ color: '#808183' }}>USDT</span>
+                      650 <span style={{ color: '#B1B5C3' }}>USDT</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <NFTDetailItem>
                     <ItemTitle>Available NFTs</ItemTitle>
                     <ItemValue>
-                      {available/1} <span style={{ color: '#808183' }}>/ 200</span>
+                      {available/1} <span style={{ color: '#B1B5C3' }}>/ 200</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <NumberController>
@@ -273,7 +273,7 @@ export const Governance = () => {
                   <NFTDetailItem>
                     <ItemTitle>Total price</ItemTitle>
                     <ItemValue>
-                      650 <span style={{ color: '#808183' }}>USDT</span>
+                      650 <span style={{ color: '#B1B5C3' }}>USDT</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <PrimaryButton>Approve</PrimaryButton>
@@ -344,7 +344,7 @@ const CheckBoxLabel = (props: CheckBoxLabelProps) => {
   return (
     <LabelContainer>
       {primary}
-      <span style={{ color: '#585c64' }}> {secondary}</span>
+      <span style={{ color: '#B1B5C3' }}> {secondary}</span>
     </LabelContainer>
   );
 };
@@ -403,7 +403,7 @@ const CardMedia = styled(Box)(({ theme }) => ({
   fontSize: '15px',
   lineHeight: '20px',
   fontWeight: '500',
-  color: '#777E90',
+  color: '#B1B5C3',
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
@@ -564,7 +564,7 @@ const FeeCardTitle = styled(Box)(({ theme }) => ({
   fontWeight: '500',
   fontSize: '15px',
   lineHeight: '20px',
-  color: '#777E90',
+  color: '#B1B5C3',
   paddingLeft: '45px'
 }));
 
