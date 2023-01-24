@@ -524,54 +524,55 @@ export const PositionData = () => {
     }
   }, [address, chain, openPositions, limitOrders]);
 
-  const setPositionVisible = (id: number, is: boolean) => {
+  function setPositionVisible(ids: number[], is: boolean) {
     const openP: any[] = openPositions.slice();
-    for (let i = 0; i < openP.length; i++) {
-      if (openP[i].id === id) {
-        const modP = {
-          trader: openP[i].trader,
-          margin: openP[i].margin,
-          leverage: openP[i].leverage,
-          price: openP[i].price,
-          tpPrice: openP[i].tpPrice,
-          slPrice: openP[i].slPrice,
-          orderType: 0,
-          direction: openP[i].direction,
-          id: id,
-          asset: openP[i].asset,
-          accInterest: openP[i].accInterest,
-          liqPrice: openP[i].liqPrice,
-          isVisible: is
-        }
-        openP[i] = modP;
-        setOpenPositions(openP);
-        break;
-      }
-    }
     const limitO: any[] = limitOrders.slice();
-    for (let i = 0; i < limitO.length; i++) {
-      if (limitO[i].id === id) {
-        const modP = {
-          trader: limitO[i].trader,
-          margin: limitO[i].margin,
-          leverage: limitO[i].leverage,
-          price: limitO[i].price,
-          tpPrice: limitO[i].tpPrice,
-          slPrice: limitO[i].slPrice,
-          orderType: limitO[i].orderType,
-          direction: limitO[i].direction,
-          id: id,
-          asset: limitO[i].asset,
-          accInterest: limitO[i].accInterest,
-          liqPrice: limitO[i].liqPrice,
-          isVisible: is
+    ids.forEach((id) => {
+      for (let i = 0; i < openP.length; i++) {
+        if (openP[i].id === id) {
+          const modP = {
+            trader: openP[i].trader,
+            margin: openP[i].margin,
+            leverage: openP[i].leverage,
+            price: openP[i].price,
+            tpPrice: openP[i].tpPrice,
+            slPrice: openP[i].slPrice,
+            orderType: 0,
+            direction: openP[i].direction,
+            id: id,
+            asset: openP[i].asset,
+            accInterest: openP[i].accInterest,
+            liqPrice: openP[i].liqPrice,
+            isVisible: is
+          }
+          openP[i] = modP;
+          break;
         }
-        limitO[i] = modP;
-        setLimitOrders(limitO);
-        console.log(id);
-        break;
       }
-    }
+      for (let i = 0; i < limitO.length; i++) {
+        if (limitO[i].id === id) {
+          const modP = {
+            trader: limitO[i].trader,
+            margin: limitO[i].margin,
+            leverage: limitO[i].leverage,
+            price: limitO[i].price,
+            tpPrice: limitO[i].tpPrice,
+            slPrice: limitO[i].slPrice,
+            orderType: limitO[i].orderType,
+            direction: limitO[i].direction,
+            id: id,
+            asset: limitO[i].asset,
+            accInterest: limitO[i].accInterest,
+            liqPrice: limitO[i].liqPrice,
+            isVisible: is
+          }
+          limitO[i] = modP;
+          break;
+        }
+      }
+    });
+    setOpenPositions(openP);
+    setLimitOrders(limitO);
   }
 
   return (

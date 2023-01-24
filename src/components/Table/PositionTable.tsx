@@ -269,7 +269,28 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     const prevVisible = isPositionVisible;
     prevVisible[id] = is;
     setPositionVisible(prevVisible);
-    positionData.setVisible(id, is);
+    positionData.setVisible([id], is);
+    e.stopPropagation();
+  }
+
+  const [isAllVisible, setAllVisible] = useState(true);
+  function handleAllEyeClick(e: any) {
+    const isSetVisible = !isAllVisible;
+    setAllVisible(isSetVisible);
+    const prevVisible = isPositionVisible;
+    console.log(openPositions);
+    console.log(limitOrders);
+    const ids = [];
+    for (let i=0; i<openPositions.length; i++) {
+      prevVisible[openPositions[i].id] = isSetVisible;
+      ids.push(openPositions[i].id);
+    }
+    for (let i=0; i<limitOrders.length; i++) {
+      prevVisible[limitOrders[i].id] = isSetVisible;
+      ids.push(limitOrders[i].id);
+    }
+    setPositionVisible(prevVisible);
+    positionData.setVisible(ids, isSetVisible);
     e.stopPropagation();
   }
 
@@ -278,6 +299,13 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
+            <TableCell>
+              <TableCellContainer>
+                <VisibilityBox>
+                  {isAllVisible ? <BsEyeFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/> : <BsEyeSlashFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/>}
+                </VisibilityBox>
+              </TableCellContainer>
+            </TableCell>
             <TableCell>User</TableCell>
             <TableCell>L/S</TableCell>
             {
@@ -308,9 +336,11 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
                 <TableCellContainer>
                   <VisibilityBox>
                     {(isPositionVisible[position.id] === true || isPositionVisible[position.id] === undefined) ? <BsEyeFill style={{ fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => {handleEyeClick(e, position.id, false);}}/> : <BsEyeSlashFill style={{ fontSize: '12px', marginLeft: '0.5px' }}  onClick={(e) => {handleEyeClick(e, position.id, true);}}/>}
-                  </VisibilityBox>{' '}
-                  {position.trader.slice(0, 6)}
+                  </VisibilityBox>
                 </TableCellContainer>
+              </TableCell>
+              <TableCell>
+                {position.trader.slice(0, 6)}
               </TableCell>
               <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
               {
