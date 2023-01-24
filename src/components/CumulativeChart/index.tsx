@@ -116,8 +116,8 @@ export const CumulativeChart = () => {
         <TokenDropMenu state={token} setState={setToken} />
         <LabelGroup>
           <LabelPnL>
-            <Label title="Daily PNL:" value="65.254K" valueColor="#219653" />
-            <Label title="Weekly PNL:" value="2.418B" valueColor="#219653" />
+            <Label title="Daily PNL:" value="65.254K" valueColor="#27A69A" />
+            <Label title="Weekly PNL:" value="2.418B" valueColor="#27A69A" />
           </LabelPnL>
           <Label title="N. of settled positions (24h):" value="0" valueColor="#FFFFFF" />
           <Label title="N. of settled positions (7d):" value="0" valueColor="#FFFFFF" />

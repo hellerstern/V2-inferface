@@ -81,7 +81,6 @@ export const Header = () => {
                   <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} />
                   <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} />
                   <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} />
-                  <CustomTab label={<Discord />} {...a11yProps(3)} onClick={() => navigate('/')} />
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
@@ -164,24 +163,6 @@ export const Header = () => {
     </>
   );
 };
-
-const Discord = () => {
-  return (
-    <DiscordContainer>
-      <Box>Discord</Box>
-      <SubFix src={Indicator} alt="indicator" />
-    </DiscordContainer>
-  );
-};
-
-const DiscordContainer = styled(Box)({
-  display: 'flex',
-  gap: '5px'
-});
-
-const SubFix = styled('img')({
-  marginTop: '-10px'
-});
 
 const HeaderContainer = styled(Box)({
   height: '60px',

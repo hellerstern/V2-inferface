@@ -54,11 +54,11 @@ export const Cumulative = () => {
               <ResponsiveDevider1 />
               <ResponsiveDevider2 />
               <OverviewSeparator>
-                <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#58BD7D" />
+                <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#27A69A" />
                 <OverviewItem title={'Entry price'} value="0.29039402" colorValue="rgba(255, 255, 255, 0.6)" />
                 <OverviewItem title={'Exit Price'} value="0.4598948585" colorValue="rgba(255, 255, 255, 0.6)" />
                 <OverviewItem title={'Stop limit price'} value="0.4590594" colorValue="rgba(255, 255, 255, 0.6)" />
-                <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#D33535" />
+                <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#EF534F" />
                 <ResponsiveDevider2 />
                 <OverviewItem title={'Total volume traded'} value="8,3million" colorValue="#777E90" />
                 <OverviewItem title={'Number of trades'} value="Number of trades" colorValue="#777E90" />

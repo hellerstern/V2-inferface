@@ -59,7 +59,7 @@ export const Footer = () => {
                   <TbPlugConnectedX color={'#FF0000'} /> :
                 dateNow > lastData+3000 ?
                   <SiQuantconnect color={'#FFFF00'} /> :
-                  <BsFillCheckCircleFill color={'#33DD33'} />
+                  <BsFillCheckCircleFill color={'#219653'} />
               }
               <Text>Oracle</Text>
             </TextCoin>
@@ -71,6 +71,7 @@ export const Footer = () => {
           <Line />
           <FooterNav>
             <NavLinks>
+              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://docs.tigris.trade", '_blank')}>Docs</SmallText>
               <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://discord.gg/tigris", '_blank')}>Discord</SmallText>
               <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://twitter.com/tigristrades", '_blank')}>Twitter</SmallText>
             </NavLinks>
