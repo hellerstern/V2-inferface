@@ -278,8 +278,6 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     const isSetVisible = !isAllVisible;
     setAllVisible(isSetVisible);
     const prevVisible = isPositionVisible;
-    console.log(openPositions);
-    console.log(limitOrders);
     const ids = [];
     for (let i=0; i<openPositions.length; i++) {
       prevVisible[openPositions[i].id] = isSetVisible;
