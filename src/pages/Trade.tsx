@@ -67,7 +67,7 @@ const TradeContainer = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   overflowX: 'hidden',
-  marginBottom: '5px'
+  marginBottom: '30px'
 });
 
 const TradingForm = styled(Box)(({ theme }) => ({

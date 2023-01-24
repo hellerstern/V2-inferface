@@ -38,6 +38,9 @@ export const Header = () => {
       setGasBalance(b);
     }
 
+    setTimeout(() => {
+      x();
+    }, 1000)
     setInterval(()=>{
       x();
     }, 10000);

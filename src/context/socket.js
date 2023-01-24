@@ -29,6 +29,7 @@ oracleSocket.on('error', (error) => {
 
 oracleSocket.on('data', (data) => {
     oracleData = data;
+    lastOracleTime = Date.now();
 });
 
 export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigitalocean.app', {transports: ['websocket']});
@@ -38,5 +39,6 @@ chatSocket.on('disconnect', (reason) => {
 });
 
 export let oracleData = "Loading...";
+export let lastOracleTime = 0;
 
 export const SocketContext = createContext();
