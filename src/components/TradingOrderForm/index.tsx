@@ -174,7 +174,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       setOpenPrice(value.slice(0, 7));
     } else {
       setOpenPrice(value);
-      console.log(value);
     }
   }
 

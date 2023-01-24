@@ -13,9 +13,10 @@ interface TabBarProps {
 interface IPositionTable {
   setPairIndex: any;
   positionData: any;
+  setPositionTab: any;
 }
 
-export const TradingPositionTable = ({ setPairIndex, positionData }: IPositionTable) => {
+export const TradingPositionTable = ({ setPairIndex, positionData, setPositionTab }: IPositionTable) => {
   const { setMiniPage } = useStore();
   const [tab, setTab] = useState(0);
   const [show, setShow] = useState('After Closing Fees');
@@ -24,10 +25,10 @@ export const TradingPositionTable = ({ setPairIndex, positionData }: IPositionTa
       <TableWrapper>
         <TableAction>
           <TableTab>
-            <TabBar active={tab === 0 ? 1 : 0} onClick={() => setTab(0)}>
+            <TabBar active={tab === 0 ? 1 : 0} onClick={() => {setTab(0); setPositionTab(0);}}>
               My Open Positions
             </TabBar>
-            <TabBar active={tab === 1 ? 1 : 0} onClick={() => setTab(1)}>
+            <TabBar active={tab === 1 ? 1 : 0} onClick={() => {setTab(1); setPositionTab(1);}}>
               My Limit Orders
             </TabBar>
           </TableTab>

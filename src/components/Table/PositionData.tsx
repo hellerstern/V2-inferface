@@ -114,6 +114,7 @@ export const PositionData = () => {
           price: parseInt(returnValue.returnValues[4].hex, 16).toString(),
           tpPrice: parseInt(returnValue.returnValues[5].hex, 16).toString(),
           slPrice: parseInt(returnValue.returnValues[6].hex, 16).toString(),
+          orderType: parseInt(returnValue.returnValues[7].hex, 16),
           direction: returnValue.returnValues[3],
           id: parseInt(returnValue.returnValues[9].hex, 16),
           asset: parseInt(returnValue.returnValues[2].hex, 16),
@@ -161,6 +162,7 @@ export const PositionData = () => {
                 price: data.price,
                 tpPrice: data.tradeInfo.tpPrice,
                 slPrice: data.tradeInfo.slPrice,
+                orderType: 0,
                 direction: data.tradeInfo.direction,
                 id: data.id,
                 asset: data.tradeInfo.asset,
@@ -252,6 +254,7 @@ export const PositionData = () => {
                   price: openP[i].price,
                   tpPrice: openP[i].tpPrice,
                   slPrice: openP[i].slPrice,
+                  orderType: 0,
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
@@ -289,9 +292,9 @@ export const PositionData = () => {
           for (let i = 0; i < limitO.length; i++) {
             if (limitO[i].id === data.id) {
               toast.info((
-                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[openP[i].asset].name +
-                (openP[i].direction ? " long " : " short ") +
+                (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
+                currentNetwork.assets[limitO[i].asset].name +
+                (limitO[i].direction ? " long " : " short ") +
                 "limit order filled @ " +
                 (parseFloat(data.oPrice) / 1e18).toPrecision(6)
               ));
@@ -299,10 +302,11 @@ export const PositionData = () => {
                 {
                   trader: data.trader,
                   margin: data.margin,
-                  leverage: data.lev,
+                  leverage: limitO[i].leverage,
                   price: data.oPrice,
                   tpPrice: limitO[i].tpPrice,
                   slPrice: limitO[i].slPrice,
+                  orderType: 0,
                   direction: data.direction,
                   id: data.id,
                   asset: data.asset,
@@ -315,7 +319,7 @@ export const PositionData = () => {
               break;
             }
           }
-          setOpenPositions(limitO);
+          setLimitOrders(limitO);
           setOpenPositions(openP);
           console.log('EVENT: Limit Order Executed');
         }
@@ -355,6 +359,7 @@ export const PositionData = () => {
                 price: openP[i].price,
                 tpPrice: openP[i].tpPrice,
                 slPrice: openP[i].slPrice,
+                orderType: 0,
                 direction: openP[i].direction,
                 id: data.id,
                 asset: openP[i].asset,
@@ -406,6 +411,7 @@ export const PositionData = () => {
                 price: data.newPrice,
                 tpPrice: openP[i].tpPrice,
                 slPrice: openP[i].slPrice,
+                orderType: 0,
                 direction: openP[i].direction,
                 id: data.id,
                 asset: openP[i].asset,
@@ -444,6 +450,7 @@ export const PositionData = () => {
                   price: openP[i].price,
                   tpPrice: data.price,
                   slPrice: openP[i].slPrice,
+                  orderType: 0,
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
@@ -477,6 +484,7 @@ export const PositionData = () => {
                   price: openP[i].price,
                   tpPrice: openP[i].tpPrice,
                   slPrice: data.price,
+                  orderType: 0,
                   direction: openP[i].direction,
                   id: data.id,
                   asset: openP[i].asset,
@@ -527,6 +535,7 @@ export const PositionData = () => {
           price: openP[i].price,
           tpPrice: openP[i].tpPrice,
           slPrice: openP[i].slPrice,
+          orderType: 0,
           direction: openP[i].direction,
           id: id,
           asset: openP[i].asset,
@@ -535,11 +544,34 @@ export const PositionData = () => {
           isVisible: is
         }
         openP[i] = modP;
+        setOpenPositions(openP);
         break;
       }
     }
-    setOpenPositions(openP);
-    console.log('Set visibility', id, is);
+    const limitO: any[] = limitOrders.slice();
+    for (let i = 0; i < openP.length; i++) {
+      if (limitO[i].id === id) {
+        const modP = {
+          trader: limitO[i].trader,
+          margin: limitO[i].margin,
+          leverage: limitO[i].leverage,
+          price: limitO[i].price,
+          tpPrice: limitO[i].tpPrice,
+          slPrice: limitO[i].slPrice,
+          orderType: limitO[i].orderType,
+          direction: limitO[i].direction,
+          id: id,
+          asset: limitO[i].asset,
+          accInterest: limitO[i].accInterest,
+          liqPrice: limitO[i].liqPrice,
+          isVisible: is
+        }
+        limitO[i] = modP;
+        setLimitOrders(limitO);
+        console.log(id);
+        break;
+      }
+    }
   }
 
   return (

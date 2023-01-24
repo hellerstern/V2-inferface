@@ -38,7 +38,6 @@ export const Footer = () => {
       setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
     });
     const interval = setInterval(() => {
-      console.log("loop", chain);
       provider.getGasPrice().then((r) => {
         setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
       });
