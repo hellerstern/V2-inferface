@@ -355,8 +355,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onChange={(event: any) => handleLeverageChange(event)}
             value={parseFloat(leverage)}
           />
-          <TigrisInput label="Stop Loss" value={stopLossPercent === "0" ? "-" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
-          <TigrisInput label="Take Profit" value={takeProfitPercent === "0" ? "-" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
+          <TigrisInput label="Stop Loss" placeholder={"-"} value={stopLossPercent === "0" ? "" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
+          <TigrisInput label="Take Profit" placeholder={"-"} value={takeProfitPercent === "0" ? "" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -370,7 +370,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: 90, label: '-90' }
             ]}
             onChange={(event: any) => handleStopLossChange(event)}
-            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4))}
+            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4).replace("NaN", "0"))}
           />
           <TigrisSlider // Take profit
             defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
@@ -384,7 +384,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500 }
             ]}
             onChange={(event: any) => handleTakeProfitChange(event)}
-            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
+            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4).replace("NaN", "0"))}
           />
           <IconDropDownMenu
             arrayData={marginAssets.marginAssetDrop}
