@@ -274,7 +274,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             Market
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => setOrderType("Limit")}
+            onClick={() => {setOrderType("Limit"); setOpenPrice(openPrice.slice(0, 8));}}
             sx={{
               backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630',
               color: orderType === "Limit" ? '#FFFFFF' : '#B1B5C3',
@@ -284,7 +284,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             Limit
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => setOrderType("Stop")}
+            onClick={() => {setOrderType("Stop"); setOpenPrice(openPrice.slice(0, 8));}}
             sx={{
               backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630',
               color: orderType === "Stop" ? '#FFFFFF' : '#B1B5C3',
