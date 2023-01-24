@@ -321,25 +321,31 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
-              <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
+              <TableCell>{(position.price / 1e18).toPrecision(7)}</TableCell>
               {
                 tableType === 0 ?
                 <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell> :
                 <></>
               }
               <TableCell>
-                <InputStore
-                  handleUpdateTPSLChange={handleUpdateTPSLChange}
-                  position={position}
-                  isTP={true}
-                />
+                {
+                  tableType === 1 ? (position.tpPrice / 1e18).toPrecision(7) :
+                  <InputStore
+                    handleUpdateTPSLChange={handleUpdateTPSLChange}
+                    position={position}
+                    isTP={true}
+                  />
+                }
               </TableCell>
               <TableCell>
-                <InputStore
-                  handleUpdateTPSLChange={handleUpdateTPSLChange}
-                  position={position}
-                  isTP={false}
-                />
+                {
+                  tableType === 1 ? (position.slPrice / 1e18).toPrecision(7) :
+                  <InputStore
+                    handleUpdateTPSLChange={handleUpdateTPSLChange}
+                    position={position}
+                    isTP={false}
+                  />
+                }
               </TableCell>
               <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>

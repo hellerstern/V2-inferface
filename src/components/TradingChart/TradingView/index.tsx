@@ -214,9 +214,9 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 								(parseFloat(data[i].leverage)/1e18).toFixed(0) + "X" + (data[i].orderType === 0 ? " " : data[i].orderType === 1 ? " LIMIT " : " STOP ") + (data[i].direction ? "LONG " : "SHORT") + " STOP LOSS"
 							)
 							.setPrice(parseFloat(data[i].slPrice) / 1e18)
-							.setQuantity(data[i].orderType === "0" ? "" : "🔒")
+							.setQuantity(data[i].orderType === 0 ? "" : "🔒")
 							.setLineStyle(0)
-							.setEditable(data[i].orderType === "0")
+							.setEditable(data[i].orderType === 0)
 							.setLineColor("#EF534F")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
