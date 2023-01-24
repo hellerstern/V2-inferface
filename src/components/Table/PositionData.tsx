@@ -295,7 +295,7 @@ export const PositionData = () => {
                 (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
                 currentNetwork.assets[limitO[i].asset].name +
                 (limitO[i].direction ? " long " : " short ") +
-                "limit order filled @ " +
+                (limitO[i].orderType === 1 ? "limit" : "stop") + " order filled @ " +
                 (parseFloat(data.oPrice) / 1e18).toPrecision(6)
               ));
               openP.push(

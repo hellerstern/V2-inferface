@@ -279,12 +279,21 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
           <TableRow>
             <TableCell>User</TableCell>
             <TableCell>L/S</TableCell>
+            {
+              tableType === 1 ?
+              <TableCell>Type</TableCell> :
+              <></>
+            }
             <TableCell>Pair</TableCell>
             <TableCell>Size</TableCell>
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>PnL</TableCell>
+            {
+              tableType === 0 ?
+              <TableCell>PnL</TableCell> :
+              <></>
+            }
             <TableCell>Take Profit</TableCell>
             <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
@@ -303,12 +312,21 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
                 </TableCellContainer>
               </TableCell>
               <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
+              {
+                tableType === 1 ?
+                <TableCell>{position.orderType === 1 ? "Limit" : "Stop"}</TableCell> :
+                <></>
+              }
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
-              <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell>
+              {
+                tableType === 0 ?
+                <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell> :
+                <></>
+              }
               <TableCell>
                 <InputStore
                   handleUpdateTPSLChange={handleUpdateTPSLChange}

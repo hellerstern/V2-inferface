@@ -22,7 +22,6 @@ import { ethers } from 'ethers';
 export interface ChartContainerProps {
 	asset: any;
 	positionData: any;
-	positionTab: number;
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -31,7 +30,7 @@ function getLanguageFromURL(): LanguageCode | null {
 	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode;
 }
 
-export const TVChartContainer = ({ asset, positionData, positionTab}: ChartContainerProps) => {
+export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) => {
 
 	const { address } = useAccount();
 	const { chain } = useNetwork();
@@ -172,7 +171,7 @@ export const TVChartContainer = ({ asset, positionData, positionTab}: ChartConta
 					posLines.current = [];
 				} catch (err) { console.log(err) }
 			});
-			const data = positionData[positionTab === 0 ? "openPositions" : "limitOrders"];
+			const data = (positionData.openPositions).concat(positionData.limitOrders);
 			for (let i = 0; i < data.length; i++) {
 				if (data[i].asset === asset && data[i].isVisible) {
 					try {
@@ -189,21 +188,21 @@ export const TVChartContainer = ({ asset, positionData, positionTab}: ChartConta
 							.setQuantity("")
 							.setLineStyle(0)
 							.setEditable(false)
-							.setLineColor("#FFFFFF")
+							.setLineColor(data[i].orderType === 0 ? "#FFFFFF" : "#3c83ff")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
 							.setQuantityBorderColor("rgba(0,0,0,0)")
 							.setQuantityBackgroundColor("rgba(0,0,0,0)")
 							.setCancelButtonBorderColor("rgba(0,0,0,0)")
 							.setCancelButtonBackgroundColor("rgba(0,0,0,0)")
-							.setBodyTextColor("#FFFFFF")
+							.setBodyTextColor(data[i].orderType === 0 ? "#FFFFFF" : "#3c83ff")
 							.setQuantityTextColor("#FFFFFF")
 							.setCancelButtonIconColor("rgba(0,0,0,0)")
 							.setQuantityFont("400 13pt DM Sans")
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(data[i].slPrice) !== 0) {
+					if (parseFloat(data[i].slPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
@@ -232,7 +231,7 @@ export const TVChartContainer = ({ asset, positionData, positionTab}: ChartConta
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(data[i].tpPrice) !== 0) {
+					if (parseFloat(data[i].tpPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
@@ -261,7 +260,7 @@ export const TVChartContainer = ({ asset, positionData, positionTab}: ChartConta
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(data[i].liqPrice) !== 0) {
+					if (parseFloat(data[i].liqPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true

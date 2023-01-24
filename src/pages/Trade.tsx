@@ -30,8 +30,6 @@ export const Trade = () => {
     TraderProfile();
   }, []);
 
-  const [positionTab, setPositionTab] = useState(0);
-
   return (
     <TradeContainer>
       {miniPage === 0 && (
@@ -41,7 +39,7 @@ export const Trade = () => {
           <Container>
             <TradingForm>
               <TradingSection>
-                <TradingChart asset={pairIndex} positionData={positionData} positionTab={positionTab} />
+                <TradingChart asset={pairIndex} positionData={positionData} />
               </TradingSection>
               <OrderFormContainer>
                 <TradingOrderForm pairIndex={pairIndex} />
@@ -53,7 +51,7 @@ export const Trade = () => {
             {
               isConnected && 
               <>
-                <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData}  setPositionTab={setPositionTab}/>
+                <TradingPositionTable setPairIndex={setPairIndex} positionData={positionData} />
                 <DailyPerformanceChart />
               </>
             }
