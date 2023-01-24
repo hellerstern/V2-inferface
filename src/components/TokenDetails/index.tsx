@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -18,9 +18,16 @@ type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 interface ITokenDetails {
   pairIndex: number;
   setPairIndex: (value: number) => void;
+  maxOi: any;
+  longOi: any;
+  shortOi: any;
+  openFee: any;
+  closeFee: any;
+  longAPRHourly: any;
+  shortAPRHourly: any;
 }
 
-export const TokenDetails = ({ pairIndex, setPairIndex }: ITokenDetails) => {
+export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, openFee, closeFee, longAPRHourly, shortAPRHourly }: ITokenDetails) => {
   const [isPairModalOpen, setPairModalOpen] = useState(false);
   const LogoArray = [
     logos.btcLogo,
@@ -72,26 +79,27 @@ export const TokenDetails = ({ pairIndex, setPairIndex }: ITokenDetails) => {
       }
     });
   }, []);
-  const [oracleData, setOracleData] = React.useState(Array(35).fill({ price: '0', spread: '0' }));
+
+  const [oracleData, setOracleData] = useState(Array(35).fill({ price: '0', spread: '0' }));
   const oracleRef = useRef(Array(35).fill({ price: '0', spread: '0' }));
 
   const INFOS: any = [
     {
       name: 'Oracle Price',
       value:
-        oracleData[pairIndex] != null
+        oracleData[pairIndex].price !== '0'
           ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
-          : 0,
+          : "Loading...",
       label: ''
     },
     { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
     { name: '24h Volume', value: '$230,050.00', label: '' },
-    { name: 'Long Open Interest', value: '0/ ', label: 'Unlimited' },
-    { name: 'Short Open Interest', value: '0/ ', label: 'Unlimited' },
-    { name: 'Opening Fee', value: '0.10%', label: ' ($0.50)' },
-    { name: 'Closing Fee', value: '0.10%', label: '' },
-    { name: 'Long Funding Fee', value: '0.00242% Per Hour', label: '', active: 2 },
-    { name: 'Short Funding Fee', value: '-0.01247% Per Hour', label: '', active: 1 },
+    { name: 'Long Open Interest', value: (longOi/1e18).toFixed(0) + '/ ', label: maxOi.toString() === "0" ? "Unlimited" : maxOi.toString() },
+    { name: 'Short Open Interest', value: (shortOi/1e18).toFixed(0) + '/ ', label: maxOi.toString() === "0" ? "Unlimited" : maxOi.toString() },
+    { name: 'Opening Fee', value: openFee, label: '' },
+    { name: 'Closing Fee', value: closeFee, label: '' },
+    { name: 'Long Funding Fee', value: ((longAPRHourly.toFixed(5).replace("NaN", "0").replace("Infinity", "ထ")) as string + '% Per Hour'), label: '', active: longAPRHourly > 0 ? 2 : 1 },
+    { name: 'Short Funding Fee', value: ((shortAPRHourly.toFixed(5).replace("NaN", "0")).replace("Infinity", "ထ") as string + '% Per Hour'), label: '', active: shortAPRHourly > 0 ? 2 : 1 },
     {
       name: 'Price Spread',
       value:

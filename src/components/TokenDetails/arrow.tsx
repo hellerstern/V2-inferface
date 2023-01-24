@@ -17,7 +17,7 @@ function ArrowRight({
       disabled={disabled}
       onClick={onClick}
       style={{
-        cursor: 'pointer',
+        cursor: disabled ? 'default' : 'pointer',
         display: 'flex',
         position: 'absolute',
         flexDirection: 'column',
@@ -53,7 +53,7 @@ function ArrowLeft({
       disabled={disabled}
       onClick={onClick}
       style={{
-        cursor: 'pointer',
+        cursor: disabled ? 'default' : 'pointer',
         display: 'flex',
         position: 'absolute',
         flexDirection: 'column',

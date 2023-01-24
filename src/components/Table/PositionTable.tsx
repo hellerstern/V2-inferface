@@ -18,6 +18,7 @@ import { oracleData, oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  height: 32,
   '&:nth-of-type(odd)': {
     backgroundColor: '#23262F'
   },
@@ -487,10 +488,3 @@ const TableCellContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '8px'
 }));
-
-const NodataLabel = styled(Box)(({ theme }) => ({
-    backgroundColor: "#18191D",
-    fontSize: '16px',
-    textAlign: 'center',
-    padding: '10px'
-}))
