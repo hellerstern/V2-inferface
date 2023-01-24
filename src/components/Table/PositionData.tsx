@@ -549,7 +549,7 @@ export const PositionData = () => {
       }
     }
     const limitO: any[] = limitOrders.slice();
-    for (let i = 0; i < openP.length; i++) {
+    for (let i = 0; i < limitO.length; i++) {
       if (limitO[i].id === id) {
         const modP = {
           trader: limitO[i].trader,
