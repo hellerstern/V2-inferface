@@ -8,7 +8,7 @@ import { Container } from '../../src/components/Container';
 import { GasStationSvg } from '../../src/config/images';
 import { lastOracleTime } from 'src/context/socket';
 import { ethers } from 'ethers';
-import { useNetwork } from 'wagmi';
+import { useNetwork, useAccount } from 'wagmi';
 
 declare const window: any
 const { ethereum } = window;
@@ -20,6 +20,7 @@ export const Footer = () => {
   const [gasPrice, setGasPrice] = useState(0);
 
   const { chain } = useNetwork();
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,11 +34,13 @@ export const Footer = () => {
   }, []);
 
   useEffect(() => {
+    if (!isConnected) return;
     const provider = new ethers.providers.Web3Provider(ethereum);
     provider.getGasPrice().then((r) => {
       setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
     });
     const interval = setInterval(() => {
+      if (!isConnected) return;
       provider.getGasPrice().then((r) => {
         setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
       });
@@ -46,7 +49,7 @@ export const Footer = () => {
     return () => {
       clearInterval(interval);
     }
-  }, [chain]);
+  }, [chain, isConnected]);
 
   return (
     <FooterContainer>

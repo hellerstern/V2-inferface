@@ -22,7 +22,7 @@ interface IOrderForm {
 
 export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
   // First render
@@ -461,6 +461,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getTokenBalance() {
+    if (!isConnected) return;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
@@ -541,6 +542,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getProxyApproval() {
+    if (!isConnected) return;
     const tradingContract = await getTradingContract();
 
     const proxy = await tradingContract.proxyApprovals(address);
@@ -588,6 +590,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getTokenApproval() {
+    if (!isConnected) return;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     if (currentMarginRef.current !== null && currentMarginRef.current.marginAssetDrop.address === currentNetwork.addresses.tigusd) {
       setIsTokenAllowed(true);
