@@ -44,11 +44,11 @@ export const Trade = () => {
     TraderProfile();
   }, [address, chain]);
 
-  const [maxOi, setMaxOi] = useState(0);
+  const [maxOi, setMaxOi] = useState(1000000e18);
   const [minLev, setMinLev] = useState(1);
   const [maxLev, setMaxLev] = useState(1000);
-  const [openFee, setOpenFee] = useState("Loading...");
-  const [closeFee, setCloseFee] = useState("Loading...");
+  const [openFee, setOpenFee] = useState("0.10%");
+  const [closeFee, setCloseFee] = useState("0.10%");
   const [longOi, setLongOi] = useState(0);
   const [shortOi, setShortOi] = useState(0);
   const [shortAPRHourly, setShortAPRHourly] = useState(0);

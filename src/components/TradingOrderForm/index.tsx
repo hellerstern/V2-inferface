@@ -10,6 +10,7 @@ import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import socketio from "socket.io-client";
 import { toast } from 'react-toastify';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -24,6 +25,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const { openConnectModal } = useConnectModal();
 
   // First render
   useEffect(() => {
@@ -400,14 +402,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             {isBalanceVisible ? tokenBalance : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => getButtonOnline() ? routeTrade() : null} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
         <Alert>
           {
             chain === undefined || address === undefined ?
               <Alert>
                 <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
                 <AlertContent>
-                  Wallet is not connected. Connect your wallet to be able approve and trade.
+                  Wallet is not connected. Connect your wallet to approve and begin trading.
                 </AlertContent>
               </Alert>
               :
@@ -522,10 +524,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function routeTrade() {
     const s = getTradeStatus();
-    s === "Approve" ? approveToken() :
-      s === "Proxy" ? approveProxy() :
-        s === "Ready" ? (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder()) :
-          console.log("Oops");
+    s === "NotConnected" ? openConnectModal?.() :
+      s === "Approve" ? approveToken() :
+        s === "Proxy" ? approveProxy() :
+          s === "Ready" && (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder())
   }
 
   async function getTradingContract() {
@@ -839,8 +841,10 @@ const FormContainer = styled(Box)(({ theme }) => ({
   height: '100%',
   backgroundColor: '#18191D',
   marginRight: '5px',
-  marginTop: '7px',
-  padding: '20px 20px'
+  paddingTop: '20px',
+  paddingRight: '20px',
+  paddingLeft: '20px',
+  paddingBottom: '10px'
 }));
 
 const FormAction = styled(Box)(({ theme }) => ({
@@ -901,7 +905,7 @@ const Alert = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
   gap: '12px',
-  marginTop: '17px'
+  marginTop: '10px'
 }));
 
 const AlertContent = styled(Box)(({ theme }) => ({
