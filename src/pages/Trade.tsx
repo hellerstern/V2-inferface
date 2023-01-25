@@ -128,10 +128,10 @@ export const Trade = () => {
     ]);
 
     const isReferred = ref === ethers.constants.HashZero;
-    const oFees = ((openFees.daoFees - (isReferred ? openFees.referralFees/1e10 : 0))*pair.feeMultiplier/1e10)/1e8;
-    const cFees = ((closeFees.daoFees - (isReferred ? closeFees.referralFees/1e10 : 0))*pair.feeMultiplier/1e10)/1e8;
-    setOpenFee(oFees.toString() + "%");
-    setCloseFee(cFees.toString() + "%");
+    const oFees = ((openFees.daoFees/1 + openFees.burnFees/1 - (isReferred ? openFees.referralFees/1e10 : 0))*pair.feeMultiplier/1e10)/1e8;
+    const cFees = ((closeFees.daoFees/1 + closeFees.burnFees/1 - (isReferred ? closeFees.referralFees/1e10 : 0))*pair.feeMultiplier/1e10)/1e8;
+    setOpenFee(oFees.toFixed(2) + "%");
+    setCloseFee(cFees.toFixed(2) + "%");
 
     const minLev = pair.minLeverage/1e18;
     const maxLev = pair.maxLeverage/1e18;
