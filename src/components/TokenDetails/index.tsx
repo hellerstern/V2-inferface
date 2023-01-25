@@ -269,14 +269,12 @@ const DesktopStatusInfos = styled(Box)(({ theme }) => ({
     borderRight: '1px solid #23262F',
     '.title': {
       color: '#D2CEDE',
-      fontWeight: '400',
       fontSize: '10px',
       lineHeight: '12px',
       fontFamily: 'DMSans-Regular',
       whiteSpace: 'nowrap'
     },
     '.value': {
-      fontWeight: '700',
       fontSize: '12px',
       lineHeight: '16px',
       fontFamily: 'DMSans-Regular',
@@ -306,14 +304,12 @@ const MobileStatusInfos = styled(Box)(({ theme }) => ({
     padding: '0 11px',
     '.title': {
       color: '#D2CEDE',
-      fontWeight: '400',
       fontSize: '10px',
       lineHeight: '12px',
       fontFamily: 'DMSans-Regular',
       whiteSpace: 'nowrap'
     },
     '.value': {
-      fontWeight: '700',
       fontSize: '12px',
       lineHeight: '16px',
       fontFamily: 'DMSans-Regular',
