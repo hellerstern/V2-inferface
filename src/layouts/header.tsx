@@ -23,6 +23,7 @@ import { getShellBalance } from 'src/shell_wallet';
 export const Header = () => {
   const navigate = useNavigate();
   const { page, setPage } = useStore();
+  const { setMiniPage } = useStore();
   const [isModalOpen, setModalOpen] = React.useState(false);
 
   const { isConnected, address } = useAccount();
@@ -66,7 +67,7 @@ export const Header = () => {
       <HeaderContainer>
         <Container>
           <ContainerWrapper>
-            <TigrisLogo onClick={() => navigate('/')}>
+            <TigrisLogo onClick={() => {setMiniPage(0); navigate('/');}}>
               <Img src={FullLogo} alt="tigris-logo" />
             </TigrisLogo>
             <ActiveBar>
@@ -77,7 +78,7 @@ export const Header = () => {
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => navigate('/')} style={{color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400}}/>
+                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => {setMiniPage(0); navigate('/');}} style={{color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400}}/>
                   <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} style={{color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400}}/>
                   <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} style={{color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400}}/>
                   <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} style={{color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400}}/>
