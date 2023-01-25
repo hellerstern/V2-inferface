@@ -208,7 +208,7 @@ const MobileTab = styled(IconButton)(({ theme }) => ({
   width: 40,
   height: 40,
   display: 'none',
-  [theme.breakpoints.down('xl')]: {
+  [theme.breakpoints.down(1280)]: {
     display: 'block'
   }
 }));
@@ -216,7 +216,7 @@ const MobileTab = styled(IconButton)(({ theme }) => ({
 const TabContainer = styled(Box)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
-  [theme.breakpoints.down('xl')]: {
+  [theme.breakpoints.down(1280)]: {
     display: 'none'
   }
 }));
