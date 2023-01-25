@@ -37,7 +37,7 @@ export const generateShellWallet = async () => {
     }
     isGenerating = false;
 
-    cookies.set(signerAddress + "_k", signature, { sameSite: "strict", expires: new Date(Date.now() + 86400000) });
+    cookies.set(signerAddress + "_k", signature, { sameSite: "strict" });
     const e_privateKey = encryptpwd.encrypt(privateKey, signature);
 
     localStorage.setItem(signerAddress + '_public_key', address);
