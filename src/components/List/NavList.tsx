@@ -31,9 +31,6 @@ export const NavList = () => {
         </ListItemIcon>
         <ListItemText primary={'Referral'} />
       </ListItemButton>
-      <ListItemButton sx={{ paddingX: '1.5rem' }}>
-        <ListItemText primary={<Discord />} />
-      </ListItemButton>
     </List>
   );
 };
@@ -42,20 +39,6 @@ const Img = styled('img')(({ theme }) => ({
   width: '15px',
   height: '15px'
 }));
-
-const Discord = () => {
-  return (
-    <DiscordContainer>
-      <Box>Discord</Box>
-      <SubFix src={Indicator} alt="indicator" />
-    </DiscordContainer>
-  );
-};
-
-const DiscordContainer = styled(Box)({
-  display: 'flex',
-  gap: '5px'
-});
 
 const SubFix = styled('img')({
   marginTop: '-10px'

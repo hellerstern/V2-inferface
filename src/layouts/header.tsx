@@ -72,15 +72,15 @@ export const Header = () => {
             <ActiveBar>
               <TabContainer>
                 <Tabs
-                  TabIndicatorProps={{ style: { backgroundColor: '#3772ff', height: '2px' } }}
+                  TabIndicatorProps={{ style: { height: '0px' } }}
                   value={page}
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => navigate('/')} />
-                  <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} />
-                  <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} />
-                  <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} />
+                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => navigate('/')} style={{color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400}}/>
+                  <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} style={{color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400}}/>
+                  <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} style={{color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400}}/>
+                  <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} style={{color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400}}/>
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
