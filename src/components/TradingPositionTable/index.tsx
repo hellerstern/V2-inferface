@@ -69,7 +69,7 @@ const TableWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const TableAction = styled(Box)(({ theme }) => ({
-  padding: '19px 17px',
+  padding: '5px 17px',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
