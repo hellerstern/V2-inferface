@@ -307,9 +307,9 @@ export const PositionData = () => {
                   tpPrice: limitO[i].tpPrice,
                   slPrice: limitO[i].slPrice,
                   orderType: 0,
-                  direction: data.direction,
+                  direction: limitO[i].direction,
                   id: data.id,
-                  asset: data.asset,
+                  asset: limitO[i].asset,
                   accInterest: 0,
                   liqPrice: limitO[i].direction ? (parseInt(data.oPrice) - parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
                   : (parseInt(data.oPrice) + parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
