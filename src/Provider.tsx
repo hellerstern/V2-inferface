@@ -79,7 +79,7 @@ const FRONT_COLORS_DARK = {
     contrastText: '#FFFFFF'
   },
   success: {
-    main: '#2e7d32', // Green 800
+    main: '#3861FB', // Green 800
     contrastText: '#FFFFFF'
   },
   warning: {
