@@ -35,7 +35,7 @@ const Message = ({ profilePicture, username, prevUsername, date, time, message }
         {
           prevUsername !== username &&
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '13px' }}>{username}
+            <h4 style={{ margin: 0, fontWeight: 'bold', fontSize: '13px' }}>{username}
               <span style={{ marginLeft: 10, color: '#8e9297', fontSize: '13px' }}>
                 {moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').format(
                   'MMM DD, HH:mm'
@@ -44,7 +44,7 @@ const Message = ({ profilePicture, username, prevUsername, date, time, message }
             </h4>
           </div>
         }
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: '18px'}}>{message}</p>
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: '18px', color: '#DCDDDE'}}>{message}</p>
       </div>
     </div>
   );
@@ -484,6 +484,7 @@ export const Chatbox = () => {
                   message={message.message}
                 />
               ))}
+              <div style={{paddingBottom: '5px'}}/>
               <div ref={(el) => { messagesEnd.current = el; }} style={{ float:"left", clear: "both" }}/>
             </div>
           </div>
