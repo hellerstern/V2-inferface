@@ -311,7 +311,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: data.asset,
                   accInterest: 0,
-                  liqPrice: 0,
+                  liqPrice: limitO[i].direction ? (parseInt(data.oPrice) - parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
+                  : (parseInt(data.oPrice) + parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
                   isVisible: true
                 }
               );
