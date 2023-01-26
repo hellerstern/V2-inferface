@@ -91,8 +91,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		localStorage.setItem("LastPairSelected", asset);
 		try {
 			tvWidget.current?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget.current?.symbolInterval().interval as ResolutionString, () => { });
-		} catch (err) {
-			console.log(err);
+		} catch {
 			tvWidget.current = new widget(widgetOptions);
 		}
 	}, [asset]);
@@ -171,51 +170,52 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 					posLines.current = [];
 				} catch (err) { console.log(err) }
 			});
-			for (let i = 0; i < positionData.openPositions.length; i++) {
-				if (positionData.openPositions[i].asset === asset && positionData.openPositions[i].isVisible) {
+			const data = (positionData.openPositions).concat(positionData.limitOrders);
+			for (let i = 0; i < data.length; i++) {
+				if (data[i].asset === asset && data[i].isVisible) {
 					try {
-					if (parseFloat(positionData.openPositions[i].price) !== 0) {
+					if (parseFloat(data[i].price) !== 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
 							}
 						)
 							.setText(
-								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + ""
+								(parseFloat(data[i].leverage)/1e18).toFixed(0) + "X" + (data[i].orderType === 0 ? " " : data[i].orderType === 1 ? " LIMIT " : " STOP ") + (data[i].direction ? "LONG" : "SHORT")
 							)
-							.setPrice(parseFloat(positionData.openPositions[i].price) / 1e18)
+							.setPrice(parseFloat(data[i].price) / 1e18)
 							.setQuantity("")
 							.setLineStyle(0)
 							.setEditable(false)
-							.setLineColor("#FFFFFF")
+							.setLineColor(data[i].orderType === 0 ? "#FFFFFF" : "#3c83ff")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
 							.setQuantityBorderColor("rgba(0,0,0,0)")
 							.setQuantityBackgroundColor("rgba(0,0,0,0)")
 							.setCancelButtonBorderColor("rgba(0,0,0,0)")
 							.setCancelButtonBackgroundColor("rgba(0,0,0,0)")
-							.setBodyTextColor("#FFFFFF")
+							.setBodyTextColor(data[i].orderType === 0 ? "#FFFFFF" : "#3c83ff")
 							.setQuantityTextColor("#FFFFFF")
 							.setCancelButtonIconColor("rgba(0,0,0,0)")
 							.setQuantityFont("400 13pt DM Sans")
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(positionData.openPositions[i].slPrice) !== 0) {
+					if (parseFloat(data[i].slPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], false, line)
+							updateTPSL(data[i], false, line)
 						})
 							.setText(
-								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " STOP LOSS"
+								(parseFloat(data[i].leverage)/1e18).toFixed(0) + "X" + (data[i].orderType === 0 ? " " : data[i].orderType === 1 ? " LIMIT " : " STOP ") + (data[i].direction ? "LONG " : "SHORT") + " STOP LOSS"
 							)
-							.setPrice(parseFloat(positionData.openPositions[i].slPrice) / 1e18)
-							.setQuantity("")
-							.setLineStyle(0)
-							.setEditable(true)
+							.setPrice(parseFloat(data[i].slPrice) / 1e18)
+							.setQuantity(data[i].orderType === 0 ? "" : "🔒")
+							.setLineStyle(2)
+							.setEditable(data[i].orderType === 0)
 							.setLineColor("#EF534F")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
@@ -224,27 +224,28 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							.setCancelButtonBorderColor("rgba(0,0,0,0)")
 							.setCancelButtonBackgroundColor("rgba(0,0,0,0)")
 							.setBodyTextColor("#EF534F")
+							.setTooltip("Drag to edit stop loss")
 							.setQuantityTextColor("#EF534F")
 							.setCancelButtonIconColor("rgba(0,0,0,0)")
 							.setQuantityFont("400 13pt DM Sans")
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(positionData.openPositions[i].tpPrice) !== 0) {
+					if (parseFloat(data[i].tpPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
 							}
 						).onMove(() => {
-							updateTPSL(positionData.openPositions[i], true, line)
+							updateTPSL(data[i], true, line)
 						})
 							.setText(
-								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " TAKE PROFIT"
+								(parseFloat(data[i].leverage)/1e18).toFixed(0) + "X" + (data[i].orderType === 0 ? " " : data[i].orderType === 1 ? " LIMIT " : " STOP ") + (data[i].direction ? "LONG " : "SHORT") + " TAKE PROFIT"
 							)
-							.setPrice(parseFloat(positionData.openPositions[i].tpPrice) / 1e18)
-							.setQuantity("")
-							.setLineStyle(0)
-							.setEditable(true)
+							.setPrice(parseFloat(data[i].tpPrice) / 1e18)
+							.setQuantity(data[i].orderType === 0 ? "" : "🔒")
+							.setLineStyle(2)
+							.setEditable(data[i].orderType === 0)
 							.setLineColor("#26A69A")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
@@ -253,27 +254,28 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							.setCancelButtonBorderColor("rgba(0,0,0,0)")
 							.setCancelButtonBackgroundColor("rgba(0,0,0,0)")
 							.setBodyTextColor("#26A69A")
+							.setTooltip("Drag to edit take profit")
 							.setQuantityTextColor("#26A69A")
 							.setCancelButtonIconColor("rgba(0,0,0,0)")
 							.setQuantityFont("400 13pt DM Sans")
 							.setBodyFont("400 13pt DM Sans")
 						posLines.current.push(line);
 					}
-					if (parseFloat(positionData.openPositions[i].liqPrice) !== 0) {
+					if (parseFloat(data[i].liqPrice) !== 0 && data[i].orderType === 0) {
 						const line = (tvWidget.current.chart() as IChartWidgetApi).createOrderLine(
 							{
 								disableUndo: true
 							}
 						).onMove(() => {
-							modifyMargin(positionData.openPositions[i], line)
+							modifyMargin(data[i], line)
 						})
 							.setText(
-								(parseFloat(positionData.openPositions[i].leverage)/1e18).toFixed(0) + "X " + (positionData.openPositions[i].direction ? "LONG " : " SHORT") + " LIQUIDATION"
+								(parseFloat(data[i].leverage)/1e18).toFixed(0) + "X" + (data[i].orderType === 0 ? " " : data[i].orderType === 1 ? " LIMIT " : " STOP ") + (data[i].direction ? "LONG " : "SHORT") + " LIQUIDATION"
 							)
-							.setPrice(parseFloat(positionData.openPositions[i].liqPrice) / 1e18)
-							.setQuantity("")
+							.setPrice(parseFloat(data[i].liqPrice) / 1e18)
+							.setQuantity(data[i].orderType === 0 ? "" : "🔒")
 							.setLineStyle(0)
-							.setEditable(true)
+							.setEditable(data[i].orderType === 0)
 							.setLineColor("#FFFF00")
 							.setBodyBorderColor("rgba(0,0,0,0)")
 							.setBodyBackgroundColor("rgba(0,0,0,0)")
@@ -282,6 +284,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 							.setCancelButtonBorderColor("rgba(0,0,0,0)")
 							.setCancelButtonBackgroundColor("rgba(0,0,0,0)")
 							.setBodyTextColor("#FFFF00")
+							.setTooltip("Drag to add/remove margin")
 							.setQuantityTextColor("#FFFF00")
 							.setCancelButtonIconColor("rgba(0,0,0,0)")
 							.setQuantityFont("400 13pt DM Sans")

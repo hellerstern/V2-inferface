@@ -37,7 +37,7 @@ export const generateShellWallet = async () => {
     }
     isGenerating = false;
 
-    cookies.set(signerAddress + "_k", signature, { sameSite: "strict", expires: new Date(Date.now() + 86400000) });
+    cookies.set(signerAddress + "_k", signature, { sameSite: "strict" });
     const e_privateKey = encryptpwd.encrypt(privateKey, signature);
 
     localStorage.setItem(signerAddress + '_public_key', address);
@@ -79,7 +79,7 @@ export const unlockShellWallet = async () => {
                 return;
             }
             isGenerating = false;
-            cookies.set(signerAddress + "_k", signature, { sameSite: "strict", expires: new Date(Date.now() + 86400000) });
+            cookies.set(signerAddress + "_k", signature, { sameSite: "strict" });
         }
         shell_private = encryptpwd.decrypt(e_privateKey, signature);
     }

@@ -1,32 +1,84 @@
 import { Box, Divider } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
+import { SiQuantconnect } from 'react-icons/si';
+import { TbPlugConnectedX } from 'react-icons/tb';
 import { Container } from '../../src/components/Container';
 import { GasStationSvg } from '../../src/config/images';
+import { lastOracleTime } from 'src/context/socket';
+import { ethers } from 'ethers';
+import { useNetwork, useAccount } from 'wagmi';
+
+declare const window: any
+const { ethereum } = window;
 
 export const Footer = () => {
+  
+  const [lastData, setLastData] = useState(0);
+  const [dateNow, setDateNow] = useState(0);
+  const [gasPrice, setGasPrice] = useState(0);
+
+  const { chain } = useNetwork();
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastData(lastOracleTime);
+      setDateNow(Date.now());
+    }, 500);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    provider.getGasPrice().then((r) => {
+      setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
+    });
+    const interval = setInterval(() => {
+      if (!isConnected) return;
+      provider.getGasPrice().then((r) => {
+        setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
+      });
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [chain, isConnected]);
+
   return (
     <FooterContainer>
       <Container>
         <FooterWrapper>
           <FooterInfo>
             <TextCoin>
-              <BsFillCheckCircleFill color={'#58BD7D'} />
+              {
+                dateNow > lastData+10000 ?
+                  <TbPlugConnectedX color={'#FF0000'} /> :
+                dateNow > lastData+3000 ?
+                  <SiQuantconnect color={'#FFFF00'} /> :
+                  <BsFillCheckCircleFill color={'#219653'} />
+              }
               <Text>Oracle</Text>
             </TextCoin>
-            <SmallText>Server Time: 10-02 10:36:42 UTC</SmallText>
             <GasFee>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '12px', height: '12px' }} />
-              <SmallText>Gas Price: 0.1 Gwei</SmallText>
+              <SmallText>Gas Price: {gasPrice} Gwei</SmallText>
             </GasFee>
           </FooterInfo>
           <Line />
           <FooterNav>
             <NavLinks>
-              <SmallText>Discord</SmallText>
-              <SmallText>Twitter</SmallText>
+              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://docs.tigris.trade", '_blank')}>Docs</SmallText>
+              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://discord.gg/tigris", '_blank')}>Discord</SmallText>
+              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://twitter.com/tigristrades", '_blank')}>Twitter</SmallText>
             </NavLinks>
-            <SmallText>© 2022. All rights reserved</SmallText>
+            <SmallText>© 2023. All rights reserved</SmallText>
           </FooterNav>
         </FooterWrapper>
       </Container>
@@ -41,7 +93,7 @@ const FooterContainer = styled(Box)(({ theme }) => ({
   minHeight: '50px',
   backgroundColor: '#18191D',
   alignItems: 'center',
-  marginTop: '5px'
+  marginTop: '0px'
 }));
 
 const FooterWrapper = styled(Box)(({ theme }) => ({

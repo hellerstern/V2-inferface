@@ -34,11 +34,11 @@ export const Proxy = () => {
   const shellExpire = useRef(0);
 
   const [editState, setEditState] = useState({
-    extendValue: 0,
-    fundValue: 0
+    extendValue: '1',
+    fundValue: tokenSymbol === 'ETH' ? '0.002' : '1'
   });
-  const handleEditState = (prop: string, value: string | number | boolean) => {
-    setEditState({ ...editState, [prop]: value });
+  const handleEditState = (prop: string, value: any) => {
+    setEditState({ ...editState, [prop]: value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0')});
   };
   
   const [hours, setHours] = useState(0);
@@ -116,15 +116,15 @@ export const Proxy = () => {
     if(!tradingContract) return;
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract?.approveProxy(shellAddress, now + 86400, {gasPrice: gasPriceEstimate, value: 0});
+    const tx = tradingContract?.approveProxy(shellAddress, now + 86400*parseFloat(editState.extendValue), {gasPrice: gasPriceEstimate, value: 0});
     await toast.promise(tx,
       {
-        pending: "Extending approval period...",
-        success: "Successfully extended approval period!",
-        error: "Failed to extend approval period!"
+        pending: "Setting approval period...",
+        success: "Successfully set approval period!",
+        error: "Failed to set approval period!"
       }
     );
-    shellExpire.current = now + 86400;
+    shellExpire.current = now + 86400*parseFloat(editState.extendValue);
   }
 
   function handleFundShell() {
@@ -134,7 +134,7 @@ export const Proxy = () => {
     const tradingContract = await getTradingContract();
     if(!tradingContract) return;
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-    const tx = tradingContract?.approveProxy(shellAddress, shellExpire.current, {gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.001")});
+    const tx = tradingContract?.approveProxy(shellAddress, shellExpire.current, {gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(editState.fundValue)});
     await toast.promise(tx,
       {
         pending: "Funding proxy wallet...",
@@ -142,7 +142,7 @@ export const Proxy = () => {
         error: "Failed to fund proxy wallet!"
       }
     );
-    setGasBalance(gasBalance + 0.001);
+    setGasBalance(gasBalance + parseFloat(editState.fundValue));
   }
 
   const update = async () => {
@@ -173,10 +173,10 @@ export const Proxy = () => {
     <Container>
       <ProxyContainer>
         <ShellWalletMedia>
-          <MediaBar>Shell Wallet</MediaBar>
+          <MediaBar>Proxy Wallet</MediaBar>
           <MediaContent>
             <Notification
-              content="Shell wallet is a frontend wallet that enables instant one-click trades. You need to fund the wallet
+              content="Proxy wallet is a frontend wallet that enables instant one-click trades. You need to fund the wallet
                 with MATIC on Polygon or ETH on Arbitrum to start trading."
             />
             <AddressSection>
@@ -186,13 +186,13 @@ export const Proxy = () => {
               </DesktopAddress>
               <MobileAddress onClick={() => handleAddressClick()}>{isConnected ? shellAddress : 'Wallet is not connected'}</MobileAddress>
             </AddressSection>
-            <CopyAddressButton onClick={() => copy()}>Copy Shell Wallet Address</CopyAddressButton>
+            <CopyAddressButton onClick={() => copy()}>Copy proxy wallet address</CopyAddressButton>
           </MediaContent>
         </ShellWalletMedia>
         <ShellWalletAction>
           <GasBalanceContainer>
             <GasBalance>{gasBalance.toFixed(4) + (chain?.id === 137 ? " MATIC" : " ETH")}</GasBalance>
-            <p style={{ color: '#777E90', fontSize: '15px', lineHeight: '20px' }}>Shell Wallet Gas Balance</p>
+            <p style={{ color: '#B1B5C3', fontSize: '15px', lineHeight: '20px' }}>Proxy wallet gas balance</p>
           </GasBalanceContainer>
           <ApproveContainer>
             <ApprovePeriod>
@@ -212,15 +212,15 @@ export const Proxy = () => {
               </TimeBox>
             </ApprovePeriod>
           </ApproveContainer>
-          <ApproveLabel>Shell Wallet Approval Period</ApproveLabel>
+          <ApproveLabel>Proxy wallet approval period</ApproveLabel>
           <ButtonGroup>
             <InputFieldContainer>
-              <VaultInput name='extendValue' type='number' value={editState.extendValue} setValue={handleEditState} placeholder='0' component={<InputLabel content="Days" />} />
-              <ExtendApproveButton onClick={() => handleExtendShell()}>Extend approval period</ExtendApproveButton>
+              <VaultInput name='extendValue' type='text' value={editState.extendValue} setValue={handleEditState} placeholder={'0'} component={<InputLabel content="Days" />} />
+              <ExtendApproveButton onClick={() => handleExtendShell()}>Set approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <VaultInput name='fundValue' type='number' value={editState.fundValue} setValue={handleEditState} placeholder={tokenSymbol === 'ETH' ? '0.002' : '1'} component={<TokenUnit symbol={tokenSymbol} />} />
-              <SendGasButton onClick={() => handleFundShell()}>Fund the shell wallet</SendGasButton>
+              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={tokenSymbol} />} />
+              <SendGasButton onClick={() => handleFundShell()}>Fund proxy wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
           </ButtonGroup>
@@ -370,11 +370,11 @@ const TimeType = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '20px',
   fontWeight: '700',
-  color: '#777E90'
+  color: '#B1B5C3'
 }));
 
 const ApproveLabel = styled(Box)(({ theme }) => ({
-  color: '#777E90',
+  color: '#B1B5C3',
   fontSize: '15px',
   lineHeight: '20px',
   fontWeight: '500',

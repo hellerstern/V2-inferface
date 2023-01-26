@@ -44,7 +44,7 @@ export const NETWORK = {
         nftsale: NFT_SALE,
         govnft: GOV_NFT,
         staking: STAKING_ABI,
-        referraks: REF_ABI
+        referrals: REF_ABI
     },
     icon: "assets/images/arbtest.png",
     gasLimit: 10_000_000,

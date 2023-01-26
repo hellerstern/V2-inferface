@@ -18,6 +18,7 @@ import { oracleData, oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  height: 32,
   '&:nth-of-type(odd)': {
     backgroundColor: '#23262F'
   },
@@ -268,7 +269,26 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     const prevVisible = isPositionVisible;
     prevVisible[id] = is;
     setPositionVisible(prevVisible);
-    positionData.setVisible(id, is);
+    positionData.setVisible([id], is);
+    e.stopPropagation();
+  }
+
+  const [isAllVisible, setAllVisible] = useState(true);
+  function handleAllEyeClick(e: any) {
+    const isSetVisible = !isAllVisible;
+    setAllVisible(isSetVisible);
+    const prevVisible = isPositionVisible;
+    const ids = [];
+    for (let i=0; i<openPositions.length; i++) {
+      prevVisible[openPositions[i].id] = isSetVisible;
+      ids.push(openPositions[i].id);
+    }
+    for (let i=0; i<limitOrders.length; i++) {
+      prevVisible[limitOrders[i].id] = isSetVisible;
+      ids.push(limitOrders[i].id);
+    }
+    setPositionVisible(prevVisible);
+    positionData.setVisible(ids, isSetVisible);
     e.stopPropagation();
   }
 
@@ -277,14 +297,30 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
+            <TableCell>
+              <TableCellContainer>
+                <VisibilityBox>
+                  {isAllVisible ? <BsEyeFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/> : <BsEyeSlashFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/>}
+                </VisibilityBox>
+              </TableCellContainer>
+            </TableCell>
             <TableCell>User</TableCell>
             <TableCell>L/S</TableCell>
+            {
+              tableType === 1 ?
+              <TableCell>Type</TableCell> :
+              <></>
+            }
             <TableCell>Pair</TableCell>
             <TableCell>Size</TableCell>
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>PnL</TableCell>
+            {
+              tableType === 0 ?
+              <TableCell>PnL</TableCell> :
+              <></>
+            }
             <TableCell>Take Profit</TableCell>
             <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
@@ -298,30 +334,47 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
                 <TableCellContainer>
                   <VisibilityBox>
                     {(isPositionVisible[position.id] === true || isPositionVisible[position.id] === undefined) ? <BsEyeFill style={{ fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => {handleEyeClick(e, position.id, false);}}/> : <BsEyeSlashFill style={{ fontSize: '12px', marginLeft: '0.5px' }}  onClick={(e) => {handleEyeClick(e, position.id, true);}}/>}
-                  </VisibilityBox>{' '}
-                  {position.trader.slice(0, 6)}
+                  </VisibilityBox>
                 </TableCellContainer>
               </TableCell>
+              <TableCell>
+                {position.trader.slice(0, 6)}
+              </TableCell>
               <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
+              {
+                tableType === 1 ?
+                <TableCell>{position.orderType === 1 ? "Limit" : "Stop"}</TableCell> :
+                <></>
+              }
               <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
-              <TableCell>{(position.price / 1e18).toPrecision(6)}</TableCell>
-              <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell>
+              <TableCell>{(position.price / 1e18).toPrecision(7)}</TableCell>
+              {
+                tableType === 0 ?
+                <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell> :
+                <></>
+              }
               <TableCell>
-                <InputStore
-                  handleUpdateTPSLChange={handleUpdateTPSLChange}
-                  position={position}
-                  isTP={true}
-                />
+                {
+                  tableType === 1 ? (position.tpPrice / 1e18).toPrecision(7) :
+                  <InputStore
+                    handleUpdateTPSLChange={handleUpdateTPSLChange}
+                    position={position}
+                    isTP={true}
+                  />
+                }
               </TableCell>
               <TableCell>
-                <InputStore
-                  handleUpdateTPSLChange={handleUpdateTPSLChange}
-                  position={position}
-                  isTP={false}
-                />
+                {
+                  tableType === 1 ? (position.slPrice / 1e18).toPrecision(7) :
+                  <InputStore
+                    handleUpdateTPSLChange={handleUpdateTPSLChange}
+                    position={position}
+                    isTP={false}
+                  />
+                }
               </TableCell>
               <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>
@@ -463,10 +516,3 @@ const TableCellContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '8px'
 }));
-
-const NodataLabel = styled(Box)(({ theme }) => ({
-    backgroundColor: "#18191D",
-    fontSize: '16px',
-    textAlign: 'center',
-    padding: '10px'
-}))

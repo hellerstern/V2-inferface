@@ -149,7 +149,7 @@ export const InputField = (props: InputLabelProps) => {
 };
 
 interface VaultInputProps {
-  value: number;
+  value: any;
   setValue: any;
   type: string;
   name: string;
@@ -180,7 +180,7 @@ export const VaultInput = (props: VaultInputProps) => {
     <InputFieldContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
       <InputFieldArea>
         <InputFieldValue
-          value={value === 0 ? '' : value}
+          value={value}
           type={type}
           name={name}
           ref={valueRef}

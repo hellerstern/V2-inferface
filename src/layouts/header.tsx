@@ -23,6 +23,7 @@ import { getShellBalance } from 'src/shell_wallet';
 export const Header = () => {
   const navigate = useNavigate();
   const { page, setPage } = useStore();
+  const { setMiniPage } = useStore();
   const [isModalOpen, setModalOpen] = React.useState(false);
 
   const { isConnected, address } = useAccount();
@@ -63,22 +64,59 @@ export const Header = () => {
       <HeaderContainer>
         <Container>
           <ContainerWrapper>
-            <TigrisLogo onClick={() => navigate('/')}>
+            <TigrisLogo
+              onClick={() => {
+                setPage(0);
+                setMiniPage(0);
+                navigate('/');
+              }}
+            >
               <Img src={FullLogo} alt="tigris-logo" />
             </TigrisLogo>
             <ActiveBar>
               <TabContainer>
                 <Tabs
-                  TabIndicatorProps={{ style: { backgroundColor: '#3772ff', height: '2px' } }}
+                  TabIndicatorProps={{ style: { height: '0px' } }}
                   value={page}
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => navigate('/')} />
-                  <CustomTab label="Vault" {...a11yProps(1)} onClick={() => navigate('/')} />
-                  <CustomTab label="Governance" {...a11yProps(2)} onClick={() => navigate('/')} />
-                  <CustomTab label="Referral" {...a11yProps(3)} onClick={() => navigate('/')} />
-                  <CustomTab label={<Discord />} {...a11yProps(3)} onClick={() => navigate('/')} />
+                  <CustomTab
+                    label="Trade"
+                    {...a11yProps(0)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Vault"
+                    {...a11yProps(1)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Governance"
+                    {...a11yProps(2)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Referral"
+                    {...a11yProps(3)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                  />
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
@@ -185,24 +223,6 @@ export const Header = () => {
   );
 };
 
-const Discord = () => {
-  return (
-    <DiscordContainer>
-      <Box>Discord</Box>
-      <SubFix src={Indicator} alt="indicator" />
-    </DiscordContainer>
-  );
-};
-
-const DiscordContainer = styled(Box)({
-  display: 'flex',
-  gap: '5px'
-});
-
-const SubFix = styled('img')({
-  marginTop: '-10px'
-});
-
 const HeaderContainer = styled(Box)({
   height: '60px',
   borderBottom: '1px solid #2E2E30',
@@ -247,7 +267,7 @@ const MobileTab = styled(IconButton)(({ theme }) => ({
   width: 40,
   height: 40,
   display: 'none',
-  [theme.breakpoints.down('xl')]: {
+  [theme.breakpoints.down(1280)]: {
     display: 'block'
   }
 }));
@@ -255,7 +275,7 @@ const MobileTab = styled(IconButton)(({ theme }) => ({
 const TabContainer = styled(Box)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
-  [theme.breakpoints.down('xl')]: {
+  [theme.breakpoints.down(1280)]: {
     display: 'none'
   }
 }));

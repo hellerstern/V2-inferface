@@ -10,6 +10,7 @@ import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import socketio from "socket.io-client";
 import { toast } from 'react-toastify';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -22,8 +23,9 @@ interface IOrderForm {
 
 export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const { openConnectModal } = useConnectModal();
 
   // First render
   useEffect(() => {
@@ -174,7 +176,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       setOpenPrice(value.slice(0, 7));
     } else {
       setOpenPrice(value);
-      console.log(value);
     }
   }
 
@@ -275,7 +276,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             Market
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => setOrderType("Limit")}
+            onClick={() => {setOrderType("Limit"); setOpenPrice(openPrice.slice(0, 8));}}
             sx={{
               backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630',
               color: orderType === "Limit" ? '#FFFFFF' : '#B1B5C3',
@@ -285,7 +286,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             Limit
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => setOrderType("Stop")}
+            onClick={() => {setOrderType("Stop"); setOpenPrice(openPrice.slice(0, 8));}}
             sx={{
               backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630',
               color: orderType === "Stop" ? '#FFFFFF' : '#B1B5C3',
@@ -356,8 +357,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onChange={(event: any) => handleLeverageChange(event)}
             value={parseFloat(leverage)}
           />
-          <TigrisInput label="Stop Loss" value={stopLossPercent === "0" ? "-" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
-          <TigrisInput label="Take Profit" value={takeProfitPercent === "0" ? "-" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
+          <TigrisInput label="Stop Loss" placeholder={"-"} value={stopLossPercent === "0" ? "" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
+          <TigrisInput label="Take Profit" placeholder={"-"} value={takeProfitPercent === "0" ? "" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -371,7 +372,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: 90, label: '-90' }
             ]}
             onChange={(event: any) => handleStopLossChange(event)}
-            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4))}
+            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4).replace("NaN", "0"))}
           />
           <TigrisSlider // Take profit
             defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
@@ -385,7 +386,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500 }
             ]}
             onChange={(event: any) => handleTakeProfitChange(event)}
-            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4))}
+            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4).replace("NaN", "0"))}
           />
           <IconDropDownMenu
             arrayData={marginAssets.marginAssetDrop}
@@ -401,14 +402,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             {isBalanceVisible ? tokenBalance : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => getButtonOnline() ? routeTrade() : null} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
         <Alert>
           {
             chain === undefined || address === undefined ?
               <Alert>
                 <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
                 <AlertContent>
-                  Wallet is not connected. Connect your wallet to be able approve and trade.
+                  Wallet is not connected. Connect your wallet to approve and begin trading.
                 </AlertContent>
               </Alert>
               :
@@ -462,6 +463,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getTokenBalance() {
+    if (!isConnected) return;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
@@ -522,10 +524,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function routeTrade() {
     const s = getTradeStatus();
-    s === "Approve" ? approveToken() :
-      s === "Proxy" ? approveProxy() :
-        s === "Ready" ? (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder()) :
-          console.log("Oops");
+    s === "NotConnected" ? openConnectModal?.() :
+      s === "Approve" ? approveToken() :
+        s === "Proxy" ? approveProxy() :
+          s === "Ready" && (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder())
   }
 
   async function getTradingContract() {
@@ -542,6 +544,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getProxyApproval() {
+    if (!isConnected) return;
     const tradingContract = await getTradingContract();
 
     const proxy = await tradingContract.proxyApprovals(address);
@@ -589,6 +592,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getTokenApproval() {
+    if (!isConnected) return;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     if (currentMarginRef.current !== null && currentMarginRef.current.marginAssetDrop.address === currentNetwork.addresses.tigusd) {
       setIsTokenAllowed(true);
@@ -837,8 +841,10 @@ const FormContainer = styled(Box)(({ theme }) => ({
   height: '100%',
   backgroundColor: '#18191D',
   marginRight: '5px',
-  marginTop: '7px',
-  padding: '20px 20px'
+  paddingTop: '20px',
+  paddingRight: '20px',
+  paddingLeft: '20px',
+  paddingBottom: '10px'
 }));
 
 const FormAction = styled(Box)(({ theme }) => ({
@@ -899,7 +905,7 @@ const Alert = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
   gap: '12px',
-  marginTop: '17px'
+  marginTop: '10px'
 }));
 
 const AlertContent = styled(Box)(({ theme }) => ({
