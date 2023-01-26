@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Box, Button, Divider, IconButton, Modal } from '@mui/material';
+import { Avatar, Badge, Box, Button, Divider, IconButton, Modal } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';
 import { GasStationSvg, Indicator, FullLogo } from '../../src/config/images';
@@ -30,19 +30,16 @@ export const Header = () => {
   const { chain } = useNetwork();
   const { disconnect } = useDisconnect();
 
-  const [gasBalance, setGasBalance] = React.useState("0.000");
+  const [gasBalance, setGasBalance] = React.useState('0.000');
 
   React.useEffect(() => {
-    const x = async ()=> {
+    const x = async () => {
       const gBalance = await getShellBalance();
       const b = parseFloat(gBalance.toString()).toFixed(4);
       setGasBalance(b);
-    }
+    };
 
-    setTimeout(() => {
-      x();
-    }, 1000)
-    setInterval(()=>{
+    setInterval(() => {
       x();
     }, 10000);
   }, []);
@@ -67,7 +64,13 @@ export const Header = () => {
       <HeaderContainer>
         <Container>
           <ContainerWrapper>
-            <TigrisLogo onClick={() => {setPage(0); setMiniPage(0); navigate('/');}}>
+            <TigrisLogo
+              onClick={() => {
+                setPage(0);
+                setMiniPage(0);
+                navigate('/');
+              }}
+            >
               <Img src={FullLogo} alt="tigris-logo" />
             </TigrisLogo>
             <ActiveBar>
@@ -78,10 +81,42 @@ export const Header = () => {
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
-                  <CustomTab label="Trade" {...a11yProps(0)} onClick={() => {setMiniPage(0); navigate('/');}} style={{color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400}}/>
-                  <CustomTab label="Vault" {...a11yProps(1)} onClick={() => {setMiniPage(0); navigate('/');}} style={{color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400}}/>
-                  <CustomTab label="Governance" {...a11yProps(2)} onClick={() => {setMiniPage(0); navigate('/');}} style={{color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400}}/>
-                  <CustomTab label="Referral" {...a11yProps(3)} onClick={() => {setMiniPage(0); navigate('/');}} style={{color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400}}/>
+                  <CustomTab
+                    label="Trade"
+                    {...a11yProps(0)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Vault"
+                    {...a11yProps(1)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Governance"
+                    {...a11yProps(2)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
+                  />
+                  <CustomTab
+                    label="Referral"
+                    {...a11yProps(3)}
+                    onClick={() => {
+                      setMiniPage(0);
+                      navigate('/');
+                    }}
+                    style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                  />
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
@@ -90,7 +125,7 @@ export const Header = () => {
               <Actions>
                 <ShellButton onClick={() => navigate('/proxy')}>
                   <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                  <GasAmount>{gasBalance + (chain?.id === 137 ? " MATIC" : " ETH")}</GasAmount>
+                  <GasAmount>{gasBalance + (chain?.id === 137 ? ' MATIC' : ' ETH')}</GasAmount>
                 </ShellButton>
                 <ConnectButton
                   accountStatus="address"
@@ -99,23 +134,46 @@ export const Header = () => {
                     largeScreen: true
                   }}
                 />
-                <IconButton onClick={() => navigate('/profile/'+(TraderProfile().username as string))} sx={{marginLeft: 1}}>
+                <IconButton
+                  onClick={() => navigate('/profile/' + (TraderProfile().username as string))}
+                  sx={{ marginLeft: 1 }}
+                >
                   <Avatar sx={{ width: 30, height: 30 }}>
                     <Person />
                   </Avatar>
                 </IconButton>
-                <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
-                  <NotificationsNone />
-                </IconButton>
+                <Badge
+                  badgeContent={4}
+                  color="success"
+                  overlap="circular"
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                >
+                  <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
+                    <NotificationsNone />
+                  </IconButton>
+                </Badge>
               </Actions>
             </ActiveBar>
             <MobileActiveBar>
               <IconButton aria-label="alarm" component="label">
                 <Search />
               </IconButton>
-              <IconButton aria-label="alarm" component="label">
-                <NotificationsNone />
-              </IconButton>
+              <Badge
+                badgeContent={4}
+                overlap="circular"
+                color="success"
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+              >
+                <IconButton aria-label="alarm" component="label">
+                  <NotificationsNone />
+                </IconButton>
+              </Badge>
 
               <IconButton aria-label="alarm" component="label" onClick={() => setModalOpen(true)}>
                 <Dehaze />
