@@ -303,16 +303,6 @@ export const USDPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
       />,
       <Benefit percent={6.62} value={60.0} />,
       27
-    ),
-    createData(
-      <PairField
-        favor={FavPairs.includes('XMR/USD')}
-        handleFavoriteToggle={handleFavoriteToggle}
-        icon={xmrLogo}
-        name={'XMR/USD'}
-      />,
-      <Benefit percent={6.62} value={60.0} />,
-      24
     )
   ].filter((pair) => pair.pair.props.name.includes(searchQuery));
 
