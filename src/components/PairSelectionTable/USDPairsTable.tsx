@@ -98,7 +98,7 @@ interface PriceCellProps {
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] != null && data[pairIndex].price !== oraclePrice) {
+      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
     });
@@ -107,7 +107,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   const [oraclePrice, setOraclePrice] = useState(
     oracleData === 'Loading...'
       ? 'Loading...'
-      : oracleData[pairIndex] === null
+      : !oracleData[pairIndex]
       ? 'Loading...'
       : (oracleData[pairIndex] as any).price
   );
@@ -303,6 +303,16 @@ export const USDPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
       />,
       <Benefit percent={6.62} value={60.0} />,
       27
+    ),
+    createData(
+      <PairField
+        favor={FavPairs.includes('XMR/USD')}
+        handleFavoriteToggle={handleFavoriteToggle}
+        icon={xmrLogo}
+        name={'XMR/USD'}
+      />,
+      <Benefit percent={6.62} value={60.0} />,
+      24
     )
   ].filter((pair) => pair.pair.props.name.includes(searchQuery));
 

@@ -69,6 +69,7 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
 
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
+      if (!data[pairIndex]) return;
       if (
         (data[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !==
           (oracleRef.current[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) ||
@@ -87,7 +88,7 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
     {
       name: 'Oracle Price',
       value:
-        oracleData[pairIndex].price !== '0'
+        oracleData[pairIndex]
           ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
           : "Loading...",
       label: ''

@@ -26,10 +26,17 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
+  const [isMarketAvailable, setMarketAvailable] = useState(true);
 
   // First render
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
+      if (!data[currentPairIndex.current]) {
+        setMarketAvailable(false);
+        setOpenPrice("Loading...");
+        return;
+      }
+      setMarketAvailable(true);
       if (orderTypeRef.current === "Market") {
         setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
         setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
@@ -298,7 +305,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         </FormAction>
         <FormArea>
           <TigrisInput label="Price" value={
-            orderType === "Market" ? getOpenPrice().replace("NaN", "") : openPrice.replace("NaN", "")
+            orderType === "Market" ? getOpenPrice().replace("NaN", "-") : openPrice.replace("NaN", "-")
           } setValue={
             handleSetOpenPrice
           } />
@@ -504,9 +511,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         s === "Proxy" ? "APPROVE PROXY" :
           s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
-              s === "Balance" ? "NOT ENOUGH BALANCE" :
-                s === "PosSize" ? "POSITION SIZE TOO LOW" :
-                  "You found a bug!"
+              s === "Unavailable" ? "MARKET UNAVAILABLE" :
+                s === "Balance" ? "NOT ENOUGH BALANCE" :
+                  s === "PosSize" ? "POSITION SIZE TOO LOW" :
+                    "You found a bug!"
     ;
     return txt;
   }
@@ -514,11 +522,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getTradeStatus() {
     let status;
     (chain === undefined || address === undefined) ? status = "NotConnected" :
-      !isTokenAllowed ? status = "Approve" :
-        !isProxyApproved ? status = "Proxy" :
-          parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-            parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
-              status = "Ready";
+      !isMarketAvailable ? status = "Unavailable" :
+        !isTokenAllowed ? status = "Approve" :
+          !isProxyApproved ? status = "Proxy" :
+            parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
+              parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
+                status = "Ready";
     return status;
   }
 

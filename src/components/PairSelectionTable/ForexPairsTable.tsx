@@ -80,7 +80,7 @@ interface PriceCellProps {
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] != null && data[pairIndex].price !== oraclePrice) {
+      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
     });
@@ -89,7 +89,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   const [oraclePrice, setOraclePrice] = useState(
     oracleData === 'Loading...'
       ? 'Loading...'
-      : oracleData[pairIndex] === null
+      : !oracleData[pairIndex]
       ? 'Loading...'
       : (oracleData[pairIndex] as any).price
   );
