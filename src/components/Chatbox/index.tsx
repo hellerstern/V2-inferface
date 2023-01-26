@@ -11,31 +11,40 @@ import { TraderProfile } from 'src/context/profile';
 interface IMessage {
   profilePicture: any;
   username: string;
+  prevUsername?: string;
   date: string;
   time: string;
   message: string;
 }
-const Message = ({ profilePicture, username, date, time, message }: IMessage) => {
+const Message = ({ profilePicture, username, prevUsername, date, time, message }: IMessage) => {
   return (
-    <div style={{ display: 'flex', marginBottom: 15, marginTop: 5 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 999, background: "#2E3137"}}>
-        <img
-          src={profilePicture}
-          alt="Profile"
-          style={{ width: 40, height: 40, borderRadius: 999}}
-        />
+    <div style={{ display: 'flex', marginBottom: 5, marginTop: 5 }}>
+      {
+        prevUsername !== username ?
+        <div style={{ width: 35, height: 35, borderRadius: 999, background: "#2E3137"}}>
+          <img
+            src={profilePicture}
+            alt="Profile"
+            style={{ width: 35, height: 35, borderRadius: 999}}
+          />
+        </div> :
+        <div style={{ minWidth: 35, height: 1, borderRadius: 999}}>
       </div>
+      }
       <div style={{ marginLeft: 10}}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '13px' }}>{username}
-          <span style={{ marginLeft: 10, color: '#8e9297', fontSize: '13px' }}>
-            {moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').format(
-              'MMM DD, HH:mm'
-            )}
-          </span>
-          </h4>
-        </div>
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: '18px' }}>{message}</p>
+        {
+          prevUsername !== username &&
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <h4 style={{ margin: 0, fontWeight: 'normal', fontSize: '13px' }}>{username}
+              <span style={{ marginLeft: 10, color: '#8e9297', fontSize: '13px' }}>
+                {moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').format(
+                  'MMM DD, HH:mm'
+                )}
+              </span>
+            </h4>
+          </div>
+        }
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: '18px'}}>{message}</p>
       </div>
     </div>
   );
@@ -198,7 +207,7 @@ export const Chatbox = () => {
     if (fetchTimeout > Date.now()) return;
     if (!messagesFinished.current) {
       // Check if the user has scrolled near the top of the messages list
-      if (messagesListRef.current.scrollTop <= 200) {
+      if (messagesListRef.current.scrollTop <= 150) {
         // Query more messages from the server
         fetchMessages().then(() => {
           setIsHistoryFetched(true);
@@ -469,6 +478,7 @@ export const Chatbox = () => {
                   key={index}
                   profilePicture={message.profilePicture}
                   username={message.username}
+                  prevUsername={index > 0 && messages[index-1].username}
                   date={message.date}
                   time={message.time}
                   message={message.message}
