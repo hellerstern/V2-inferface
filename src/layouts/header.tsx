@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Box, Button, Divider, IconButton, Modal } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from '../../src/components/Container';
@@ -18,13 +18,17 @@ import { AccountSetting } from '../../src/components/List/AccountSetting';
 import { useNavigate } from 'react-router-dom';
 import { TraderProfile } from 'src/context/profile';
 import { getShellBalance } from 'src/shell_wallet';
+import NotificationMenu from 'src/components/Menu/NotificationMenu';
 
 // import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
   const navigate = useNavigate();
   const { page, setPage } = useStore();
   const { setMiniPage } = useStore();
-  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [notiData, setNotiData] = useState<string[]>([]);
+  const [notiCount, setNotiCount] = useState(0);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
@@ -32,7 +36,7 @@ export const Header = () => {
 
   const [gasBalance, setGasBalance] = React.useState('0.000');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const x = async () => {
       const gBalance = await getShellBalance();
       const b = parseFloat(gBalance.toString()).toFixed(4);
@@ -46,6 +50,28 @@ export const Header = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      console.log('hahahaha');
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      fetch(`http://localhost:5000/notification/${chain?.id}/${address}`).then((response) => {
+        response.json().then((data) => {
+          console.log({ data });
+          setNotiData(data);
+          setNotiCount(data.length);
+        });
+      });
+    } else {
+      setNotiData([]);
+      setNotiCount(0);
+    }
+  }, [isConnected]);
+
+  const handleBellClick = (event: React.MouseEvent<HTMLElement>) => {
+    setNotiCount(0);
+    setAnchorEl(event.currentTarget);
   };
 
   const style = {
@@ -142,38 +168,37 @@ export const Header = () => {
                     <Person />
                   </Avatar>
                 </IconButton>
-                <Badge
-                  badgeContent={4}
-                  color="success"
-                  overlap="circular"
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                >
-                  <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }}>
+                <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }} onClick={handleBellClick}>
+                  <Badge
+                    badgeContent={notiCount}
+                    color="success"
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right'
+                    }}
+                  >
                     <NotificationsNone />
-                  </IconButton>
-                </Badge>
+                  </Badge>
+                </IconButton>
               </Actions>
             </ActiveBar>
             <MobileActiveBar>
               <IconButton aria-label="alarm" component="label">
                 <Search />
               </IconButton>
-              <Badge
-                badgeContent={4}
-                overlap="circular"
-                color="success"
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-              >
-                <IconButton aria-label="alarm" component="label">
+
+              <IconButton aria-label="alarm" component="label" sx={{ marginRight: 1 }} onClick={handleBellClick}>
+                <Badge
+                  badgeContent={notiCount}
+                  color="success"
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                >
                   <NotificationsNone />
-                </IconButton>
-              </Badge>
+                </Badge>
+              </IconButton>
 
               <IconButton aria-label="alarm" component="label" onClick={() => setModalOpen(true)}>
                 <Dehaze />
@@ -217,6 +242,7 @@ export const Header = () => {
           <NavList />
           <Divider />
           <AccountSetting />
+          <NotificationMenu state={anchorEl} setState={setAnchorEl} data={notiData} />
         </Box>
       </Modal>
     </>
