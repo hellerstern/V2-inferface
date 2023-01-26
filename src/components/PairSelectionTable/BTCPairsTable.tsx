@@ -145,16 +145,6 @@ export const BTCPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
       />,
       <Benefit percent={0.63} value={110} />,
       33
-    ),
-    createData(
-      <PairField
-        favor={FavPairs.includes('XMR/BTC')}
-        handleFavoriteToggle={handleFavoriteToggle}
-        icon={xmrLogo}
-        name={'XMR/BTC'}
-      />,
-      <Benefit percent={0.63} value={110} />,
-      34
     )
   ].filter((pair) => pair.pair.props.name.includes(searchQuery));
 
