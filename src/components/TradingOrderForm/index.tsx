@@ -33,7 +33,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     oracleSocket.on('data', (data: any) => {
       if (!data[currentPairIndex.current]) {
         setMarketAvailable(false);
-        setOpenPrice("Loading...");
+        setOpenPrice("");
         return;
       }
       setMarketAvailable(true);
@@ -304,14 +304,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           </OrderTypeButton>
         </FormAction>
         <FormArea>
-          <TigrisInput label="Price" value={
-            orderType === "Market" ? getOpenPrice().replace("NaN", "-") : openPrice.replace("NaN", "-")
+          <TigrisInput label="Price" placeholder='-' value={
+            !isMarketAvailable ? "" : orderType === "Market" ? getOpenPrice().replace("NaN", "-") : openPrice.replace("NaN", "-")
           } setValue={
             handleSetOpenPrice
           } />
           <div style={{ cursor: 'not-allowed' }}>
             <div style={{ pointerEvents: 'none' }}>
-              <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
+              <TigrisInput label="Liq Price" placeholder='-' value={!isMarketAvailable ? "" : liqPrice()} setValue={() => null} />
             </div>
           </div>
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
@@ -364,8 +364,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onChange={(event: any) => handleLeverageChange(event)}
             value={parseFloat(leverage)}
           />
-          <TigrisInput label="Stop Loss" placeholder={"-"} value={stopLossPercent === "0" ? "" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
-          <TigrisInput label="Take Profit" placeholder={"-"} value={takeProfitPercent === "0" ? "" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
+          <TigrisInput label="Stop Loss" placeholder={"-"} value={!isMarketAvailable ? "" : stopLossPercent === "0" ? "" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
+          <TigrisInput label="Take Profit" placeholder={"-"} value={!isMarketAvailable ? "" : takeProfitPercent === "0" ? "" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
