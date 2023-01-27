@@ -93,14 +93,6 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
           : "Loading...",
       label: ''
     },
-    { name: 'Daily Change', value: '+0.49%', label: '', active: 1 },
-    { name: '24h Volume', value: '$230,050.00', label: '' },
-    { name: 'Long Open Interest', value: (longOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
-    { name: 'Short Open Interest', value: (shortOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
-    { name: 'Opening Fee', value: openFee, label: '' },
-    { name: 'Closing Fee', value: closeFee, label: '' },
-    { name: 'Long Funding Fee', value: ((longAPRHourly.toFixed(5).replace("NaN", "0").replace("Infinity", "ထ")) as string + '% Per Hour'), label: '', active: longAPRHourly > 0 ? 2 : 1 },
-    { name: 'Short Funding Fee', value: ((shortAPRHourly.toFixed(5).replace("NaN", "0")).replace("Infinity", "ထ") as string + '% Per Hour'), label: '', active: shortAPRHourly > 0 ? 2 : 1 },
     {
       name: 'Price Spread',
       value:
@@ -108,7 +100,13 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
           ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
           : '0.000%',
       label: ''
-    }
+    },
+    { name: 'Long Open Interest', value: (longOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
+    { name: 'Short Open Interest', value: (shortOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
+    { name: 'Opening Fee', value: openFee, label: '' },
+    { name: 'Closing Fee', value: closeFee, label: '' },
+    { name: 'Long Funding Fee', value: ((longAPRHourly.toFixed(5).replace("NaN", "0").replace("Infinity", "ထ")) as string + '% Per Hour'), label: '', active: longAPRHourly > 0 ? 2 : 1 },
+    { name: 'Short Funding Fee', value: ((shortAPRHourly.toFixed(5).replace("NaN", "0")).replace("Infinity", "ထ") as string + '% Per Hour'), label: '', active: shortAPRHourly > 0 ? 2 : 1 }
   ];
 
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {
