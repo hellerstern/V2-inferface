@@ -229,8 +229,8 @@ const TradingForm = styled(Box)(({ theme }) => ({
   width: '100%',
   marginTop: '5px',
   display: 'grid',
-  gridTemplateColumns: '3fr 1fr',
-  gap: '5px',
+  gridTemplateColumns: '3fr 0fr',
+  gapTop: '5px',
   marginBottom: '5px',
   [theme.breakpoints.down('desktop')]: {
     gridTemplateColumns: '2fr 2fr'
