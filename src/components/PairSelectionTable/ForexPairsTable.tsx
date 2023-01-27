@@ -2,7 +2,7 @@ import { Star, StarBorder } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { btcLogo } from '../../config/images';
+import { btcLogo, eurLogo, gbpLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
 import { oracleSocket, oracleData } from '../../../src/context/socket';
 
@@ -140,7 +140,7 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
       <PairField
         favor={FavPairs.includes('EUR/USD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={eurLogo}
         name={'EUR/USD'}
       />,
       <Benefit percent={0.63} value={110} />,
@@ -150,7 +150,7 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
       <PairField
         favor={FavPairs.includes('GBP/USD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={gbpLogo}
         name={'GBP/USD'}
       />,
       <Benefit percent={0.63} value={110} />,

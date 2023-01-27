@@ -32,11 +32,11 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
   const LogoArray = [
     logos.btcLogo,
     logos.ethLogo,
-    logos.btcLogo,
+    logos.goldLogo,
     logos.maticLogo,
     logos.linkLogo,
-    logos.btcLogo, // eur
-    logos.btcLogo, // gbp
+    logos.eurLogo,
+    logos.gbpLogo,
     logos.btcLogo, // jpy
     logos.btcLogo, // rub
     logos.btcLogo, // chf
@@ -62,7 +62,7 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
     logos.nearLogo,
     logos.algoLogo,
     logos.btcLogo, // icp
-    logos.btcLogo, // xag
+    logos.silverLogo, // xag
     logos.linkLogo, // link/btc
     logos.xmrLogo // xmr/btc
   ];
