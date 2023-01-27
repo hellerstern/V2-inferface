@@ -34,6 +34,10 @@ import usdtLogo from '../assets/images/CoinImage/usdtLogo.svg';
 import uniLogo from '../assets/images/CoinImage/uniLogo.svg';
 import xmrLogo from '../assets/images/CoinImage/xmrLogo.svg';
 import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
+import eurLogo from '../assets/images/CoinImage/eurLogo.svg';
+import gbpLogo from '../assets/images/CoinImage/gbpLogo.svg';
+import goldLogo from '../assets/images/CoinImage/goldLogo.svg';
+import silverLogo from '../assets/images/CoinImage/silverLogo.svg';
 import PolygonSvg from '../assets/images/CoinImage/Polygon.svg';
 import DAISvg from "../assets/images/CoinImage/DAI.svg"
 
@@ -73,5 +77,9 @@ export {
   xrpLogo,
   ArbiScanSvg,
   PolygonSvg,
-  DAISvg
+  DAISvg,
+  goldLogo,
+  silverLogo,
+  eurLogo,
+  gbpLogo
 };

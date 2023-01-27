@@ -32,11 +32,11 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
   const LogoArray = [
     logos.btcLogo,
     logos.ethLogo,
-    logos.btcLogo,
+    logos.goldLogo,
     logos.maticLogo,
     logos.linkLogo,
-    logos.btcLogo, // eur
-    logos.btcLogo, // gbp
+    logos.eurLogo,
+    logos.gbpLogo,
     logos.btcLogo, // jpy
     logos.btcLogo, // rub
     logos.btcLogo, // chf
@@ -62,13 +62,14 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
     logos.nearLogo,
     logos.algoLogo,
     logos.btcLogo, // icp
-    logos.btcLogo, // xag
+    logos.silverLogo, // xag
     logos.linkLogo, // link/btc
     logos.xmrLogo // xmr/btc
   ];
 
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
+      if (!data[pairIndex]) return;
       if (
         (data[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !==
           (oracleRef.current[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) ||
@@ -87,7 +88,7 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
     {
       name: 'Oracle Price',
       value:
-        oracleData[pairIndex].price !== '0'
+        oracleData[pairIndex]
           ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
           : "Loading...",
       label: ''

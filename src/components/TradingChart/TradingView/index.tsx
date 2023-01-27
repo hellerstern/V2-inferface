@@ -103,6 +103,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 	useEffect(() => {
 		tvWidget.current.onChartReady(() => {
 			oracleSocket.on('data', (data: any) => {
+				if (!data[currentAsset.current]) return;
 				const spreadPrices = {
 					ask: (parseInt(data[currentAsset.current].price) - parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18,
 					bid: (parseInt(data[currentAsset.current].price) + parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18

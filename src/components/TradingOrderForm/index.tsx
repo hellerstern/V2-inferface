@@ -31,6 +31,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
+  const [isMarketAvailable, setMarketAvailable] = useState(true);
 
   // First render
   useEffect(() => {
@@ -352,7 +353,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           />
           <div style={{ cursor: 'not-allowed' }}>
             <div style={{ pointerEvents: 'none' }}>
-              <TigrisInput label="Liq Price" value={liqPrice()} setValue={() => null} />
+              <TigrisInput
+                label="Liq Price"
+                placeholder="-"
+                value={!isMarketAvailable ? '' : liqPrice()}
+                setValue={() => null}
+              />
             </div>
           </div>
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />

@@ -7,6 +7,7 @@ var callback;
 var cAsset = 0;
 
 oracleSocket.on('data', (data) => {
+  if (!data[cAsset]) return;
   const tradePrice = parseFloat(data[cAsset].price / 1e18);
   var tNow = new Date().getTime();
   const tradeTime = tNow - (tNow % 60000);

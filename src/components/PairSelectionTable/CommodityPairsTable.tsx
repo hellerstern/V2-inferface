@@ -2,7 +2,7 @@ import { Star, StarBorder } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { btcLogo } from '../../config/images';
+import { goldLogo, silverLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
 import { oracleSocket, oracleData } from '../../../src/context/socket';
 
@@ -80,7 +80,7 @@ interface PriceCellProps {
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] != null && data[pairIndex].price !== oraclePrice) {
+      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
     });
@@ -89,7 +89,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   const [oraclePrice, setOraclePrice] = useState(
     oracleData === 'Loading...'
       ? 'Loading...'
-      : oracleData[pairIndex] === null
+      : !oracleData[pairIndex]
       ? 'Loading...'
       : (oracleData[pairIndex] as any).price
   );
@@ -130,7 +130,7 @@ export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Prop
       <PairField
         favor={FavPairs.includes('XAG/USD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={silverLogo}
         name={'XAG/USD'}
       />,
       <Benefit percent={0.63} value={110} />,
@@ -140,7 +140,7 @@ export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Prop
       <PairField
         favor={FavPairs.includes('XAU/USD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={goldLogo}
         name={'XAU/USD'}
       />,
       <Benefit percent={0.63} value={110} />,
