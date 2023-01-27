@@ -54,9 +54,8 @@ export const Header = () => {
 
   useEffect(() => {
     if (isConnected) {
-      console.log('hahahaha');
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      fetch(`http://localhost:5000/notification/${chain?.id}/${address}`).then((response) => {
+      fetch(`http://localhost:5000/notification/data/${chain?.id}/${address}`).then((response) => {
         response.json().then((data) => {
           console.log({ data });
           setNotiData(data);

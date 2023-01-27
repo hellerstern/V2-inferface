@@ -24,13 +24,13 @@ export default function NotificationMenu(props: NotificationMenuProps) {
   const { address } = useAccount();
 
   React.useEffect(() => {
-    if (address !== undefined) {
+    if (address !== undefined && data.length > 0) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      axios.delete(`http://localhost:5000/notification/clear/${address}`).then((data) => {
+      fetch(`http://localhost:5000/notification/clear/${address}`).then((data) => {
         console.log(data);
       });
     }
-  }, []);
+  }, [state]);
 
   return (
     <React.Fragment>
@@ -81,7 +81,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
                 <ItemContainer>
                   <Item>TradeID: {item[0]}</Item>
                   <Item>EventType: {item[1]}</Item>
-                  <Item>Date: {item[2]}</Item>
+                  <Item>Date: {parseDate(item[2])}</Item>
                 </ItemContainer>
               </MenuItem>
               <Divider />
@@ -92,6 +92,11 @@ export default function NotificationMenu(props: NotificationMenuProps) {
     </React.Fragment>
   );
 }
+
+const parseDate = (dateTime: string) => {
+  const date = new Date(dateTime);
+  return date.toLocaleString();
+};
 
 const ItemContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
