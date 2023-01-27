@@ -230,13 +230,14 @@ const TradingForm = styled(Box)(({ theme }) => ({
   marginTop: '5px',
   display: 'grid',
   gridTemplateColumns: '3fr 0fr',
-  gapTop: '5px',
   marginBottom: '5px',
+  gap: '5px',
   [theme.breakpoints.down('desktop')]: {
     gridTemplateColumns: '2fr 2fr'
   },
   [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: '1fr'
+    gridTemplateColumns: '1fr',
+    gap: '0px'
   }
 }));
 
@@ -246,6 +247,9 @@ const TradingSection = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('desktop')]: {
     gridColumn: '1 / 3',
     order: 1
+  },
+  [theme.breakpoints.down('md')]: {
+    marginBottom: '5px'
   }
 }));
 
