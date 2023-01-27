@@ -26,7 +26,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
   React.useEffect(() => {
     if (address !== undefined && data.length > 0) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      fetch(`http://localhost:5000/notification/clear/${address}`).then((data) => {
+      fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/clear/${address}`).then((data) => {
         console.log(data);
       });
     }

@@ -55,13 +55,15 @@ export const Header = () => {
   useEffect(() => {
     if (isConnected) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      fetch(`http://localhost:5000/notification/data/${chain?.id}/${address}`).then((response) => {
-        response.json().then((data) => {
-          console.log({ data });
-          setNotiData(data);
-          setNotiCount(data.length);
-        });
-      });
+      fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/data/${chain?.id}/${address}`).then(
+        (response) => {
+          response.json().then((data) => {
+            console.log({ data });
+            setNotiData(data);
+            setNotiCount(data.length);
+          });
+        }
+      );
     } else {
       setNotiData([]);
       setNotiCount(0);
