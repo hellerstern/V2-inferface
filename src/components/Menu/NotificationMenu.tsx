@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider';
 import { styled } from '@mui/system';
 import { Box } from '@mui/material';
 import { useAccount } from 'wagmi';
-import axios from 'axios';
 
 interface NotificationMenuProps {
   state: null | HTMLElement;
@@ -95,6 +94,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
 
 const parseDate = (dateTime: string) => {
   const date = new Date(dateTime);
+  console.log({ date });
   return date.toLocaleString();
 };
 

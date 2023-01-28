@@ -1,36 +1,40 @@
-import { Modal, Box } from '@mui/material';
+import { Modal, Box, Menu } from '@mui/material';
 import { styled } from '@mui/system';
 import { PairSelectionTable } from '../PairSelectionTable';
 
 interface PairModalProps {
-  isModalOpen: boolean;
-  setModalOpen: (value: boolean) => void;
+  // isModalOpen: boolean;
+  // setModalOpen: (value: boolean) => void;
+  state: null | HTMLElement;
+  setState: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   pairIndex: number;
   setPairIndex: (value: number) => void;
 }
 
 export const PairSelectionModal = (props: PairModalProps) => {
-  const { isModalOpen, setModalOpen, setPairIndex } = props;
-  const style = {outline: '0'};
+  const { state, setState, setPairIndex } = props;
+  const isOpen = Boolean(state);
+  const style = { outline: '0' };
+  const handleClose = () => {
+    setState(null);
+  };
   return (
-    <Modal
-      keepMounted
-      open={isModalOpen}
-      onClose={() => setModalOpen(false)}
-      aria-labelledby="keep-mounted-modal-title"
-      aria-describedby="keep-mounted-modal-description"
+    <Menu
+      anchorEl={state}
+      id="account-menu"
+      open={isOpen}
+      onClose={handleClose}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <PairTableContainer sx={style}>
-        <PairSelectionTable isMobile={true} onClose={() => setModalOpen(false)} setPairIndex={setPairIndex} />
+        <PairSelectionTable isMobile={true} onClose={handleClose} setPairIndex={setPairIndex} />
       </PairTableContainer>
-    </Modal>
+    </Menu>
   );
 };
 
 const PairTableContainer = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: '0',
-  left: '0',
   width: '400px',
   minHeight: '560px',
   overflow: 'auto',
