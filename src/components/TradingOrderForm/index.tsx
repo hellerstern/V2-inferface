@@ -27,6 +27,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
   const [isMarketAvailable, setMarketAvailable] = useState(true);
+  const [isMarketClosed, setMarketClosed] = useState(false);
 
   // First render
   useEffect(() => {
@@ -37,6 +38,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         return;
       }
       setMarketAvailable(true);
+      setMarketClosed(data[currentPairIndex.current].is_closed);
+      console.log(data[currentPairIndex.current]);
       if (orderTypeRef.current === "Market") {
         setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
         setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
@@ -512,9 +515,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Unavailable" ? "MARKET UNAVAILABLE" :
-                s === "Balance" ? "NOT ENOUGH BALANCE" :
-                  s === "PosSize" ? "POSITION SIZE TOO LOW" :
-                    "You found a bug!"
+                s === "Closed" ? "MARKET CLOSED" :
+                  s === "Balance" ? "NOT ENOUGH BALANCE" :
+                    s === "PosSize" ? "POSITION SIZE TOO LOW" :
+                      "You found a bug!"
     ;
     return txt;
   }
@@ -523,11 +527,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     let status;
     (chain === undefined || address === undefined) ? status = "NotConnected" :
       !isMarketAvailable ? status = "Unavailable" :
-        !isTokenAllowed ? status = "Approve" :
-          !isProxyApproved ? status = "Proxy" :
-            parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-              parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
-                status = "Ready";
+        isMarketClosed ? status = "Closed" :
+          !isTokenAllowed ? status = "Approve" :
+            !isProxyApproved ? status = "Proxy" :
+              parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
+                parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
+                  status = "Ready";
     return status;
   }
 
