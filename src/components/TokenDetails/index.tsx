@@ -27,7 +27,17 @@ interface ITokenDetails {
   shortAPRHourly: any;
 }
 
-export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, openFee, closeFee, longAPRHourly, shortAPRHourly }: ITokenDetails) => {
+export const TokenDetails = ({
+  pairIndex,
+  setPairIndex,
+  maxOi,
+  longOi,
+  shortOi,
+  openFee,
+  closeFee,
+  longAPRHourly,
+  shortAPRHourly
+}: ITokenDetails) => {
   const [isPairModalOpen, setPairModalOpen] = useState(false);
   const LogoArray = [
     logos.btcLogo,
@@ -78,10 +88,9 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
   const INFOS: any = [
     {
       name: 'Oracle Price',
-      value:
-        oracleData[pairIndex]
-          ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
-          : "Loading...",
+      value: oracleData[pairIndex]
+        ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
+        : 'Loading...',
       label: ''
     },
     {
@@ -92,12 +101,30 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
           : '0.000%',
       label: ''
     },
-    { name: 'Long Open Interest', value: (longOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
-    { name: 'Short Open Interest', value: (shortOi/1e18).toFixed(0) + '/', label: maxOi.toString() === "0" ? "Unlimited" : (maxOi/1e18).toString() },
+    {
+      name: 'Long Open Interest',
+      value: (longOi / 1e18).toFixed(0) + '/',
+      label: maxOi.toString() === '0' ? 'Unlimited' : (maxOi / 1e18).toString()
+    },
+    {
+      name: 'Short Open Interest',
+      value: (shortOi / 1e18).toFixed(0) + '/',
+      label: maxOi.toString() === '0' ? 'Unlimited' : (maxOi / 1e18).toString()
+    },
     { name: 'Opening Fee', value: openFee, label: '' },
     { name: 'Closing Fee', value: closeFee, label: '' },
-    { name: 'Long Funding Fee', value: ((longAPRHourly.toFixed(5).replace("NaN", "0").replace("Infinity", "ထ")) as string + '% Per Hour'), label: '', active: longAPRHourly > 0 ? 2 : 1 },
-    { name: 'Short Funding Fee', value: ((shortAPRHourly.toFixed(5).replace("NaN", "0")).replace("Infinity", "ထ") as string + '% Per Hour'), label: '', active: shortAPRHourly > 0 ? 2 : 1 }
+    {
+      name: 'Long Funding Fee',
+      value: (longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') as string) + '% Per Hour',
+      label: '',
+      active: longAPRHourly > 0 ? 2 : 1
+    },
+    {
+      name: 'Short Funding Fee',
+      value: (shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') as string) + '% Per Hour',
+      label: '',
+      active: shortAPRHourly > 0 ? 2 : 1
+    }
   ];
 
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {
@@ -115,12 +142,16 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
     }
   }
   const { disableScroll, enableScroll } = usePreventBodyScroll();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleTokenClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   return (
     <TradeContainer>
       <Container>
         <TradeWrapper>
-          <KindOfToken onClick={() => setPairModalOpen(true)}>
+          <KindOfToken onClick={handleTokenClick}>
             <Tokens>
               <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
               <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
@@ -130,16 +161,12 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
             </Tokens>
             <AiFillStar />
           </KindOfToken>
-          { isPairModalOpen ?
           <PairSelectionModal
-            isModalOpen={isPairModalOpen}
-            setModalOpen={setPairModalOpen}
+            state={anchorEl}
+            setState={setAnchorEl}
             pairIndex={pairIndex}
             setPairIndex={setPairIndex}
           />
-          : 
-          <></>
-          }
           <DesktopStatusInfos onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} onWheel={onWheel}>
               {INFOS.map((item: any, index: number) => (
