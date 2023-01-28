@@ -39,7 +39,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       }
       setMarketAvailable(true);
       setMarketClosed(data[currentPairIndex.current].is_closed);
-      console.log(data[currentPairIndex.current]);
       if (orderTypeRef.current === "Market") {
         setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
         setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
