@@ -69,20 +69,11 @@ export const TokenDetails = ({ pairIndex, setPairIndex, maxOi, longOi, shortOi, 
 
   useEffect(() => {
     oracleSocket.on('data', (data: any) => {
-      if (!data[pairIndex]) return;
-      if (
-        (data[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) !==
-          (oracleRef.current[pairIndex].price / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals) ||
-        data[pairIndex].spread !== oracleRef.current[pairIndex].spread
-      ) {
-        setOracleData(data);
-        oracleRef.current = data;
-      }
+      setOracleData(data);
     });
   }, []);
 
   const [oracleData, setOracleData] = useState(Array(35).fill({ price: '0', spread: '0' }));
-  const oracleRef = useRef(Array(35).fill({ price: '0', spread: '0' }));
 
   const INFOS: any = [
     {
