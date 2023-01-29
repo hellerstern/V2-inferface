@@ -176,7 +176,7 @@ export const TokenDetails = ({
                   <p className="title">{item.name}</p>
                   <p
                     className="value"
-                    style={{ color: item.active === 1 ? '#58BD7D' : item.active === 2 ? '#D33535' : '#E5E3EC' }}
+                    style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
                   >
                     {item.value}
                     <span>{item.label}</span>
@@ -191,7 +191,7 @@ export const TokenDetails = ({
                 <p className="title">{item.name}</p>
                 <p
                   className="value"
-                  style={{ color: item.active === 1 ? '#58BD7D' : item.active === 2 ? '#D33535' : '#E5E3EC' }}
+                  style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
                 >
                   {item.value}
                   <span>{item.label}</span>
