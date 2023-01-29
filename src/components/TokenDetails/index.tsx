@@ -25,6 +25,7 @@ interface ITokenDetails {
   closeFee: any;
   longAPRHourly: any;
   shortAPRHourly: any;
+  maxLev: any;
 }
 
 export const TokenDetails = ({
@@ -36,7 +37,8 @@ export const TokenDetails = ({
   openFee,
   closeFee,
   longAPRHourly,
-  shortAPRHourly
+  shortAPRHourly,
+  maxLev
 }: ITokenDetails) => {
   const [isPairModalOpen, setPairModalOpen] = useState(false);
   const LogoArray = [
@@ -156,7 +158,7 @@ export const TokenDetails = ({
               <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
               <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
               <Box className="multi-value">
-                <span>100X</span>
+                <span>{getNetwork(0).assets[pairIndex].maxLev}X</span>
               </Box>
             </Tokens>
             <AiFillStar />
@@ -174,7 +176,7 @@ export const TokenDetails = ({
                   <p className="title">{item.name}</p>
                   <p
                     className="value"
-                    style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
+                    style={{ color: item.active === 1 ? '#58BD7D' : item.active === 2 ? '#D33535' : '#E5E3EC' }}
                   >
                     {item.value}
                     <span>{item.label}</span>
@@ -189,7 +191,7 @@ export const TokenDetails = ({
                 <p className="title">{item.name}</p>
                 <p
                   className="value"
-                  style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
+                  style={{ color: item.active === 1 ? '#58BD7D' : item.active === 2 ? '#D33535' : '#E5E3EC' }}
                 >
                   {item.value}
                   <span>{item.label}</span>
@@ -256,8 +258,11 @@ const Tokens = styled(Box)(({ theme }) => ({
     lineHeight: '32px'
   },
   '.multi-value': {
-    border: '1px solid #3772FF',
+    borderImage: 'linear-gradient(150deg, #3772FF 10%, #D737FF 100%)',
+    borderStyle: 'solid',
+    borderWidth: '1px',
     borderRadius: '4px',
+    borderImageSlice: 1,
     height: '20px',
     display: 'flex',
     justifyContent: 'center',
@@ -268,7 +273,7 @@ const Tokens = styled(Box)(({ theme }) => ({
       fontWeight: '700',
       fontSize: '11px',
       lineHeight: '9px',
-      background: 'linear-gradient(180deg, #D737FF 0%, #3772FF 100%)',
+      background: '#FFFFFF',
       backgroundClip: 'text',
       textFillColor: 'transparent'
     }

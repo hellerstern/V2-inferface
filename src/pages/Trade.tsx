@@ -46,7 +46,7 @@ export const Trade = () => {
 
   const [maxOi, setMaxOi] = useState(1000000e18);
   const [minLev, setMinLev] = useState(1);
-  const [maxLev, setMaxLev] = useState(1000);
+  const [maxLev, setMaxLev] = useState(100);
   const [openFee, setOpenFee] = useState("0.10%");
   const [closeFee, setCloseFee] = useState("0.10%");
   const [longOi, setLongOi] = useState(0);
@@ -190,6 +190,7 @@ export const Trade = () => {
             closeFee={closeFee}
             longAPRHourly={longAPRHourly}
             shortAPRHourly={shortAPRHourly}
+            maxLev={maxLev}
           />
           <Container>
             <TradingForm>

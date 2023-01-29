@@ -188,7 +188,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  const currentMarginRef = useRef<any>(null);
+  const currentMarginRef = useRef<any>(getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]);
 
   const doMarginChange = (prop: string, value: string | number | boolean) => {
     const _currentMargin = { ...currentMargin, [prop]: value };
