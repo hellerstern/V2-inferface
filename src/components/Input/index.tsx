@@ -88,7 +88,7 @@ export const TigrisInput = (props: InputProps) => {
           value={value}
           type="text"
           ref={valueRef}
-          placeholder={placeholder !== undefined ? placeholder : ""}
+          placeholder={placeholder !== undefined ? placeholder : ''}
           defaultValue={defaultValue}
           onChange={(e: React.FormEvent<HTMLInputElement>) =>
             setValue(
@@ -158,25 +158,25 @@ interface VaultInputProps {
 }
 
 export const VaultInput = (props: VaultInputProps) => {
-    const { value, setValue, type, name, placeholder, component } = props;
-    const [isVisit, setVisit] = useState(false);
-    const inputRef = useRef<HTMLDivElement>(null);
-    const valueRef = useRef<HTMLInputElement>(null);
-    const handleClickOutside = (event: React.MouseEvent<HTMLElement>) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as any)) {
-        setVisit(false);
-      }
-    };
+  const { value, setValue, type, name, placeholder, component } = props;
+  const [isVisit, setVisit] = useState(false);
+  const inputRef = useRef<HTMLDivElement>(null);
+  const valueRef = useRef<HTMLInputElement>(null);
+  const handleClickOutside = (event: React.MouseEvent<HTMLElement>) => {
+    if (inputRef.current && !inputRef.current.contains(event.target as any)) {
+      setVisit(false);
+    }
+  };
 
-    const handleClickInside = () => {
-      setVisit(true);
-      valueRef.current?.focus();
-    };
+  const handleClickInside = () => {
+    setVisit(true);
+    valueRef.current?.focus();
+  };
 
-    useEffect(() => {
-      document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
-    }, [inputRef]);
-    return (
+  useEffect(() => {
+    document.addEventListener('mousedown', (event) => handleClickOutside(event as any));
+  }, [inputRef]);
+  return (
     <InputFieldContainer ref={inputRef} visited={isVisit ? 1 : 0} onMouseUp={() => handleClickInside()}>
       <InputFieldArea>
         <InputFieldValue
@@ -188,10 +188,10 @@ export const VaultInput = (props: VaultInputProps) => {
           onChange={(e: React.FormEvent<HTMLInputElement>) => setValue(name, e.currentTarget.value)}
         />
         {component}
-        </InputFieldArea>
-      </InputFieldContainer>
-     );
-}
+      </InputFieldArea>
+    </InputFieldContainer>
+  );
+};
 
 const InputContainer = styled(Box)<containerProps>(({ visited, theme }) => ({
   width: '100%',

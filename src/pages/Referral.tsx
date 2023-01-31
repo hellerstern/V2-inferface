@@ -1,30 +1,73 @@
 import { Box, Button, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
-import { InputField } from 'src/components/Input';
+import { VaultInput } from 'src/components/Input';
 import { BiLinkAlt } from 'react-icons/bi';
+import { useAccount, useProvider, useSigner } from 'wagmi';
+import { toast } from 'react-toastify';
+import { ethers } from 'ethers';
+import axios from 'axios';
+import { PRIVATE_ROUTES } from 'src/config/routes';
 
 export const Referral = () => {
   const [editState, setEditState] = useState({
     refCode: ''
   });
+
+  const { data: signer } = useSigner();
+  // const provider = useProvider();
+
+  const { isConnected } = useAccount();
+
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
+  };
+  const handleCreateLink = async () => {
+    if (isConnected) {
+      if (editState.refCode === '') {
+        toast.error('Referral code is empty');
+      } else {
+        const signedMessage = await signer?.signMessage(editState.refCode);
+        axios
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          .post(`${PRIVATE_ROUTES.baseUrl}/create-link`, {
+            signMessage: signedMessage,
+            refCode: editState.refCode
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+      }
+    } else {
+      toast.error('Connect the wallet !');
+    }
   };
   return (
     <ReferralContainer>
       <ReferralLinkContainer>
         <ReferralLinkLabel>Create a New Link</ReferralLinkLabel>
         <CreateLinkContainer>
-          <InputField
+          <VaultInput
             type="text"
             placeholder="Referral Code"
             value={editState.refCode}
             setValue={handleEditState}
             name="refCode"
+            component=""
           />
           <CodeLink>https://app.tigris.trade/?ref={editState.refCode}</CodeLink>
-          <CreateLinkButton>Create Link</CreateLinkButton>
+          <CreateLinkButton
+            onClick={() => {
+              (async () => {
+                await handleCreateLink();
+              })();
+            }}
+          >
+            Create Link
+          </CreateLinkButton>
         </CreateLinkContainer>
         <ReferralLinkLabel sx={{ marginTop: '6px' }}>Your links</ReferralLinkLabel>
         <ReferralLinks>
