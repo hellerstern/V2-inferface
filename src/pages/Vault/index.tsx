@@ -137,33 +137,32 @@ export const Vault = () => {
                     <VaultCardGroup>
                         <VaultCard>
                             <VaultCardContainer>
-                            <VaultCardTitle>
-                                <Img src={DAISvg} alt="dai-svg" />
-                                0.654398 DAI
-                            </VaultCardTitle>
-                            <VaultCardContent>  
-                                Vault balance
-                            </VaultCardContent>
+                                <VaultCardTitle>
+                                    $100,000.00
+                                </VaultCardTitle>
+                                <VaultCardContent>  
+                                    Vault Balance
+                                </VaultCardContent>
                             </VaultCardContainer>
                         </VaultCard>
                         <VaultCard>
                             <VaultCardContainer>
-                            <VaultCardTitle>
-                                100%
-                            </VaultCardTitle>
-                            <VaultCardContent>  
-                                Vault Percentage
-                            </VaultCardContent>
+                                <VaultCardTitle>
+                                    100.00%
+                                </VaultCardTitle>
+                                <VaultCardContent>  
+                                    Vault Collateralization
+                                </VaultCardContent>
                             </VaultCardContainer>
                         </VaultCard>
                         <VaultCard style={{ gridColumn: '1 / 3' }}>
                             <VaultCardContainer>
-                            <VaultCardTitle>
-                                0.4593149
-                            </VaultCardTitle>
-                            <VaultCardContent>  
-                                TigUSD Supply
-                            </VaultCardContent>
+                                <VaultCardTitle>
+                                    100,000.00
+                                </VaultCardTitle>
+                                <VaultCardContent>  
+                                    tigUSD Supply
+                                </VaultCardContent>
                             </VaultCardContainer>
                         </VaultCard>
                     </VaultCardGroup>
@@ -343,13 +342,17 @@ const VaultCardTitle = styled(Box)(({ theme }) => ({
     gap: "11px",
     fontSize: "20px",
     lineHeight: '26px',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
 }))
 
 const VaultCardContent = styled(Box)(({ theme }) => ({
     fontSize: '13px',
     lineHeight: "17px",
-    color: "#777E90"
+    color: "#777E90",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
 }))
 
 const VaultLabel = styled(Box)(({ theme }) => ({
