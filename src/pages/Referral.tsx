@@ -1,44 +1,71 @@
 import { Box, Button, Divider } from '@mui/material';
 import { styled } from '@mui/system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { VaultInput } from 'src/components/Input';
 import { BiLinkAlt } from 'react-icons/bi';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { toast } from 'react-toastify';
-import { ethers } from 'ethers';
 import axios from 'axios';
 import { PRIVATE_ROUTES } from 'src/config/routes';
+import CopyToClipboard from 'src/components/CopyToClipboard';
 
 export const Referral = () => {
   const [editState, setEditState] = useState({
     refCode: ''
   });
 
+  const [codeData, setCodeData] = useState([]);
+
   const { data: signer } = useSigner();
   // const provider = useProvider();
 
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const getCreatedLink = async () => {
+    if (address !== undefined) {
+      await axios
+        .get(`${PRIVATE_ROUTES.baseUrl}/${address}`)
+        .then((response) => {
+          setCodeData(response.data);
+        })
+        .catch((err) => {
+          const error = err.response.data;
+          console.log({ error });
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      getCreatedLink();
+    } else {
+      setCodeData([]);
+    }
+  }, [isConnected]);
 
   const handleEditState = (prop: string, value: string | number | boolean) => {
     setEditState({ ...editState, [prop]: value });
   };
+
   const handleCreateLink = async () => {
     if (isConnected) {
       if (editState.refCode === '') {
         toast.error('Referral code is empty');
       } else {
         const signedMessage = await signer?.signMessage(editState.refCode);
-        axios
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        await axios
           .post(`${PRIVATE_ROUTES.baseUrl}/create-link`, {
             signMessage: signedMessage,
             refCode: editState.refCode
           })
-          .then(function (response) {
-            console.log(response);
+          .then((res) => {
+            console.log({ res, signedMessage });
+            toast.success('Successfully created');
+            getCreatedLink();
           })
-          .catch(function (err) {
-            console.log(err);
+          .catch((err) => {
+            const error = err.response.data;
+            toast.error(error);
           });
       }
     } else {
@@ -71,15 +98,30 @@ export const Referral = () => {
         </CreateLinkContainer>
         <ReferralLinkLabel sx={{ marginTop: '6px' }}>Your links</ReferralLinkLabel>
         <ReferralLinks>
-          <ReferralLink>
-            <BiLinkAlt color="#3772FF" style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }} />
-            https://app.tigris.trade/?ref=system/?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
-          </ReferralLink>
-          <Divider />
-          <ReferralLink>
-            <BiLinkAlt color="#3772FF" style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }} />
-            https://app.tigris.trade/?ref=system/?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
-          </ReferralLink>
+          {codeData.length === 0 ? (
+            <LinkText>You have no referral code</LinkText>
+          ) : (
+            codeData.map((item) => (
+              <CopyToClipboard key={item}>
+                {({ copy }) => (
+                  <ReferralLink
+                    onClick={() =>
+                      copy(
+                        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                        `https://app.tigris.trade/?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
+                      )
+                    }
+                  >
+                    <LinkText>
+                      <BiLinkIcon />
+                      https://app.tigris.trade/?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
+                    </LinkText>
+                    <Divider />
+                  </ReferralLink>
+                )}
+              </CopyToClipboard>
+            ))
+          )}
         </ReferralLinks>
         <ReferralLinkLabel sx={{ marginTop: '6px' }}>Referred Addresses</ReferralLinkLabel>
         <ReferredAddresses>No adresses yet.</ReferredAddresses>
@@ -214,7 +256,7 @@ const ReferralLinks = styled(Box)(({ theme }) => ({
   gap: '13px'
 }));
 
-const ReferralLink = styled(Box)(({ theme }) => ({
+const LinkText = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '7px',
   fontSize: '12px',
@@ -254,4 +296,19 @@ const ReferralCardContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column'
   }
+}));
+
+const BiLinkIcon = styled(BiLinkAlt)(({ theme }) => ({
+  width: '20px',
+  height: '20px',
+  minWidth: '20px',
+  minHeight: '20px',
+  color: '#3772FF'
+}));
+
+const ReferralLink = styled(Box)(({ theme }) => ({
+  cursor: 'pointer',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px'
 }));
