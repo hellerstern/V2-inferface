@@ -17,8 +17,7 @@ export const Home = () => {
   useEffect(() => {
     const currentUrl = location.search;
     const params = new URLSearchParams(currentUrl);
-    const _refCode = params.get('ref');
-    const refCode = _refCode?.split('?')[0];
+    const refCode = params.get('ref');
     if (refCode != null && refCode !== undefined) {
       fetch(`${PRIVATE_ROUTES.serverUrl}/${refCode}`).then((response) => {
         response.json().then((data) => {

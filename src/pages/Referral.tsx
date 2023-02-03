@@ -58,7 +58,7 @@ export const Referral = () => {
             refCode: editState.refCode
           })
           .then((res) => {
-            toast.success('Successfully created');
+            toast.success(res.data.message);
             getCreatedLink();
           })
           .catch((err) => {
@@ -108,13 +108,13 @@ export const Referral = () => {
                     onClick={() =>
                       copy(
                         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        `${PRIVATE_ROUTES.clientUrl}/?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
+                        `${PRIVATE_ROUTES.clientUrl}/?ref=${item}`
                       )
                     }
                   >
                     <LinkText>
                       <BiLinkIcon />
-                      {PRIVATE_ROUTES.clientUrl}/?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
+                      {PRIVATE_ROUTES.clientUrl}/?ref={item}
                     </LinkText>
                     <Divider />
                   </ReferralLink>
