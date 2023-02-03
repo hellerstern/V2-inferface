@@ -22,7 +22,7 @@ import {
   xmrLogo
 } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
-import { oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
@@ -97,7 +97,12 @@ interface PriceCellProps {
 
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
-    oracleSocket.on('data', (data: any) => {
+    eu1oracleSocket.on('data', (data: any) => {
+      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
+        setOraclePrice(data[pairIndex].price);
+      }
+    });
+    eu2oracleSocket.on('data', (data: any) => {
       if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }

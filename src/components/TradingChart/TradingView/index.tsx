@@ -12,7 +12,7 @@ import {
 import Datafeed from './datafeed.js';
 import { useEffect } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
-import { oracleSocket } from '../../../../src/context/socket';
+import { eu1oracleSocket, eu2oracleSocket } from '../../../../src/context/socket';
 import { toast } from 'react-toastify';
 import { getShellWallet, getShellNonce } from '../../../../src/shell_wallet/index';
 import { oracleData } from 'src/context/socket';
@@ -102,62 +102,64 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 
 	useEffect(() => {
 		tvWidget.current.onChartReady(() => {
-			oracleSocket.on('data', (data: any) => {
-				if (!data[currentAsset.current]) return;
-				const spreadPrices = {
-					ask: (parseInt(data[currentAsset.current].price) - parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18,
-					bid: (parseInt(data[currentAsset.current].price) + parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18
-				}
-				try {
-					(tvWidget.current.chart() as IChartWidgetApi).removeEntity(BidLine.current);
-					(tvWidget.current.chart() as IChartWidgetApi).removeEntity(AskLine.current);
-					BidLine.current = (tvWidget.current.chart() as IChartWidgetApi).createShape(
-						{
-							time: 0,
-							price: spreadPrices.bid
-						},
-						{
-							shape: 'horizontal_line',
-							lock: true,
-							disableSelection: true,
-							overrides: {
-								showPrice: true,
-								linestyle: 1,
-								linewidth: 1,
-								linecolor: "#26A69A",
-								showLabel: true,
-								text: "BID",
-								textcolor: "#26A69A",
-								horzLabelsAlign: "right",
-								vertLabelsAlign: "bottom",
-								fontsize: "11",
+			[eu1oracleSocket, eu2oracleSocket].forEach((socket) => {
+				socket.on('data', (data: any) => {
+					if (!data[currentAsset.current]) return;
+					const spreadPrices = {
+						ask: (parseInt(data[currentAsset.current].price) - parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18,
+						bid: (parseInt(data[currentAsset.current].price) + parseInt(data[currentAsset.current].price) * parseInt(data[currentAsset.current].spread) / 1e10) / 1e18
+					}
+					try {
+						(tvWidget.current.chart() as IChartWidgetApi).removeEntity(BidLine.current);
+						(tvWidget.current.chart() as IChartWidgetApi).removeEntity(AskLine.current);
+						BidLine.current = (tvWidget.current.chart() as IChartWidgetApi).createShape(
+							{
+								time: 0,
+								price: spreadPrices.bid
+							},
+							{
+								shape: 'horizontal_line',
+								lock: true,
+								disableSelection: true,
+								overrides: {
+									showPrice: true,
+									linestyle: 1,
+									linewidth: 1,
+									linecolor: "#26A69A",
+									showLabel: true,
+									text: "BID",
+									textcolor: "#26A69A",
+									horzLabelsAlign: "right",
+									vertLabelsAlign: "bottom",
+									fontsize: "11",
+								}
 							}
-						}
-					);
-					AskLine.current = (tvWidget.current.chart() as IChartWidgetApi).createShape(
-						{
-							time: 0,
-							price: spreadPrices.ask
-						},
-						{
-							shape: 'horizontal_line',
-							lock: true,
-							disableSelection: true,
-							overrides: {
-								showPrice: true,
-								linestyle: 1,
-								linewidth: 1,
-								linecolor: "#EF534F",
-								showLabel: true,
-								text: "ASK",
-								textcolor: "#EF534F",
-								horzLabelsAlign: "right",
-								vertLabelsAlign: "top",
-								fontsize: "11"
+						);
+						AskLine.current = (tvWidget.current.chart() as IChartWidgetApi).createShape(
+							{
+								time: 0,
+								price: spreadPrices.ask
+							},
+							{
+								shape: 'horizontal_line',
+								lock: true,
+								disableSelection: true,
+								overrides: {
+									showPrice: true,
+									linestyle: 1,
+									linewidth: 1,
+									linecolor: "#EF534F",
+									showLabel: true,
+									text: "ASK",
+									textcolor: "#EF534F",
+									horzLabelsAlign: "right",
+									vertLabelsAlign: "top",
+									fontsize: "11"
+								}
 							}
-						}
-					);
-				} catch (err) { }
+						);
+					} catch (err) { }
+				});
 			});
 		});
 	}, []);

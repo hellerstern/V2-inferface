@@ -10,7 +10,7 @@ import usePreventBodyScroll from '../../../src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
 import { getNetwork } from '../../../src/constants/networks';
-import { oracleSocket } from '../../../src/context/socket';
+import { eu1oracleSocket, eu2oracleSocket } from '../../../src/context/socket';
 import { PairSelectionModal } from '../Modal/PairSelectionModal';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
@@ -80,7 +80,10 @@ export const TokenDetails = ({
   ];
 
   useEffect(() => {
-    oracleSocket.on('data', (data: any) => {
+    eu1oracleSocket.on('data', (data: any) => {
+      setOracleData(data);
+    });
+    eu2oracleSocket.on('data', (data: any) => {
       setOracleData(data);
     });
   }, []);

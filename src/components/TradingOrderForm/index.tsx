@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
@@ -31,21 +31,23 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   // First render
   useEffect(() => {
-    oracleSocket.on('data', (data: any) => {
-      if (!data[currentPairIndex.current]) {
-        setMarketAvailable(false);
-        setOpenPrice("");
-        return;
-      }
-      setMarketAvailable(true);
-      setMarketClosed(data[currentPairIndex.current].is_closed);
-      if (orderTypeRef.current === "Market") {
-        setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
-        setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
-      }
+    [eu1oracleSocket, eu2oracleSocket].forEach((socket) => {
+      socket.on('data', (data: any) => {
+        if (!data[currentPairIndex.current]) {
+          setMarketAvailable(false);
+          setOpenPrice("");
+          return;
+        }
+        setMarketAvailable(true);
+        setMarketClosed(data[currentPairIndex.current].is_closed);
+        if (orderTypeRef.current === "Market") {
+          setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
+          setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
+        }
+      });
+      getTokenApproval();
+      getTokenBalance();
     });
-    getTokenApproval();
-    getTokenBalance();
   }, []);
 
   useEffect(() => {
