@@ -17,13 +17,12 @@ export const Referral = () => {
   const [codeData, setCodeData] = useState([]);
 
   const { data: signer } = useSigner();
-  // const provider = useProvider();
 
   const { isConnected, address } = useAccount();
   const getCreatedLink = async () => {
     if (address !== undefined) {
       await axios
-        .get(`${PRIVATE_ROUTES.baseUrl}/${address}`)
+        .get(`${PRIVATE_ROUTES.baseUrl}/user/${address}`)
         .then((response) => {
           setCodeData(response.data);
         })
@@ -59,7 +58,6 @@ export const Referral = () => {
             refCode: editState.refCode
           })
           .then((res) => {
-            console.log({ res, signedMessage });
             toast.success('Successfully created');
             getCreatedLink();
           })
@@ -85,7 +83,9 @@ export const Referral = () => {
             name="refCode"
             component=""
           />
-          <CodeLink>https://app.tigris.trade/?ref={editState.refCode}</CodeLink>
+          <CodeLink>
+            {PRIVATE_ROUTES.currentUrl}/ref?ref={editState.refCode}
+          </CodeLink>
           <CreateLinkButton
             onClick={() => {
               (async () => {
@@ -108,13 +108,13 @@ export const Referral = () => {
                     onClick={() =>
                       copy(
                         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        `https://app.tigris.trade/?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
+                        `${PRIVATE_ROUTES.currentUrl}/ref?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
                       )
                     }
                   >
                     <LinkText>
                       <BiLinkIcon />
-                      https://app.tigris.trade/?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
+                      {PRIVATE_ROUTES.currentUrl}/ref?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
                     </LinkText>
                     <Divider />
                   </ReferralLink>

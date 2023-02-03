@@ -21,7 +21,9 @@ function App() {
               <Route path={PUBLIC_ROUTES.default} element={<Home />} />
               <Route path={PUBLIC_ROUTES.home} element={<Home />} />
               <Route path={PUBLIC_ROUTES.proxy} element={<Proxy />} />
+              <Route path={PUBLIC_ROUTES.ref} element={<Home />} />
               <Route path={PUBLIC_ROUTES.profile} element={<Profile />} />
+              <Route path={'*'} element={<Home />} />
             </Routes>
           </Layout>
         </AppThemeProvider>
