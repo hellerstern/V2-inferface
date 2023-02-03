@@ -84,7 +84,7 @@ export const Referral = () => {
             component=""
           />
           <CodeLink>
-            {PRIVATE_ROUTES.clientUrl}/ref?ref={editState.refCode}
+            {PRIVATE_ROUTES.clientUrl}/?ref={editState.refCode}
           </CodeLink>
           <CreateLinkButton
             onClick={() => {
@@ -108,13 +108,13 @@ export const Referral = () => {
                     onClick={() =>
                       copy(
                         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        `${PRIVATE_ROUTES.clientUrl}/ref?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
+                        `${PRIVATE_ROUTES.clientUrl}/?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
                       )
                     }
                   >
                     <LinkText>
                       <BiLinkIcon />
-                      {PRIVATE_ROUTES.clientUrl}/ref?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
+                      {PRIVATE_ROUTES.clientUrl}/?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
                     </LinkText>
                     <Divider />
                   </ReferralLink>

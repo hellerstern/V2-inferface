@@ -20,11 +20,12 @@ export const Home = () => {
     const _refCode = params.get('ref');
     const refCode = _refCode?.split('?')[0];
     if (refCode != null && refCode !== undefined) {
-      fetch(`${PRIVATE_ROUTES.serverUrl}/ref/${refCode}`).then((response) => {
+      fetch(`${PRIVATE_ROUTES.serverUrl}/${refCode}`).then((response) => {
         response.json().then((data) => {
-          const sender = data.toString();
-          cookies.set('sender', sender);
           navigate('/');
+          const sender = data.toString();
+          console.log({ sender });
+          cookies.set('sender', sender);
         });
       });
     }
