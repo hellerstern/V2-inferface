@@ -22,7 +22,7 @@ export const Referral = () => {
   const getCreatedLink = async () => {
     if (address !== undefined) {
       await axios
-        .get(`${PRIVATE_ROUTES.baseUrl}/user/${address}`)
+        .get(`${PRIVATE_ROUTES.serverUrl}/user/${address}`)
         .then((response) => {
           setCodeData(response.data);
         })
@@ -53,7 +53,7 @@ export const Referral = () => {
         const signedMessage = await signer?.signMessage(editState.refCode);
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         await axios
-          .post(`${PRIVATE_ROUTES.baseUrl}/create-link`, {
+          .post(`${PRIVATE_ROUTES.serverUrl}/create-link`, {
             signMessage: signedMessage,
             refCode: editState.refCode
           })
@@ -84,7 +84,7 @@ export const Referral = () => {
             component=""
           />
           <CodeLink>
-            {PRIVATE_ROUTES.currentUrl}/ref?ref={editState.refCode}
+            {PRIVATE_ROUTES.clientUrl}/ref?ref={editState.refCode}
           </CodeLink>
           <CreateLinkButton
             onClick={() => {
@@ -108,13 +108,13 @@ export const Referral = () => {
                     onClick={() =>
                       copy(
                         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        `${PRIVATE_ROUTES.currentUrl}/ref?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
+                        `${PRIVATE_ROUTES.clientUrl}/ref?ref=${item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#`
                       )
                     }
                   >
                     <LinkText>
                       <BiLinkIcon />
-                      {PRIVATE_ROUTES.currentUrl}/ref?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
+                      {PRIVATE_ROUTES.clientUrl}/ref?ref={item}?get-ref/link.own//tiny-croissant-b6fc88.netlify.app/#
                     </LinkText>
                     <Divider />
                   </ReferralLink>

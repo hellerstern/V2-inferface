@@ -8,6 +8,6 @@ export const PUBLIC_ROUTES = {
 };
 
 export const PRIVATE_ROUTES = {
-  baseUrl: 'http://localhost:5000',
-  currentUrl: 'http://localhost:9000'
+  serverUrl: 'https://referral-server-oirhf.ondigitalocean.app/',
+  clientUrl: 'https://v2-interface.4everland.app/'
 };

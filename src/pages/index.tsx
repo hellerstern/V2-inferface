@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PRIVATE_ROUTES } from 'src/config/routes';
@@ -21,7 +20,7 @@ export const Home = () => {
     const _refCode = params.get('ref');
     const refCode = _refCode?.split('?')[0];
     if (refCode != null && refCode !== undefined) {
-      fetch(`${PRIVATE_ROUTES.baseUrl}/ref/${refCode}`).then((response) => {
+      fetch(`${PRIVATE_ROUTES.serverUrl}/ref/${refCode}`).then((response) => {
         response.json().then((data) => {
           const sender = data.toString();
           cookies.set('sender', sender);
