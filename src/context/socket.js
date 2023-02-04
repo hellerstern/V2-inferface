@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import socketio from "socket.io-client";
 
-export const eu1oracleSocket = socketio.connect('https://eu1-oracle-sscsc.ondigitalocean.app', {transports: ['websocket'] });
+export const eu1oracleSocket = socketio.connect('https://eu1.tigrisoracle.net', {transports: ['websocket'] });
 eu1oracleSocket.on('connect', () => {
     console.log('[eu1-oracleSocket] Connected');
 });
@@ -19,7 +19,7 @@ eu1oracleSocket.on('data', (data) => {
     lastOracleTime = Date.now();
 });
 
-export const eu2oracleSocket = socketio.connect('https://eu2-oracle-v6vvj.ondigitalocean.app', {transports: ['websocket'] });
+export const eu2oracleSocket = socketio.connect('https://eu2.tigrisoracle.net', {transports: ['websocket'] });
 eu2oracleSocket.on('connect', () => {
     console.log('[eu2-oracleSocket] Connected');
 });
