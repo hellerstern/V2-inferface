@@ -96,7 +96,11 @@ export default {
         try {
           rawData = await fetch(`https://tigrischarts.net:8080/tradingview/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`);
         } catch {
-          rawData = await fetch(`https://js-chart-history-b4lol.ondigitalocean.app/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`);
+          try {
+            rawData = await fetch(`https://js-chart-history-b4lol.ondigitalocean.app/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`);
+          } catch {
+            console.log("CHARTS DIDNT WORK");
+          }
         }
       const data = await (rawData).json();
       if ((data.s && data.s != 'ok') || data.time.length === 0) {
