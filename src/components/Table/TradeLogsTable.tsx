@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,6 +6,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
+import { useAccount } from 'wagmi';
+import { PRIVATE_ROUTES } from 'src/config/routes';
+import axios from 'axios';
 
 function createData(
   position: string,
@@ -45,32 +48,44 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }));
 
-const rows = [
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
-  createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM')
-];
-
 interface LogsTableProps {
   setData: any;
 }
 
 export const TradeLogsTable = (props: LogsTableProps) => {
+  const [logData, setLogData] = useState({});
+
+  const { address } = useAccount();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (address !== undefined) {
+        const result = await axios.get(`${PRIVATE_ROUTES.serverUrl}/${address}`);
+        console.log({ result });
+      }
+    };
+  }, []);
+
+  const rows = [
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM'),
+    createData('SHORT', 'C98/BUSD', 700, 2.59, 1.483, 2.5094, 40.0, 4.584, 'STP LMT', '10-02-2022', '10:36:42 PM')
+  ];
   const { setData } = props;
   React.useEffect(() => {
     setData(rows);
