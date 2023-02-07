@@ -3,6 +3,18 @@ import { NETWORK as POLYGON } from './polygon-main/index';
 import { NETWORK as ARBITRUM } from './arbitrum/index';
 import { NETWORK as ARBGOERLI } from './arbi-test/index';
 import { tigusdLogo, daiLogo, usdtLogo } from '../../config/images';
+import {
+  POSITIONS_ABI,
+  TRADING_ABI,
+  ERC20_ABI,
+  PAIR_ABI,
+  VAULT_ABI,
+  NFT_SALE,
+  GOV_NFT,
+  TRADINGLIBRARY_ABI,
+  STAKING_ABI,
+  REF_ABI
+} from '../abis';
 
 function isClosed(asset: any) {
   if (asset == 2 || asset == 32 || asset == 5 || asset == 6 || asset == 7 || asset == 8 || asset == 10) {
@@ -49,14 +61,16 @@ export const getNetwork = (networkId: any) => {
           govnft: '0x'
         },
         abis: {
-          positions: [],
-          trading: [],
-          tradinglibrary: [],
-          erc20: [],
-          pairscontract: [],
-          referrals: [],
-          nftsale: [],
-          govnft: []
+          positions: POSITIONS_ABI,
+          trading: TRADING_ABI,
+          tradinglibrary: TRADINGLIBRARY_ABI,
+          erc20: ERC20_ABI,
+          pairscontract: PAIR_ABI,
+          tigusdvault: VAULT_ABI,
+          nftsale: NFT_SALE,
+          govnft: GOV_NFT,
+          staking: STAKING_ABI,
+          referrals: REF_ABI
         },
         assets: [
           {
@@ -488,6 +502,22 @@ export const getNetwork = (networkId: any) => {
             decimals: 18,
             hasPermit: false,
             icon: tigusdLogo
+          },
+          {
+            name: 'USDT',
+            address: '',
+            stablevault: '',
+            decimals: 6,
+            hasPermit: false,
+            icon: usdtLogo
+          },
+          {
+            name: 'DAI',
+            address: '',
+            stablevault: '',
+            decimals: 18,
+            hasPermit: false,
+            icon: daiLogo
           }
         ],
         nativeSupported: false

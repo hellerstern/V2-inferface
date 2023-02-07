@@ -12,7 +12,7 @@ import {
   REF_ABI
 } from '../../abis';
 
-import { tigusdLogo, daiLogo, usdtLogo, ArbiScanSvg } from '../../../config/images';
+import { tigusdLogo, usdtLogo, ArbiScanSvg } from '../../../config/images';
 
 function isClosed(asset: any) {
   if (asset == 2 || asset == 32 || asset == 5 || asset == 6 || asset == 7 || asset == 8 || asset == 10) {
@@ -486,6 +486,14 @@ export const NETWORK = {
     }
   ],
   marginAssets: [
+    {
+      name: 'tigUSD',
+      address: '0x7E491F53bF807f836E2dd6C4A4FBd193e1913EFd',
+      stablevault: '0xe82fcefbDD034500B5862B4827CAE5c117f6b921',
+      decimals: 18,
+      hasPermit: true,
+      icon: tigusdLogo
+    },
     {
       name: 'USDT',
       address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',

@@ -9,7 +9,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/system';
 import { Divider, useMediaQuery } from '@mui/material';
 import { VaultInput } from '../Input';
-import { TigUsDMax } from 'src/pages/Vault';
 import { LockOutlined } from '@mui/icons-material'
 
 export interface DialogTitleProps {
@@ -94,7 +93,7 @@ export const ClaimModal = (props: ClaimModalProps) => {
                         <ItemText2>30 days | <span style={{ color: "#777E90" }}>Ends in 4 days </span></ItemText2>
                     </ExtendItemLabel>
                     <VaultInputWrapper>
-                        <VaultInput type="number" name="stakingPeriod" placeholder="0" value={editState.stakingPeriod} setValue={handleEditState} component={<Max>Max</Max>} />
+                        <VaultInput type="number" name="stakingPeriod" placeholder="0" value={editState.stakingPeriod} setValue={handleEditState} component={<></>} />
                     </VaultInputWrapper>
                 </ExtendItemContent>
             </ExtendItem>
@@ -106,7 +105,7 @@ export const ClaimModal = (props: ClaimModalProps) => {
                         <ItemText2>0.7894 tig USD</ItemText2>
                     </ExtendItemLabel>
                     <VaultInputWrapper>
-                        <VaultInput type="number" name="stakingAmount" placeholder="0" value={editState.stakingAmount} setValue={handleEditState} component={<TigUsDMax />} />
+                        <VaultInput type="number" name="stakingAmount" placeholder="0" value={editState.stakingAmount} setValue={handleEditState} component={<></>} />
                     </VaultInputWrapper>
                 </ExtendItemContent>
             </ExtendItem>

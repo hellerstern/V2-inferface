@@ -22,6 +22,7 @@ export const Layout = ({ children }: LayoutProps) => {
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
+        pauseOnFocusLoss={false}
         newestOnTop={true}
         closeOnClick
         theme="dark"

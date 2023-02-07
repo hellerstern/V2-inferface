@@ -10,7 +10,7 @@ import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
+import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -101,6 +101,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const [isProxyApproved, setIsProxyApproved] = useState(true);
   const [isTokenAllowed, setIsTokenAllowed] = useState(true);
+  const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
 
   const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
   const tokenLiveAllowance = useTokenAllowance(currentMargin.marginAssetDrop.address);
@@ -108,7 +109,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setTokenBalance(((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2));
   }, [tokenLiveBalance, currentMargin]);
   useEffect(() => {
-    setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveBalance) > 0 : false);
+    setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
   }, [tokenLiveAllowance]);
 
   const orderTypeRef = useRef(orderType);
@@ -358,7 +359,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             state={currentMargin.marginAssetDrop}
             setState={doMarginChange}
           />
-          <AssetBalance key={tokenBalance}>
+          <AssetBalance>
             Balance
             <IconButton onClick={() => setBalanceVisible(!isBalanceVisible)}>
               {isBalanceVisible ? <Visibility fontSize="small" /> : <VisibilityOff fontSize="small" />}
@@ -484,7 +485,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function routeTrade() {
     const s = getTradeStatus();
     s === "NotConnected" ? openConnectModal?.() :
-      s === "Approve" ? approveToken() :
+      s === "Approve" ? approve?.() :
         s === "Proxy" ? approveProxy() :
           s === "Ready" && (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder())
   }
@@ -547,35 +548,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         );    
       }
       getProxyApproval();
-    }, 2000);
-  }
-
-  async function approveToken() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, signer);
-    const tx = tokenContract.approve(currentNetwork.addresses.trading, ethers.constants.MaxUint256);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Approval pending...',
-        success: undefined,
-        error: 'Approval failed!'
-      }
-    );
-    // eslint-disable-next-line
-    setTimeout(async () => {
-      const receipt = await tokenContract.provider.getTransactionReceipt(response.hash);
-      if (receipt.status === 0) {
-        toast.error(
-          'Approval failed!'
-        );
-      } else if(receipt.status === 1) {
-        toast.success(
-          'Successfully approved!'
-        );    
-      }
     }, 2000);
   }
 

@@ -1,11 +1,16 @@
 import { Box, Button } from "@mui/material";
 import { styled } from "@mui/system";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "src/components/Container"
-import { VaultInput } from "src/components/Input";
-import { DAISvg, LOGO } from "src/config/images";
+import { TigrisInput } from "src/components/Input";
+import { DAISvg, LOGO, tigusdLogo } from "src/config/images";
 import {LockOutlined, SwapHoriz , HelpOutline, MoreHoriz } from '@mui/icons-material'
 import { ClaimModal } from "src/components/Modal/VaultClaimModal";
+import { useTokenAllowance, useTokenBalance, useContractTokenBalance, useTokenSupply, useApproveToken } from 'src/hook/useToken';
+import { useVaultDeposit, useVaultWithdraw } from "src/hook/useVault";
+import { getNetwork } from "src/constants/networks";
+import { useNetwork } from "wagmi";
+import { ethers } from "ethers";
 
 const TigUSDList = () => {
     return(
@@ -118,17 +123,46 @@ const LockArr: LockArrProps[] = [
 ]
 
 export const Vault = () => {
+    const {chain} = useNetwork();
     const [editState, setEditState] = useState({
-        daiValue: 0,
-        tigValue: 0,
+        swapInput: '' as unknown as number,
         tigBalance: 0.7894,
         days: 18,
         isMyLock: false
     });
-  const handleEditState = (prop: string, value: string | number | boolean) => {
-    setEditState({ ...editState, [prop]: value });
-  };
-  const [ isModalOpen, setModalOpen ] = useState(false);
+    const handleEditState = (prop: string, value: any) => {
+        setEditState({ ...editState, [prop]: value });
+    };
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [isDeposit, setIsDeposit] = useState(true);
+    const [fromTokenBalance, setFromTokenBalance] = useState("Loading...");
+    const [tigTokenBalance, setTigTokenBalance] = useState("Loading...");
+    const [isTokenAllowed, setIsTokenAllowed] = useState(true);
+    const [vaultBalance, setVaultBalance] = useState("Loading...");
+    const [tigusdSupply, setTigusdSupply] = useState("Loading...");
+    const fromTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).marginAssets[2].address);
+    const tigTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).addresses.tigusd);
+    const tokenLiveAllowance = useTokenAllowance(getNetwork(chain?.id).marginAssets[2].address);
+    const vaultLiveBalance = useContractTokenBalance(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address);
+    const tigusdLiveSupply = useTokenSupply(getNetwork(chain?.id).marginAssets[0].address);
+    const [approve] = useApproveToken(getNetwork(chain?.id).marginAssets[2].address, getNetwork(chain?.id).addresses.tigusdvault);
+    const [deposit] = useVaultDeposit(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address, isDeposit ? (ethers.utils.parseUnits(Number(editState.swapInput).toFixed(getNetwork(chain?.id).marginAssets[2].decimals), getNetwork(chain?.id).marginAssets[2].decimals)) : "0");
+    const [withdraw] = useVaultWithdraw(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address, isDeposit ? "0" : (ethers.utils.parseEther(Number(editState.swapInput).toFixed(18))));
+    useEffect(() => {
+        setFromTokenBalance(((fromTokenLiveBalance ? Number(fromTokenLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[2].decimals)).toString());
+    }, [fromTokenLiveBalance]);
+    useEffect(() => {
+        setTigTokenBalance(((tigTokenLiveBalance ? Number(tigTokenLiveBalance) : 0) / 1e18).toFixed(2));
+    }, [tigTokenLiveBalance]);
+    useEffect(() => {
+        setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
+    }, [tokenLiveAllowance]);
+    useEffect(() => {
+        setVaultBalance(((vaultLiveBalance ? Number(vaultLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[2].decimals)).toFixed(2));
+    }, [vaultLiveBalance]);
+    useEffect(() => {
+        setTigusdSupply(((tigusdLiveSupply ? Number(tigusdLiveSupply) : 0) / 1e18).toFixed(2));
+    }, [tigusdLiveSupply]);
 
     return(
         <Container>
@@ -138,7 +172,7 @@ export const Vault = () => {
                         <VaultCard>
                             <VaultCardContainer>
                                 <VaultCardTitle>
-                                    $100,000.00
+                                    ${vaultBalance === "Loading..." ? "Loading..." : ethers.utils.commify(vaultBalance)}
                                 </VaultCardTitle>
                                 <VaultCardContent>  
                                     Vault Balance
@@ -148,7 +182,7 @@ export const Vault = () => {
                         <VaultCard>
                             <VaultCardContainer>
                                 <VaultCardTitle>
-                                    100.00%
+                                    {(Number(vaultBalance)/Number(tigusdSupply)*100).toFixed(2)}%
                                 </VaultCardTitle>
                                 <VaultCardContent>  
                                     Vault Collateralization
@@ -158,7 +192,7 @@ export const Vault = () => {
                         <VaultCard style={{ gridColumn: '1 / 3' }}>
                             <VaultCardContainer>
                                 <VaultCardTitle>
-                                    100,000.00
+                                    {tigusdSupply === "Loading..." ? "Loading..." : ethers.utils.commify(tigusdSupply)}
                                 </VaultCardTitle>
                                 <VaultCardContent>  
                                     tigUSD Supply
@@ -169,32 +203,96 @@ export const Vault = () => {
                     <VaultLabel>USD VAULT</VaultLabel>
                     <VaultSection>
                         <VaultInputContainer>
+                            {
+                            isDeposit ?
                             <VaultInputWrapper>
-                                <VaultInput type="number" name="daiValue" placeholder="0" value={editState.daiValue} setValue={handleEditState} component={<Max>Max</Max>} />
+                                <TigrisInput label="DAI" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
                                 <VaultInputLabel>
-                                    <VaultInputPrimary>Asset balance</VaultInputPrimary>
+                                    <VaultInputPrimary>Balance:</VaultInputPrimary>
                                     <VaultInputSecondary>
-                                        <img src={DAISvg} alt="dai-svg" />
-                                        0.57489DAI
+                                        <img style={{ width: '20px' }} src={DAISvg} alt="dai-svg" />
+                                        <FromBalance onClick={
+                                            () => handleEditState(
+                                                "swapInput",
+                                                (fromTokenBalance ? Number(fromTokenBalance) : 0)
+                                            )
+                                        }
+                                        >
+                                            {Number(fromTokenBalance).toFixed(2)}
+                                        </FromBalance>
                                     </VaultInputSecondary>
                                 </VaultInputLabel>
                             </VaultInputWrapper>
-                            <SwapIcon sx={{ marginTop: '-36px' }} />
+                            :
                             <VaultInputWrapper>
-                                <VaultInput type="number" name="tigValue" placeholder="0" value={editState.tigValue} setValue={handleEditState} component={<TigUSD />} />
+                                <TigrisInput label="tigUSD" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
                                 <VaultInputLabel>
-                                    <VaultInputPrimary>Asset balance</VaultInputPrimary>
+                                    <VaultInputPrimary>Balance:</VaultInputPrimary>
                                     <VaultInputSecondary>
-                                        0.00 TigUSD
+                                        <img style={{width: '20px'}} src={tigusdLogo} alt="tigusd-svg" />
+                                        <FromBalance onClick={
+                                            () => handleEditState(
+                                                "swapInput",
+                                                (tigTokenBalance ? Number(tigTokenBalance) : 0)
+                                            )
+                                        }
+                                        >
+                                            {Number(tigTokenBalance).toFixed(2)}
+                                        </FromBalance>
                                     </VaultInputSecondary>
                                 </VaultInputLabel>
                             </VaultInputWrapper>
+                            }
+                            <SwapIcon style={{cursor: 'pointer'}} onClick={() => setIsDeposit(!isDeposit)} sx={{ marginTop: '-36px' }} />
+                            {
+                            !isDeposit ?
+                            <VaultInputWrapper>
+                                <TigrisInput label="DAI" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
+                                <VaultInputLabel>
+                                    <VaultInputPrimary>Balance:</VaultInputPrimary>
+                                    <VaultInputSecondary>
+                                        <img style={{ width: '20px' }} src={DAISvg} alt="dai-svg" />
+                                        {Number(fromTokenBalance).toFixed(2)}
+                                    </VaultInputSecondary>
+                                </VaultInputLabel>
+                            </VaultInputWrapper>
+                            :
+                            <VaultInputWrapper>
+                                <TigrisInput label="tigUSD" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
+                                <VaultInputLabel>
+                                    <VaultInputPrimary>Balance:</VaultInputPrimary>
+                                    <VaultInputSecondary>
+                                        <img style={{width: '20px'}} src={tigusdLogo} alt="tigusd-svg" />
+                                        {Number(tigTokenBalance).toFixed(2)}
+                                    </VaultInputSecondary>
+                                </VaultInputLabel>
+                            </VaultInputWrapper>
+                            }
                         </VaultInputContainer>
-                        <ApproveButton>
-                            Approve
-                        </ApproveButton>
+                        {
+                            (isDeposit && !isTokenAllowed) ?
+                                <SwapButton onClick={() => approve?.()}>
+                                    Approve
+                                </SwapButton>
+                            : (isDeposit && isTokenAllowed && Number(fromTokenBalance) < editState.swapInput) ?
+                                <DisabledSwapButton>
+                                    Balance too low
+                                </DisabledSwapButton>
+                            : (!isDeposit && Number(tigTokenBalance) < editState.swapInput) ?
+                                <DisabledSwapButton>
+                                    Balance too low
+                                </DisabledSwapButton>
+                            : (Number(editState.swapInput) === 0) ?
+                                <DisabledSwapButton>
+                                    Swap
+                                </DisabledSwapButton>
+                            :
+                                <SwapButton onClick={() => isDeposit ? deposit?.() : withdraw?.()}>
+                                    Swap
+                                </SwapButton>
+                        }
                     </VaultSection>
-                    <VaultLabel>TigUSD STAKING</VaultLabel>
+                    <VaultLabel>tigUSD STAKING</VaultLabel>
                     <VaultSection>
                         <VaultButtonGroup>
                             <LockButtonGroup>
@@ -216,16 +314,16 @@ export const Vault = () => {
                         { !editState.isMyLock ?
                             <>
                                 <VaultInputBox>
-                                    <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<TigUsDMax />} />
+                                    <TigrisInput label="tigUSD" placeholder="0" value={editState.tigBalance.toString()} setValue={(e) => handleEditState("tigBalance", (e))} />
                                     <VaultInputLabel>
-                                        <VaultInputPrimary>Asset balance</VaultInputPrimary>
+                                        <VaultInputPrimary>Balance:</VaultInputPrimary>
                                         <VaultInputSecondary>
-                                            0.57489 TigUSD
+                                            0.57489 tigUSD
                                         </VaultInputSecondary>
                                     </VaultInputLabel>
                                 </VaultInputBox>
                                 <VaultInputBox> 
-                                    <VaultInput type="number" name="tigBalance" placeholder="0" value={editState.tigBalance} setValue={handleEditState} component={<Max>Max</Max>} />
+                                    <TigrisInput label="Days" placeholder="0" value={editState.tigBalance.toString()} setValue={(e) => handleEditState("tigBalance", (e))} />
                                     <VaultInputLabel>
                                         <VaultInputPrimary>7-365 days Max</VaultInputPrimary>
                                     </VaultInputLabel>
@@ -288,6 +386,14 @@ export const Vault = () => {
         </Container>
     )
 }
+
+const FromBalance = styled(Box)(({ theme }) => ({
+    "&: hover": {
+        color: "#FFFFFF",
+        cursor: 'pointer',
+        textDecoration: 'underline'
+    }
+}));
 
 const GovernanceContainer = styled(Box)(({ theme }) => ({
   padding: '70px 0',
@@ -374,19 +480,6 @@ const VaultSection = styled(Box)(({ theme }) => ({
     gap: '28px'
 }))
 
-const Max = styled(Box)(({ theme }) => ({
-    minWidth: '70px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#18191D',
-    borderRadius: '2px',
-    fontSize: '12px',
-    lineHeight: '20px',
-    color: "#777E90",
-    cursor: 'pointer'
-}))
-
 const VaultInputContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     justifyContent: 'space-between',
@@ -405,25 +498,6 @@ const VaultInputWrapper = styled(Box)(({ theme }) => ({
     [theme.breakpoints.down('md')]: {
         width: '100%'
     }
-}))
-
-const TigUSD = () => {
-    return(
-        <TigUSDContainer>
-            <Img src={LOGO} alt='tigusd-logo' />
-            tigUSD
-        </TigUSDContainer>
-    )
-}
-
-const TigUSDContainer = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    gap: "7px",
-    fontSize: '12px',
-    lineHeight: '20px',
-    fontWeight: "700",
-    alignItems: 'center',
-    color: "#FFFFFF"
 }))
 
 const VaultInputLabel = styled(Box)(({ theme }) => ({
@@ -449,7 +523,7 @@ const VaultInputSecondary = styled(Box)(({ theme }) => ({
     alignItems: 'center'
 }))
 
-const ApproveButton = styled(Button)(({ theme }) => ({
+const SwapButton = styled(Button)(({ theme }) => ({
     width: '100%',
     height: '40px',
     backgroundColor: "#3772FF",
@@ -458,6 +532,18 @@ const ApproveButton = styled(Button)(({ theme }) => ({
     textTransform: "none",
     "&: hover": {
         backgroundColor: "#3772FF"
+    }
+}))
+
+const DisabledSwapButton = styled(Button)(({ theme }) => ({
+    width: '100%',
+    height: '40px',
+    backgroundColor: "#2F3135",
+    border: "1px solid #2F3135",
+    borderRadius: '4px',
+    textTransform: "none",
+    "&: hover": {
+        backgroundColor: "#2F3135"
     }
 }))
 
@@ -511,20 +597,6 @@ const LockIcon = styled(LockOutlined)(({ theme }) => ({
 const LockButtonGroup = styled(Box)(({ theme }) => ({
     display: 'flex',
     gap: '16px'
-}))
-
-export const TigUsDMax = () => {
-    return(
-        <TigUsDMaxContainer>
-            <TigUSD />
-            <Max>Max</Max>
-        </TigUsDMaxContainer>
-    )
-}
-
-const TigUsDMaxContainer = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    gap: '11px'
 }))
 
 const VaultInputBox = styled(Box)(({ theme }) => ({
