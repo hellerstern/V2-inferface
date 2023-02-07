@@ -8,9 +8,9 @@ import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/conte
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
-import socketio from "socket.io-client";
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
 
@@ -45,14 +45,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
         }
       });
-      getTokenApproval();
-      getTokenBalance();
     });
   }, []);
-
-  useEffect(() => {
-    getProxyApproval();
-  }, [chain, address, ethereum]);
 
   useEffect(() => {
     if (address === undefined) return;
@@ -67,11 +61,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
+    getProxyApproval();
   }, [chain]);
 
   const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
 
   const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] });
+  const currentMarginRef = useRef<any>(getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]);
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -105,6 +101,15 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const [isProxyApproved, setIsProxyApproved] = useState(true);
   const [isTokenAllowed, setIsTokenAllowed] = useState(true);
+
+  const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
+  const tokenLiveAllowance = useTokenAllowance(currentMargin.marginAssetDrop.address);
+  useEffect(() => {
+    setTokenBalance(((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2));
+  }, [tokenLiveBalance, currentMargin]);
+  useEffect(() => {
+    setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveBalance) > 0 : false);
+  }, [tokenLiveAllowance]);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -190,64 +195,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  const currentMarginRef = useRef<any>(getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]);
-
   const doMarginChange = (prop: string, value: string | number | boolean) => {
     const _currentMargin = { ...currentMargin, [prop]: value };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
     setTokenBalance("Loading...");
-    getTokenApproval();
   };
-
-  useEffect(() => {
-    getTokenBalance();
-  }, [currentMargin, address, chain]);
-
-  useEffect(() => {
-    if (address !== undefined) {
-      const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', { transports: ['websocket'] });
-
-      socket.on('PositionOpened', (data: any) => {
-        if (data.trader === address && data.chainId === chain?.id) {
-          getTokenBalance();
-          getProxyApproval();
-        }
-      });
-
-      socket.on('PositionClosed', (data: any) => {
-        if (data.trader === address && data.chainId === chain?.id) {
-          getTokenBalance();
-          getProxyApproval();
-        }
-      });
-
-      socket.on('LimitCancelled', (data: any) => {
-        if (data.trader === address && data.chainId === chain?.id) {
-          getTokenBalance();
-          getProxyApproval();
-        }
-      });
-
-      socket.on('MarginModified', (data: any) => {
-        if (data.trader === address && data.chainId === chain?.id) {
-          getTokenBalance();
-          getProxyApproval();
-        }
-      });
-
-      socket.on('AddToPosition', (data: any) => {
-        if (data.trader === address && data.chainId === chain?.id) {
-          getTokenBalance();
-          getProxyApproval();
-        }
-      });
-
-      return () => {
-        socket.disconnect();
-      }
-    }
-  }, [address, chain, currentMargin]);
 
   return (
     <Container>
@@ -473,15 +426,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  async function getTokenBalance() {
-    if (!isConnected) return;
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const tokenContract = new ethers.Contract(currentMargin.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
-    const balance = ((await tokenContract.balanceOf(address)) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2);
-    setTokenBalance(balance);
-  }
-
   function marginScale(value: number) {
     return Math.round((
       parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
@@ -606,23 +550,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }, 2000);
   }
 
-  async function getTokenApproval() {
-    if (!isConnected) return;
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    if (currentMarginRef.current !== null && currentMarginRef.current.marginAssetDrop.address === currentNetwork.addresses.tigusd) {
-      setIsTokenAllowed(true);
-      return;
-    }
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const tokenContract = new ethers.Contract(currentMarginRef.current.marginAssetDrop.address, currentNetwork.abis.erc20, provider);
-    const allowance = await tokenContract.allowance(address, currentNetwork.addresses.trading);
-    if ((allowance.toString()) !== "0") {
-      setIsTokenAllowed(true);
-    } else {
-      setIsTokenAllowed(false);
-    }
-  }
-
   async function approveToken() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -649,7 +576,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           'Successfully approved!'
         );    
       }
-      getTokenApproval();
     }, 2000);
   }
 
