@@ -22,7 +22,7 @@ export const Referral = () => {
   const getCreatedLink = async () => {
     if (address !== undefined) {
       await axios
-        .get(`${PRIVATE_ROUTES.serverUrl}/user/${address}`)
+        .get(`${PRIVATE_ROUTES.referral_serverUrl}/user/${address}`)
         .then((response) => {
           setCodeData(response.data);
         })
@@ -53,7 +53,7 @@ export const Referral = () => {
         const signedMessage = await signer?.signMessage(editState.refCode);
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         await axios
-          .post(`${PRIVATE_ROUTES.serverUrl}/create-link`, {
+          .post(`${PRIVATE_ROUTES.referral_serverUrl}/create-link`, {
             signMessage: signedMessage,
             refCode: editState.refCode
           })

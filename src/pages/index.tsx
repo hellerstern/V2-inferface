@@ -19,7 +19,7 @@ export const Home = () => {
     const params = new URLSearchParams(currentUrl);
     const refCode = params.get('ref');
     if (refCode != null && refCode !== undefined) {
-      fetch(`${PRIVATE_ROUTES.serverUrl}/${refCode}`).then((response) => {
+      fetch(`${PRIVATE_ROUTES.referral_serverUrl}/${refCode}`).then((response) => {
         response.json().then((data) => {
           navigate('/');
           const sender = data.toString();

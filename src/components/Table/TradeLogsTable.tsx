@@ -79,7 +79,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
   const fetchData = async () => {
     if (address !== undefined) {
       setLoading(true);
-      const result = await axios.get(`${PRIVATE_ROUTES.serverUrl}/tradelogs/${address}`);
+      const result = await axios.get(`${PRIVATE_ROUTES.tradelogs_serverUrl}/tradelogs/${address}`);
       const data = result.data;
       const len = data.length;
       const createArr = [];
