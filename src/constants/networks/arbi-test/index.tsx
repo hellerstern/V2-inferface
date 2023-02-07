@@ -447,20 +447,20 @@ export const NETWORK = {
             icon: tigusdLogo
         },
         {
-            name: "USDT",
-            address: "0xfb59C8Cac513440cD93306987BcfC53202940868",
-            stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
-            decimals: 6,
-            hasPermit: true,
-            icon: usdtLogo
-        },
-        {
             name: "DAI",
             address: "0xE94Aa6479601544a32e43CAF082A2F7FC7fB0720",
             stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
             decimals: 18,
             hasPermit: true,
             icon: daiLogo
+        },
+        {
+            name: "USDT",
+            address: "0xfb59C8Cac513440cD93306987BcfC53202940868",
+            stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
+            decimals: 6,
+            hasPermit: true,
+            icon: usdtLogo
         }
     ],
     nativeSupported: false

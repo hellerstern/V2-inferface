@@ -504,20 +504,20 @@ export const getNetwork = (networkId: any) => {
             icon: tigusdLogo
           },
           {
-            name: 'USDT',
-            address: '',
-            stablevault: '',
-            decimals: 6,
-            hasPermit: false,
-            icon: usdtLogo
-          },
-          {
             name: 'DAI',
             address: '',
             stablevault: '',
             decimals: 18,
             hasPermit: false,
             icon: daiLogo
+          },
+          {
+            name: 'USDT',
+            address: '',
+            stablevault: '',
+            decimals: 6,
+            hasPermit: false,
+            icon: usdtLogo
           }
         ],
         nativeSupported: false

@@ -140,16 +140,16 @@ export const Vault = () => {
     const [isTokenAllowed, setIsTokenAllowed] = useState(true);
     const [vaultBalance, setVaultBalance] = useState("Loading...");
     const [tigusdSupply, setTigusdSupply] = useState("Loading...");
-    const fromTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).marginAssets[2].address);
+    const fromTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).marginAssets[1].address);
     const tigTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).addresses.tigusd);
-    const tokenLiveAllowance = useTokenAllowance(getNetwork(chain?.id).marginAssets[2].address);
-    const vaultLiveBalance = useContractTokenBalance(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address);
+    const tokenLiveAllowance = useTokenAllowance(getNetwork(chain?.id).marginAssets[1].address);
+    const vaultLiveBalance = useContractTokenBalance(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address);
     const tigusdLiveSupply = useTokenSupply(getNetwork(chain?.id).marginAssets[0].address);
-    const [approve] = useApproveToken(getNetwork(chain?.id).marginAssets[2].address, getNetwork(chain?.id).addresses.tigusdvault);
-    const [deposit] = useVaultDeposit(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address, isDeposit ? (ethers.utils.parseUnits(Number(editState.swapInput).toFixed(getNetwork(chain?.id).marginAssets[2].decimals), getNetwork(chain?.id).marginAssets[2].decimals)) : "0");
-    const [withdraw] = useVaultWithdraw(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[2].address, isDeposit ? "0" : (ethers.utils.parseEther(Number(editState.swapInput).toFixed(18))));
+    const [approve] = useApproveToken(getNetwork(chain?.id).marginAssets[1].address, getNetwork(chain?.id).addresses.tigusdvault);
+    const [deposit] = useVaultDeposit(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address, isDeposit ? (ethers.utils.parseUnits(Number(editState.swapInput).toFixed(getNetwork(chain?.id).marginAssets[1].decimals), getNetwork(chain?.id).marginAssets[1].decimals)) : "0");
+    const [withdraw] = useVaultWithdraw(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address, isDeposit ? "0" : (ethers.utils.parseEther(Number(editState.swapInput).toFixed(18))));
     useEffect(() => {
-        setFromTokenBalance(((fromTokenLiveBalance ? Number(fromTokenLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[2].decimals)).toString());
+        setFromTokenBalance(((fromTokenLiveBalance ? Number(fromTokenLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[1].decimals)).toString());
     }, [fromTokenLiveBalance]);
     useEffect(() => {
         setTigTokenBalance(((tigTokenLiveBalance ? Number(tigTokenLiveBalance) : 0) / 1e18).toFixed(2));
@@ -158,7 +158,7 @@ export const Vault = () => {
         setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
     }, [tokenLiveAllowance]);
     useEffect(() => {
-        setVaultBalance(((vaultLiveBalance ? Number(vaultLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[2].decimals)).toFixed(2));
+        setVaultBalance(((vaultLiveBalance ? Number(vaultLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[1].decimals)).toFixed(2));
     }, [vaultLiveBalance]);
     useEffect(() => {
         setTigusdSupply(((tigusdLiveSupply ? Number(tigusdLiveSupply) : 0) / 1e18).toFixed(2));
