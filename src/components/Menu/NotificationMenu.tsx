@@ -92,7 +92,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
   );
 }
 
-const parseDate = (dateTime: string) => {
+export const parseDate = (dateTime: string) => {
   const date = new Date(dateTime);
   console.log({ date });
   return date.toLocaleString();

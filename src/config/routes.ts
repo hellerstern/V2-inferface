@@ -11,5 +11,5 @@ export const PRIVATE_ROUTES = {
   serverUrl: 'https://referral-server-oirhf.ondigitalocean.app',
   clientUrl: 'https://v2-interface.4everland.app'
   // serverUrl: 'http://localhost:5000',
-  // clientUrl: 'http://localhost:9000'
+  // clientUrl: 'http://localhost:3000'
 };
