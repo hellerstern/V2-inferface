@@ -82,8 +82,8 @@ export const TradeLogsTable = (props: LogsTableProps) => {
       const result = await axios.get(`${PRIVATE_ROUTES.serverUrl}/tradelogs/${address}`);
       const data = result.data;
       const len = data.length;
+      const createArr = [];
       if (len > 0) {
-        const createArr = [];
         for (let i = 0; i < len; i++) {
           const position = data[i].position === true ? 'LONG' : 'SHORT';
           const symbol_idx = data[i].symbol;
@@ -114,9 +114,9 @@ export const TradeLogsTable = (props: LogsTableProps) => {
             )
           );
         }
-        setLogData(createArr);
-        setLoading(false);
       }
+      setLogData(createArr);
+      setLoading(false);
     }
   };
 
@@ -131,6 +131,8 @@ export const TradeLogsTable = (props: LogsTableProps) => {
     <TableContainer>
       {isLoading ? (
         <ThreeDotsLoader />
+      ) : logData.length === 0 ? (
+        <NoDataLabel>There is no log data of trade</NoDataLabel>
       ) : (
         <Table size="small" aria-label="a dense table">
           <TableHead>
@@ -184,4 +186,11 @@ const CustomTableBody = styled(TableBody)(({ theme }) => ({
   '.MuiTableCell-root': {
     color: '#B1B5C3'
   }
+}));
+
+const NoDataLabel = styled(Box)(({ theme }) => ({
+  textAlign: 'center',
+  fontSize: '15px',
+  paddingBottom: '20px',
+  color: '#777E90'
 }));
