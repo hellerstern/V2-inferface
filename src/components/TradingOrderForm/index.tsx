@@ -104,7 +104,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
 
   const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
-  const tokenLiveAllowance = useTokenAllowance(currentMargin.marginAssetDrop.address);
+  const tokenLiveAllowance = useTokenAllowance(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
   useEffect(() => {
     setTokenBalance(((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2));
   }, [tokenLiveBalance, currentMargin]);

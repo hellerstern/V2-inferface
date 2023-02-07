@@ -142,7 +142,7 @@ export const Vault = () => {
     const [tigusdSupply, setTigusdSupply] = useState("Loading...");
     const fromTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).marginAssets[1].address);
     const tigTokenLiveBalance = useTokenBalance(getNetwork(chain?.id).addresses.tigusd);
-    const tokenLiveAllowance = useTokenAllowance(getNetwork(chain?.id).marginAssets[1].address);
+    const tokenLiveAllowance = useTokenAllowance(getNetwork(chain?.id).marginAssets[1].address, getNetwork(chain?.id).addresses.tigusdvault);
     const vaultLiveBalance = useContractTokenBalance(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address);
     const tigusdLiveSupply = useTokenSupply(getNetwork(chain?.id).marginAssets[0].address);
     const [approve] = useApproveToken(getNetwork(chain?.id).marginAssets[1].address, getNetwork(chain?.id).addresses.tigusdvault);

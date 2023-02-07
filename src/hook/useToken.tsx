@@ -3,17 +3,15 @@ import { erc20ABI, usePrepareContractWrite, useContractWrite, useContractRead, u
 import { getNetwork } from "src/constants/networks";
 import { toast } from 'react-toastify';
 
-export const useTokenAllowance = (tokenAddress: string) => {
+export const useTokenAllowance = (tokenAddress: string, spender: string) => {
     const { address } = useAccount()
-    const { chain } = useNetwork()
-    const network = getNetwork(chain?.id)
     if (!address) return 0;
 
     const { data, isError, isFetching } = useContractRead({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'allowance',
-        args: [address, network.addresses.trading as `0x${string}`],
+        args: [address, spender as `0x${string}`],
         watch: true
     })
 
