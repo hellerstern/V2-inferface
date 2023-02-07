@@ -206,11 +206,11 @@ export const Vault = () => {
                             {
                             isDeposit ?
                             <VaultInputWrapper>
-                                <TigrisInput label="DAI" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
+                                <TigrisInput label={getNetwork(chain?.id).marginAssets[1].name} placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
                                 <VaultInputLabel>
                                     <VaultInputPrimary>Balance:</VaultInputPrimary>
                                     <VaultInputSecondary>
-                                        <img style={{ width: '20px' }} src={DAISvg} alt="dai-svg" />
+                                        <img style={{ width: '20px' }} src={getNetwork(chain?.id).marginAssets[1].icon} alt="dai-svg" />
                                         <FromBalance onClick={
                                             () => handleEditState(
                                                 "swapInput",
@@ -247,11 +247,11 @@ export const Vault = () => {
                             {
                             !isDeposit ?
                             <VaultInputWrapper>
-                                <TigrisInput label="DAI" placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
+                                <TigrisInput label={getNetwork(chain?.id).marginAssets[1].name} placeholder="0" value={editState.swapInput.toString()} setValue={(e) => handleEditState("swapInput", (e))} />
                                 <VaultInputLabel>
                                     <VaultInputPrimary>Balance:</VaultInputPrimary>
                                     <VaultInputSecondary>
-                                        <img style={{ width: '20px' }} src={DAISvg} alt="dai-svg" />
+                                        <img style={{ width: '20px' }} src={getNetwork(chain?.id).marginAssets[1].icon} alt="dai-svg" />
                                         {Number(fromTokenBalance).toFixed(2)}
                                     </VaultInputSecondary>
                                 </VaultInputLabel>
