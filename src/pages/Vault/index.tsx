@@ -182,7 +182,7 @@ export const Vault = () => {
                         <VaultCard>
                             <VaultCardContainer>
                                 <VaultCardTitle>
-                                    {(Number(vaultBalance)/Number(tigusdSupply)*100).toFixed(2)}%
+                                    {(Number(vaultBalance)/Number(tigusdSupply)*100).toFixed(2).replace("NaN", "100.00")}%
                                 </VaultCardTitle>
                                 <VaultCardContent>  
                                     Vault Collateralization

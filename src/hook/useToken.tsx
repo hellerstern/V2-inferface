@@ -5,13 +5,12 @@ import { toast } from 'react-toastify';
 
 export const useTokenAllowance = (tokenAddress: string, spender: string) => {
     const { address } = useAccount()
-    if (!address) return 0;
 
     const { data, isError, isFetching } = useContractRead({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'allowance',
-        args: [address, spender as `0x${string}`],
+        args: [address as `0x${string}`, spender as `0x${string}`],
         watch: true
     })
 
@@ -20,13 +19,12 @@ export const useTokenAllowance = (tokenAddress: string, spender: string) => {
 
 export const useTokenBalance = (tokenAddress: string) => {
     const { address } = useAccount()
-    if (!address) return 0;
 
     const { data, isError, isFetching } = useContractRead({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'balanceOf',
-        args: [address],
+        args: [address as `0x${string}`],
         watch: true
     })
 
@@ -34,7 +32,6 @@ export const useTokenBalance = (tokenAddress: string) => {
 }
 
 export const useContractTokenBalance = (contractAddress: string, tokenAddress: string) => {
-
     const { data, isError, isFetching } = useContractRead({
         address: tokenAddress,
         abi: erc20ABI,
@@ -42,21 +39,16 @@ export const useContractTokenBalance = (contractAddress: string, tokenAddress: s
         args: [contractAddress as `0x${string}`],
         watch: true
     })
-
     return data
 }
 
 export const useTokenSupply = (tokenAddress: string) => {
-    const { address } = useAccount()
-    if (!address) return 0;
-
     const { data, isError, isFetching } = useContractRead({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'totalSupply',
         watch: true
     })
-
     return data
 }
 
