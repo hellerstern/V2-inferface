@@ -125,7 +125,7 @@ const LockArr: LockArrProps[] = [
 export const Vault = () => {
     const {chain} = useNetwork();
     const [editState, setEditState] = useState({
-        swapInput: '' as unknown as number,
+        swapInput: '' as string,
         tigBalance: 0.7894,
         days: 18,
         isMyLock: false
@@ -147,12 +147,12 @@ export const Vault = () => {
     const tigusdLiveSupply = useTokenSupply(getNetwork(chain?.id).marginAssets[0].address);
     const [approve] = useApproveToken(getNetwork(chain?.id).marginAssets[1].address, getNetwork(chain?.id).addresses.tigusdvault);
     const [deposit] = useVaultDeposit(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address, isDeposit ? (ethers.utils.parseUnits(Number(editState.swapInput).toFixed(getNetwork(chain?.id).marginAssets[1].decimals), getNetwork(chain?.id).marginAssets[1].decimals)) : "0");
-    const [withdraw] = useVaultWithdraw(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address, isDeposit ? "0" : (ethers.utils.parseEther(Number(editState.swapInput).toFixed(18))));
+    const [withdraw] = useVaultWithdraw(getNetwork(chain?.id).addresses.tigusdvault, getNetwork(chain?.id).marginAssets[1].address, isDeposit ? "0" : (ethers.utils.parseEther(editState.swapInput === '' ? '0' : editState.swapInput)));
     useEffect(() => {
         setFromTokenBalance(((fromTokenLiveBalance ? Number(fromTokenLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[1].decimals)).toString());
     }, [fromTokenLiveBalance]);
     useEffect(() => {
-        setTigTokenBalance(((tigTokenLiveBalance ? Number(tigTokenLiveBalance) : 0) / 1e18).toString());
+        setTigTokenBalance(tigTokenLiveBalance ? ethers.utils.formatEther(tigTokenLiveBalance) : "0");
     }, [tigTokenLiveBalance]);
     useEffect(() => {
         setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
@@ -214,7 +214,7 @@ export const Vault = () => {
                                         <FromBalance onClick={
                                             () => handleEditState(
                                                 "swapInput",
-                                                (fromTokenBalance ? Number(fromTokenBalance) : 0)
+                                                fromTokenBalance
                                             )
                                         }
                                         >
@@ -233,7 +233,7 @@ export const Vault = () => {
                                         <FromBalance onClick={
                                             () => handleEditState(
                                                 "swapInput",
-                                                (tigTokenBalance ? Number(tigTokenBalance) : 0)
+                                                tigTokenBalance
                                             )
                                         }
                                         >
@@ -274,11 +274,11 @@ export const Vault = () => {
                                 <SwapButton onClick={() => approve?.()}>
                                     Approve
                                 </SwapButton>
-                            : (isDeposit && isTokenAllowed && Number(fromTokenBalance) < editState.swapInput) ?
+                            : (isDeposit && isTokenAllowed && Number(fromTokenBalance) < Number(editState.swapInput)) ?
                                 <DisabledSwapButton>
                                     Balance too low
                                 </DisabledSwapButton>
-                            : (!isDeposit && Number(tigTokenBalance) < editState.swapInput) ?
+                            : (!isDeposit && Number(tigTokenBalance) < Number(editState.swapInput)) ?
                                 <DisabledSwapButton>
                                     Balance too low
                                 </DisabledSwapButton>
