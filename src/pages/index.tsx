@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PRIVATE_ROUTES } from 'src/config/routes';
 import { TabPanel } from '../../src/components/TabPanel';
@@ -7,6 +7,8 @@ import { Governance } from './Governance';
 import { Referral } from './Referral';
 import { Trade } from './Trade';
 import { Vault } from './Vault';
+import { oracleData, eu1oracleSocket, eu2oracleSocket } from 'src/context/socket';
+import { getNetwork } from 'src/constants/networks';
 import Cookies from 'universal-cookie';
 
 export const Home = () => {
@@ -14,6 +16,15 @@ export const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const cookies = new Cookies();
+  const [data, setData] = useState<any>(oracleData);
+  useEffect(() => {
+    eu1oracleSocket.on('data', (data: any) => {
+      setData(data);
+    });
+    eu2oracleSocket.on('data', (data: any) => {
+      setData(data);
+    });
+  }, []);
   useEffect(() => {
     const currentUrl = location.search;
     const params = new URLSearchParams(currentUrl);
@@ -29,6 +40,20 @@ export const Home = () => {
       });
     }
   }, []);
+  useEffect(() => {
+		if(data === "Loading...") {
+      document.title = "Trading | Tigris";
+      return;
+    }
+    const currentNetwork = getNetwork(0);
+    const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
+		const pair = currentNetwork.assets[pairIndex].name;
+
+		if(page === 0) document.title = pair + " $"+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
+		if(page === 1) document.title = "Vault | Tigris";
+		if(page === 2) document.title = "Governance | Tigris";
+		if(page === 3) document.title = "Referral | Tigris";
+	}, [data, page]);
   return (
     <>
       <TabPanel value={page} index={0}>
