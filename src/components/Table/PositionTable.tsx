@@ -14,7 +14,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import { getShellWallet, getShellNonce } from '../../../src/shell_wallet/index';
-import { oracleData, eu1oracleSocket, eu2oracleSocket } from 'src/context/socket';
+import { oracleData, eu1oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -47,9 +47,6 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   const [data, setData] = useState<any>(oracleData);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
-      setData(data);
-    });
-    eu2oracleSocket.on('data', (data: any) => {
       setData(data);
     });
   }, []);

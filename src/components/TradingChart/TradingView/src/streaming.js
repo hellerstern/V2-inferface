@@ -1,12 +1,12 @@
 /* eslint-disable */
 
-import { eu1oracleSocket, eu2oracleSocket } from "../../../../../src/context/socket";
+import { eu1oracleSocket } from "../../../../../src/context/socket";
 
 var lastDailyBar;
 var callback;
 var cAsset = 0;
 
-[eu1oracleSocket, eu2oracleSocket].forEach((socket) => {
+[eu1oracleSocket].forEach((socket) => {
   socket.on('data', (data) => {
     if (!data[cAsset]) return;
     const tradePrice = parseFloat(data[cAsset].price / 1e18);

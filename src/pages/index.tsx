@@ -7,7 +7,7 @@ import { Governance } from './Governance';
 import { Referral } from './Referral';
 import { Trade } from './Trade';
 import { Vault } from './Vault';
-import { oracleData, eu1oracleSocket, eu2oracleSocket } from 'src/context/socket';
+import { oracleData, eu1oracleSocket } from 'src/context/socket';
 import { getNetwork } from 'src/constants/networks';
 import Cookies from 'universal-cookie';
 
@@ -19,9 +19,6 @@ export const Home = () => {
   const [data, setData] = useState<any>(oracleData);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
-      setData(data);
-    });
-    eu2oracleSocket.on('data', (data: any) => {
       setData(data);
     });
   }, []);

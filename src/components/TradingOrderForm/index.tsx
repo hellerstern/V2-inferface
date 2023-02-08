@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
@@ -34,7 +34,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
 
   // First render
   useEffect(() => {
-    [eu1oracleSocket, eu2oracleSocket].forEach((socket) => {
+    [eu1oracleSocket].forEach((socket) => {
       socket.on('data', (data: any) => {
         if (!data[currentPairIndex.current]) {
           setMarketAvailable(false);
