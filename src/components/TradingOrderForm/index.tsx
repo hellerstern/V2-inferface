@@ -19,9 +19,12 @@ const { ethereum } = window;
 
 interface IOrderForm {
   pairIndex: number;
+  longOi: any;
+  shortOi: any;
+  maxOi: any;
 }
 
-export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
+export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderForm) => {
 
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -67,7 +70,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
 
   const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] });
-  const currentMarginRef = useRef<any>(getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0]);
+  const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[0]);
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -109,8 +112,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setTokenBalance(((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2));
   }, [tokenLiveBalance, currentMargin]);
   useEffect(() => {
-    setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
-  }, [tokenLiveAllowance]);
+    setIsTokenAllowed(currentMargin.marginAssetDrop.address === getNetwork(chain?.id).addresses.tigusd ? true : tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
+  }, [tokenLiveAllowance, currentMargin]);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -462,9 +465,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Unavailable" ? "MARKET UNAVAILABLE" :
                 s === "Closed" ? "MARKET CLOSED" :
-                  s === "Balance" ? "NOT ENOUGH BALANCE" :
-                    s === "PosSize" ? "POSITION SIZE TOO LOW" :
-                      "You found a bug!"
+                  s === "MaxOi" ? "OPEN INTEREST LIMIT REACHED" :
+                    s === "Balance" ? "NOT ENOUGH BALANCE" :
+                      s === "PosSize" ? "POSITION SIZE TOO LOW" :
+                        "You found a bug!"
     ;
     return txt;
   }
@@ -477,8 +481,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           !isTokenAllowed ? status = "Approve" :
             !isProxyApproved ? status = "Proxy" :
               parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-                parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
-                  status = "Ready";
+                parseFloat(margin)*parseFloat(leverage) + (isLong ? longOi/1e18 : shortOi/1e18) > maxOi/1e18 ? status = "MaxOi" :
+                  parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
+                    status = "Ready";
     return status;
   }
 

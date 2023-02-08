@@ -198,7 +198,7 @@ export const Trade = () => {
                 <TradingChart asset={pairIndex} positionData={positionData} />
               </TradingSection>
               <OrderFormContainer>
-                <TradingOrderForm pairIndex={pairIndex} />
+                <TradingOrderForm pairIndex={pairIndex} longOi={longOi} shortOi={shortOi} maxOi={maxOi}/>
               </OrderFormContainer>
               <PairTableContainer>
                 <PairSelectionTable isMobile={false} setPairIndex={setPairIndex}/>
