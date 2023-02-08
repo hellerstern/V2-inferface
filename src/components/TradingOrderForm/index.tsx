@@ -481,7 +481,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
           !isTokenAllowed ? status = "Approve" :
             !isProxyApproved ? status = "Proxy" :
               parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-                parseFloat(margin)*parseFloat(leverage) + (isLong ? longOi/1e18 : shortOi/1e18) > maxOi/1e18 ? status = "MaxOi" :
+                maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? longOi/1e18 : shortOi/1e18) > maxOi/1e18 ? status = "MaxOi" :
                   parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
                     status = "Ready";
     return status;
