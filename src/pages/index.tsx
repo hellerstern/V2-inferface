@@ -45,14 +45,18 @@ export const Home = () => {
       document.title = "Trading | Tigris";
       return;
     }
-    const currentNetwork = getNetwork(0);
-    const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
-		const pair = currentNetwork.assets[pairIndex].name;
-
-		if(page === 0) document.title = pair + " $"+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
-		if(page === 1) document.title = "Vault | Tigris";
-		if(page === 2) document.title = "Governance | Tigris";
-		if(page === 3) document.title = "Referral | Tigris";
+    if(page === 0) {
+      const currentNetwork = getNetwork(0);
+      const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
+      const pair = currentNetwork.assets[pairIndex].name;
+      document.title = pair + " $"+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
+    } else if(page === 1) {
+      document.title = "Vault | Tigris";
+    } else if(page === 2) {
+      document.title = "Governance | Tigris";
+    } else if(page === 3) {
+      document.title = "Referral | Tigris";
+    }
 	}, [data, page]);
   return (
     <>
