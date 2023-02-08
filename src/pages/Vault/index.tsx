@@ -152,7 +152,7 @@ export const Vault = () => {
         setFromTokenBalance(((fromTokenLiveBalance ? Number(fromTokenLiveBalance) : 0) / 10 ** (getNetwork(chain?.id).marginAssets[1].decimals)).toString());
     }, [fromTokenLiveBalance]);
     useEffect(() => {
-        setTigTokenBalance(((tigTokenLiveBalance ? Number(tigTokenLiveBalance) : 0) / 1e18).toFixed(2));
+        setTigTokenBalance(((tigTokenLiveBalance ? Number(tigTokenLiveBalance) : 0) / 1e18).toString());
     }, [tigTokenLiveBalance]);
     useEffect(() => {
         setIsTokenAllowed(tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
