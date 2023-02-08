@@ -153,21 +153,24 @@ export const TradeLogsTable = (props: LogsTableProps) => {
             </TableRow>
           </TableHead>
           <CustomTableBody>
-            {logData.map((row, index) => (
-              <StyledTableRow key={index}>
-                <TableCell>{row.position}</TableCell>
-                <TableCell>{row.symbol}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.positionSize}</TableCell>
-                <TableCell>{row.leverage}x</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.entryPrice}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.exitPrice}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.pnlPro}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.pnlDollar}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.orderType}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.date}</TableCell>
-                <TableCell sx={{ minWidth: '100px' }}>{row.time}</TableCell>
-              </StyledTableRow>
-            ))}
+            {logData
+              .slice(0)
+              .reverse()
+              .map((row, index) => (
+                <StyledTableRow key={index}>
+                  <TableCell>{row.position}</TableCell>
+                  <TableCell>{row.symbol}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.positionSize}</TableCell>
+                  <TableCell>{row.leverage}x</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.entryPrice}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.exitPrice}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.pnlPro}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.pnlDollar}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.orderType}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.date}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>{row.time}</TableCell>
+                </StyledTableRow>
+              ))}
           </CustomTableBody>
         </Table>
       )}
