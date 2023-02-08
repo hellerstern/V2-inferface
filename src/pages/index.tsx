@@ -49,7 +49,7 @@ export const Home = () => {
       const currentNetwork = getNetwork(0);
       const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
       const pair = currentNetwork.assets[pairIndex].name;
-      document.title = pair + " $"+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
+      document.title = pair + " "+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
     } else if(page === 1) {
       document.title = "Vault | Tigris";
     } else if(page === 2) {
