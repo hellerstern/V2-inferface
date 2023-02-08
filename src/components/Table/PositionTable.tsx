@@ -13,7 +13,7 @@ import { EditModal } from '../Modal/EditModal';
 import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
-import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
+import { getShellWallet, getShellNonce } from '../../../src/shell_wallet/index';
 import { oracleData, eu1oracleSocket, eu2oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 

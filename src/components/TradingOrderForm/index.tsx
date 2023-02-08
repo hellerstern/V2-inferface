@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 
-import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
+import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet, checkShellWallet } from '../../../src/shell_wallet/index';
 
 declare const window: any
 const { ethereum } = window;
@@ -52,19 +52,15 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   }, []);
 
   useEffect(() => {
-    if (address === undefined) return;
-    const x = async () => {
-      await unlockShellWallet();
-    }
-    x();
-  }, [address]);
+    checkShellWallet(address as string);
+    getProxyApproval();
+  }, [address, chain]);
 
   useEffect(() => {
     setMarginAssets({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
     const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
-    getProxyApproval();
   }, [chain]);
 
   const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
@@ -510,7 +506,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
 
   async function getProxyApproval() {
     if (!isConnected) return;
-    const tradingContract = await getTradingContract();
+    const tradingContract = await getTradingContractForApprove();
 
     const proxy = await tradingContract.proxyApprovals(address);
 
@@ -529,9 +525,14 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-
+    const traderGas = await tradingContract.provider.getBalance(address as string);
+    if (Number(traderGas)/1e18 < 0.005) {
+      toast.error("Not enough gas for proxy wallet");
+      return;
+    }
+    await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 86400, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
     const response: any = await toast.promise(
       tx,
       {
