@@ -6,12 +6,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { PRIVATE_ROUTES } from 'src/config/routes';
 import { NETWORK } from 'src/constants/networks/polygon-main';
 import axios from 'axios';
 import { parseDate } from '../Menu/NotificationMenu';
 import { ThreeDotsLoader } from '../ThreeDotsLoader';
+import { getNetwork } from 'src/constants/networks';
 
 function createData(
   position: string,
@@ -75,6 +76,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
   const [isLoading, setLoading] = useState(false);
 
   const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const fetchData = async () => {
     if (address !== undefined) {
@@ -87,7 +89,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
         for (let i = 0; i < len; i++) {
           const position = data[i].position === true ? 'LONG' : 'SHORT';
           const symbol_idx = data[i].symbol;
-          const symbol = NETWORK.assets[symbol_idx].name;
+          const symbol = getNetwork(chain?.id).assets[symbol_idx].name;
           const positionSize = data[i].positionSize;
           const leverage = data[i].leverage;
           const entryPrice = data[i].entryPrice;
