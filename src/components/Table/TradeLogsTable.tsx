@@ -87,7 +87,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
       const createArr = [];
       if (len > 0) {
         for (let i = 0; i < len; i++) {
-          const position = data[i].position === true ? 'LONG' : 'SHORT';
+          const position = data[i].position === true ? 'Long' : 'Short';
           const symbol_idx = data[i].symbol;
           const symbol = getNetwork(chain?.id).assets[symbol_idx].name;
           const positionSize = data[i].positionSize;
@@ -158,14 +158,18 @@ export const TradeLogsTable = (props: LogsTableProps) => {
               .reverse()
               .map((row, index) => (
                 <StyledTableRow key={index}>
-                  <TableCell>{row.position}</TableCell>
+                  <TableCell>
+                    <span style={{ color: row.position === 'Long' ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>
+                      {row.position}
+                    </span>
+                  </TableCell>
                   <TableCell>{row.symbol}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.positionSize}</TableCell>
                   <TableCell>{row.leverage}x</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.entryPrice}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.exitPrice}</TableCell>
-                  <TableCell sx={{ minWidth: '100px' }}>{row.pnlPro}</TableCell>
-                  <TableCell sx={{ minWidth: '100px' }}>{row.pnlDollar}</TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}><span style={{ color: row.pnlPro > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>{row.pnlPro}</span></TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}><span style={{ color: row.pnlDollar > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>{row.pnlDollar}</span></TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.orderType}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.date}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.time}</TableCell>
