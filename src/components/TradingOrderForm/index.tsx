@@ -541,7 +541,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(getNetwork(chain?.id).proxyGas) });
     const response: any = await toast.promise(
       tx,
       {
