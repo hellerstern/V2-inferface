@@ -535,13 +535,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const tradingContract = getTradingContractForApprove();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const traderGas = await tradingContract.provider.getBalance(address as string);
-    if (Number(traderGas)/1e18 < 0.005) {
+    const proxyGas = getNetwork(chain?.id).proxyGas;
+    if (Number(traderGas)/1e18 < Number(proxyGas)) {
       toast.error("Not enough gas for proxy wallet");
       return;
     }
     await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(getNetwork(chain?.id).proxyGas) });
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(proxyGas) });
     const response: any = await toast.promise(
       tx,
       {
