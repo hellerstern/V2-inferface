@@ -9,7 +9,7 @@ export const SearchBar = ({onChange}: SearchProps) => {
   return (
     <SearchBarContainer component={'form'}>
       <Search sx={{ color: '#777E90' }} />
-      <InputBox placeholder="Search a specific pairs..." onChange={onChange}/>
+      <InputBox placeholder="Search a specific pair" onChange={onChange}/>
     </SearchBarContainer>
   );
 };

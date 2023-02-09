@@ -55,16 +55,16 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }, [address, chain]);
 
   useEffect(() => {
-    setMarginAssets({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
-    const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
+    setMarginAssets({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
+    const _currentMargin = { marginAssetDrop: getNetwork(chain?.id).marginAssets[1] };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
   }, [chain]);
 
-  const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
+  const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
 
-  const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] });
-  const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[0]);
+  const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets[1] });
+  const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[1]);
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -330,6 +330,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             defaultValue={0}
             aria-label="Default"
             valueLabelDisplay="auto"
+            valueLabelFormat={(value: number, index: number) => {
+              return `${value}%`;
+            }}
             min={0}
             step={1}
             max={90}
@@ -345,6 +348,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
             aria-label="Default"
             valueLabelDisplay="auto"
+            valueLabelFormat={(value: number, index: number) => {
+              return `${value}%`;
+            }}
             min={0}
             step={1}
             max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
