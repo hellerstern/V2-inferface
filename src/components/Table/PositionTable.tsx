@@ -57,6 +57,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
 
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { assets } = getNetwork(0);
 
   const [forceRerender, setForceRerender] = useState(Math.random());
 
@@ -120,7 +121,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   }
   async function cancelOrder(id: number) {
     try {
-      const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+      const currentNetwork = getNetwork(chain?.id);
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
@@ -156,7 +157,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   }
   async function updateTPSL(position: any, isTP: boolean, limitPrice: string) {
     try {
-      const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+      const currentNetwork = getNetwork(chain?.id);
       const _oracleData: any = oracleData[position.asset];
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
@@ -343,7 +344,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
                 <TableCell>{position.orderType === 1 ? "Limit" : "Stop"}</TableCell> :
                 <></>
               }
-              <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
+              <TableCell>{assets[position.asset].name}</TableCell>
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
