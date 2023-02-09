@@ -2,7 +2,7 @@ import { Star, StarBorder } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { btcLogo, eurLogo, gbpLogo } from '../../config/images';
+import { btcLogo, cadLogo, eurLogo, jpyLogo, gbpLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
 import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 
@@ -130,7 +130,7 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
       <PairField
         favor={FavPairs.includes('USD/CAD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={cadLogo}
         name={'USD/CAD'}
       />,
       <Benefit percent={0.63} value={110} />,
@@ -160,7 +160,7 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
       <PairField
         favor={FavPairs.includes('USD/JPY')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
+        icon={jpyLogo}
         name={'USD/JPY'}
       />,
       <Benefit percent={0.63} value={110} />,

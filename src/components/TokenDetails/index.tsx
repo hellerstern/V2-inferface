@@ -34,10 +34,10 @@ export const TokenDetails = ({
     logos.linkLogo,
     logos.eurLogo,
     logos.gbpLogo,
-    logos.btcLogo, // jpy
+    logos.jpyLogo,
     logos.btcLogo, // rub
     logos.btcLogo, // chf
-    logos.btcLogo, // cad
+    logos.cadLogo,
     logos.ethLogo, // eth/btc
     logos.xrpLogo,
     logos.bnbLogo,

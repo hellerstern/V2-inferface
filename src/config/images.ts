@@ -20,6 +20,7 @@ import avaxLogo from '../assets/images/CoinImage/avaxLogo.svg';
 import bchLogo from '../assets/images/CoinImage/bchLogo.svg';
 import btcLogo from '../assets/images/CoinImage/btcLogo.svg';
 import bnbLogo from '../assets/images/CoinImage/bnbLogo.svg';
+import cadLogo from '../assets/images/CoinImage/cadLogo.svg';
 import daiLogo from '../assets/images/CoinImage/daiLogo.svg';
 import dogeLogo from '../assets/images/CoinImage/dogeLogo.svg';
 import dotLogo from '../assets/images/CoinImage/dotLogo.svg';
@@ -35,6 +36,7 @@ import uniLogo from '../assets/images/CoinImage/uniLogo.svg';
 import xmrLogo from '../assets/images/CoinImage/xmrLogo.svg';
 import xrpLogo from '../assets/images/CoinImage/xrpLogo.svg';
 import eurLogo from '../assets/images/CoinImage/eurLogo.svg';
+import jpyLogo from '../assets/images/CoinImage/jpyLogo.svg';
 import gbpLogo from '../assets/images/CoinImage/gbpLogo.svg';
 import goldLogo from '../assets/images/CoinImage/goldLogo.svg';
 import silverLogo from '../assets/images/CoinImage/silverLogo.svg';
@@ -61,10 +63,12 @@ export {
   bchLogo,
   btcLogo,
   bnbLogo,
+  cadLogo,
   daiLogo,
   dogeLogo,
   dotLogo,
   ethLogo,
+  jpyLogo,
   linkLogo,
   ltcLogo,
   maticLogo,
