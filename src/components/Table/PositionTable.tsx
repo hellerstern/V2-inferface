@@ -59,9 +59,6 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   const { chain } = useNetwork();
 
   const [forceRerender, setForceRerender] = useState(Math.random());
-  useEffect(() => {
-    setForceRerender(Math.random());
-  }, [positionData]);
 
   const [clickedPosition, setClickedPosition] = useState<any>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
