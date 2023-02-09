@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import { styled } from '@mui/system';
 import { Box } from '@mui/material';
+import { useAccount } from 'wagmi';
 
 interface NotificationMenuProps {
   state: null | HTMLElement;
@@ -17,6 +18,15 @@ export default function NotificationMenu(props: NotificationMenuProps) {
   const handleClose = () => {
     setState(null);
   };
+
+  const { address } = useAccount();
+
+  React.useEffect(() => {
+    if (address !== undefined && data.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/clear/${address}`);
+    }
+  }, [state]);
 
   return (
     <React.Fragment>
@@ -81,7 +91,6 @@ export default function NotificationMenu(props: NotificationMenuProps) {
 
 export const parseDate = (dateTime: string) => {
   const date = new Date(dateTime);
-  console.log({ date });
   return date.toLocaleString();
 };
 
