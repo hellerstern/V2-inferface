@@ -34,11 +34,12 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 
 	const { address } = useAccount();
 	const { chain } = useNetwork();
+	const { assets } = getNetwork(0);
 
 	const posData = positionData;
 
 	const widgetOptions: ChartingLibraryWidgetOptions = {
-		symbol: getNetwork(0).assets[asset].name as string,
+		symbol: assets[asset].name as string,
 		// tslint:disable-next-line:no-any
 		datafeed: Datafeed,
 		interval: '1' as ResolutionString,
@@ -90,7 +91,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		currentAsset.current = asset;
 		localStorage.setItem("LastPairSelected", asset);
 		try {
-			tvWidget.current?.setSymbol(getNetwork(0).assets[asset].name as string, tvWidget.current?.symbolInterval().interval as ResolutionString, () => { });
+			tvWidget.current?.setSymbol(assets[asset].name as string, tvWidget.current?.symbolInterval().interval as ResolutionString, () => { });
 		} catch {
 			tvWidget.current = new widget(widgetOptions);
 		}

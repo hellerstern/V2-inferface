@@ -2,11 +2,12 @@ import { ethers } from "ethers";
 import { erc20ABI, usePrepareContractWrite, useContractWrite, useContractRead, useAccount, useNetwork, useWaitForTransaction } from "wagmi";
 import { getNetwork } from "src/constants/networks";
 import { toast } from 'react-toastify';
+const { abis } = getNetwork(0);
 
 export const useVaultDeposit = (vaultAddress: string, tokenAddress: string, amount: any) => {
     const { config } = usePrepareContractWrite({
         address: vaultAddress,
-        abi: getNetwork(0).abis.tigusdvault,
+        abi: abis.tigusdvault,
         functionName: 'deposit',
         args: [tokenAddress, amount]
     });
@@ -38,7 +39,7 @@ export const useVaultDeposit = (vaultAddress: string, tokenAddress: string, amou
 export const useVaultWithdraw = (vaultAddress: string, tokenAddress: string, amount: any) => {
     const { config } = usePrepareContractWrite({
         address: vaultAddress,
-        abi: getNetwork(0).abis.tigusdvault,
+        abi: abis.tigusdvault,
         functionName: 'withdraw',
         args: [tokenAddress, amount]
     });

@@ -26,6 +26,7 @@ export const TokenDetails = ({
   pairIndex,
   setPairIndex
 }: ITokenDetails) => {
+  const { assets } = getNetwork(0);
   const LogoArray = [
     logos.btcLogo,
     logos.ethLogo,
@@ -172,9 +173,9 @@ export const TokenDetails = ({
           <KindOfToken onClick={handleTokenClick}>
             <Tokens>
               <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
-              <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
+              <span className="token-name">{assets[pairIndex].name}</span>
               <Box className="multi-value">
-                <span>{getNetwork(0).assets[pairIndex].maxLev}X</span>
+                <span>{assets[pairIndex].maxLev}X</span>
               </Box>
             </Tokens>
             <AiFillStar />

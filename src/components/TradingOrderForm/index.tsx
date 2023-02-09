@@ -29,6 +29,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const { openConnectModal } = useConnectModal();
   const [isMarketAvailable, setMarketAvailable] = useState(true);
   const [isMarketClosed, setMarketClosed] = useState(false);
+  const { assets } = getNetwork(0);
 
   // First render
   useEffect(() => {
@@ -465,7 +466,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const txt =
       s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
         s === "Proxy" ? "APPROVE PROXY" :
-          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (getNetwork(0).assets[pairIndex].name) :
+          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Unavailable" ? "MARKET UNAVAILABLE" :
                 s === "Closed" ? "MARKET CLOSED" :

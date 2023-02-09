@@ -96,6 +96,7 @@ interface PriceCellProps {
 }
 
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
+  const { assets } = getNetwork(0);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
       if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
@@ -117,7 +118,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
       <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
         {oraclePrice === 'Loading...'
           ? 'Loading...'
-          : (oraclePrice / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+          : (oraclePrice / 1e18).toFixed(assets[pairIndex].decimals)}
       </TableCell>
     </>
   );
