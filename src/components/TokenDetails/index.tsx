@@ -13,6 +13,7 @@ import { eu1oracleSocket, lastOracleTime } from '../../../src/context/socket';
 import { PairSelectionModal } from '../Modal/PairSelectionModal';
 import { useCloseFees, useOpenFees, useOpenInterest, usePairData, useReferral, useVaultFunding } from 'src/hook/useTradeInfo';
 import { ethers } from 'ethers';
+import { getNetwork } from 'src/constants/networks';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
@@ -171,9 +172,9 @@ export const TokenDetails = ({
           <KindOfToken onClick={handleTokenClick}>
             <Tokens>
               <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
-              <span className="token-name">{pairData?.name}</span>
+              <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
               <Box className="multi-value">
-                <span>{pairData?.maxLeverage/1e18}X</span>
+                <span>{getNetwork(0).assets[pairIndex].maxLev}X</span>
               </Box>
             </Tokens>
             <AiFillStar />
@@ -210,25 +211,25 @@ export const TokenDetails = ({
                 <p className="title">Long Open Interest</p>
                 <p className="value">
                   {
-                    (oi?.longOi / 1e18).toFixed(0) + '/'
+                    (oi ? oi.longOi / 1e18 : 0).toFixed(0) + '/'
                   }
-                  <span>{oi?.maxOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                  <span>{oi ? oi.maxOi.toString() === '0' ? 'Unlimited' : (oi.maxOi / 1e18).toString() : "Unlimited"}</span>
                 </p>
               </Box>
               <Box className="index-info">
                 <p className="title">Short Open Interest</p>
                 <p className="value">
                   {
-                    (oi?.shortOi / 1e18).toFixed(0) + '/'
+                    (oi ? oi.shortOi / 1e18 : 0).toFixed(0) + '/'
                   }
-                  <span>{oi?.shortOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                  <span>{oi ? oi.maxOi.toString() === '0' ? 'Unlimited' : (oi.maxOi / 1e18).toString() : "Unlimited"}</span>
                 </p>
               </Box>
               <Box className="index-info">
                 <p className="title">Open Fee</p>
                 <p className="value">
                   {
-                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.HashZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                    openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.HashZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%" : "0.100%"
                   }
                 </p>
               </Box>
@@ -236,23 +237,23 @@ export const TokenDetails = ({
                 <p className="title">Close Fee</p>
                 <p className="value">
                   {
-                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.HashZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                    closeFees ? (((Number(closeFees.daoFees) + Number(closeFees.burnFees) - (referral !== ethers.constants.HashZero ? closeFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%" : "0.100%"
                   }
                 </p>
               </Box>
               <Box className="index-info">
                 <p className="title">Long Funding Fee</p>
-                <p className="value" style={{ color: longAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                <p className="value" style={{ color: longAPRHourly <= 0 || isNaN(longAPRHourly) ? '#26A69A' : '#EF534F' }}>
                   {
-                    longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                    longAPRHourly.toFixed(5).replace('NaN', '0.00000').replace('Infinity', 'ထ') + '% Per Hour'
                   }
                 </p>
               </Box>
               <Box className="index-info">
                 <p className="title">Short Funding Fee</p>
-                <p className="value" style={{ color: shortAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                <p className="value" style={{ color: shortAPRHourly <= 0 || isNaN(shortAPRHourly) ? '#26A69A' : '#EF534F' }}>
                   {
-                    shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                    shortAPRHourly.toFixed(5).replace('NaN', '0.00000').replace('Infinity', 'ထ') + '% Per Hour'
                   }
                 </p>
               </Box>
