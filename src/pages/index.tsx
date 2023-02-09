@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PRIVATE_ROUTES } from 'src/config/routes';
 import { TabPanel } from '../../src/components/TabPanel';
@@ -16,11 +16,16 @@ export const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const cookies = new Cookies();
-  const [data, setData] = useState<any>(oracleData);
   const { assets } = getNetwork(0);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
-      setData(data);
+      const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
+      const pair = assets[pairIndex].name;
+      if (data[pairIndex]) {
+        document.title = pair + " "+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
+      } else {
+        document.title = "Trading | Tigris";
+      }
     });
   }, []);
   useEffect(() => {
@@ -39,18 +44,8 @@ export const Home = () => {
     }
   }, []);
   useEffect(() => {
-		if(data === "Loading...") {
-      document.title = "Trading | Tigris";
-      return;
-    }
     if(page === 0) {
-      const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
-      const pair = assets[pairIndex].name;
-      if (data[pairIndex]) {
-        document.title = pair + " "+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
-      } else {
-        document.title = "Trading | Tigris";
-      }
+      document.title = "Trading | Tigris";
     } else if(page === 1) {
       document.title = "Vault | Tigris";
     } else if(page === 2) {
@@ -58,7 +53,7 @@ export const Home = () => {
     } else if(page === 3) {
       document.title = "Referral | Tigris";
     }
-	}, [data, page]);
+	}, [page]);
   return (
     <>
       <TabPanel value={page} index={0}>

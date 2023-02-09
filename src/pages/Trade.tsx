@@ -19,8 +19,8 @@ declare const window: any
 const { ethereum } = window;
 
 export const Trade = () => {
-  const positionData = PositionData().positionData;
-
+  const { positionData } = PositionData();
+  
   const [pairIndex, setPairIndex] = useState(
     localStorage.getItem('LastPairSelected') !== null ? parseInt(localStorage.getItem('LastPairSelected') as string) : 0
   );
