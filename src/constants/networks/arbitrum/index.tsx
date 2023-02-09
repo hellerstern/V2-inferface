@@ -63,6 +63,7 @@ export const NETWORK = {
   },
   icon: ArbiScanSvg,
   gasLimit: 6_000_000,
+  proxyGas: "0.01",
   assets: [],
   marginAssets: [
     {

@@ -18,6 +18,7 @@ const { ethereum } = window;
 export const Proxy = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const { proxyGas } = getNetwork(chain?.id);
 
   const [shellAddress, setShellAddress] = useState("Loading...");
   const [gasBalanceData, setGasBalanceData] = useState<any>({formatted: "0", symbol: "ETH"});
@@ -33,7 +34,7 @@ export const Proxy = () => {
 
   const [editState, setEditState] = useState({
     extendValue: '1',
-    fundValue: '0.002'
+    fundValue: proxyGas
   });
   const handleEditState = (prop: string, value: any) => {
     setEditState({ ...editState, [prop]: value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0')});
@@ -71,7 +72,7 @@ export const Proxy = () => {
   }, []);
 
   async function getTradingContract() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const currentNetwork = getNetwork(chain?.id);
     return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, new ethers.providers.Web3Provider(ethereum).getSigner());
   }
 

@@ -48,8 +48,7 @@ export const NETWORK = {
     },
     icon: "assets/images/arbtest.png",
     gasLimit: 10_000_000,
-    shell_token: "ETH",
-    shell_gas_amount: "0.005",
+    proxyGas: "0.01",
     assets: [],
     marginAssets: [
         {
