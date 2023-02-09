@@ -128,10 +128,10 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
   const rows = [
     createData(
       <PairField
-        favor={FavPairs.includes('CAD/USD')}
+        favor={FavPairs.includes('USD/CAD')}
         handleFavoriteToggle={handleFavoriteToggle}
         icon={btcLogo}
-        name={'CAD/USD'}
+        name={'USD/CAD'}
       />,
       <Benefit percent={0.63} value={110} />,
       10
@@ -158,10 +158,10 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
     ),
     createData(
       <PairField
-        favor={FavPairs.includes('JPY/USD')}
+        favor={FavPairs.includes('USD/JPY')}
         handleFavoriteToggle={handleFavoriteToggle}
         icon={btcLogo}
-        name={'JPY/USD'}
+        name={'USD/JPY'}
       />,
       <Benefit percent={0.63} value={110} />,
       7

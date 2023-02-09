@@ -461,12 +461,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   function getButtonText() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const s = getTradeStatus();
     const txt =
       s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
         s === "Proxy" ? "APPROVE PROXY" :
-          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
+          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (getNetwork(0).assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Unavailable" ? "MARKET UNAVAILABLE" :
                 s === "Closed" ? "MARKET CLOSED" :
