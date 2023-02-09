@@ -17,6 +17,7 @@ export const Home = () => {
   const navigate = useNavigate();
   const cookies = new Cookies();
   const [data, setData] = useState<any>(oracleData);
+  const { assets } = getNetwork(0);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
       setData(data);
@@ -43,9 +44,8 @@ export const Home = () => {
       return;
     }
     if(page === 0) {
-      const currentNetwork = getNetwork(0);
       const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
-      const pair = currentNetwork.assets[pairIndex].name;
+      const pair = assets[pairIndex].name;
       if (data[pairIndex]) {
         document.title = pair + " "+ (parseFloat(data[pairIndex].price)/1e18).toPrecision(6) +" | Tigris";
       } else {
