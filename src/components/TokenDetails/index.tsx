@@ -9,38 +9,22 @@ import { Container } from '../../../src/components/Container';
 import usePreventBodyScroll from '../../../src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
-import { getNetwork } from '../../../src/constants/networks';
-import { eu1oracleSocket } from '../../../src/context/socket';
+import { eu1oracleSocket, lastOracleTime } from '../../../src/context/socket';
 import { PairSelectionModal } from '../Modal/PairSelectionModal';
+import { useCloseFees, useOpenFees, useOpenInterest, usePairData, useReferral, useVaultFunding } from 'src/hook/useTradeInfo';
+import { ethers } from 'ethers';
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 interface ITokenDetails {
   pairIndex: number;
   setPairIndex: (value: number) => void;
-  maxOi: any;
-  longOi: any;
-  shortOi: any;
-  openFee: any;
-  closeFee: any;
-  longAPRHourly: any;
-  shortAPRHourly: any;
-  maxLev: any;
 }
 
 export const TokenDetails = ({
   pairIndex,
-  setPairIndex,
-  maxOi,
-  longOi,
-  shortOi,
-  openFee,
-  closeFee,
-  longAPRHourly,
-  shortAPRHourly,
-  maxLev
+  setPairIndex
 }: ITokenDetails) => {
-  const [isPairModalOpen, setPairModalOpen] = useState(false);
   const LogoArray = [
     logos.btcLogo,
     logos.ethLogo,
@@ -84,50 +68,81 @@ export const TokenDetails = ({
       setOracleData(data);
     });
   }, []);
-
   const [oracleData, setOracleData] = useState(Array(35).fill({ price: '0', spread: '0' }));
 
-  const INFOS: any = [
-    {
-      name: 'Oracle Price',
-      value: oracleData[pairIndex]
-        ? (parseInt(oracleData[pairIndex].price) / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)
-        : 'Loading...',
-      label: ''
-    },
-    {
-      name: 'Price Spread',
-      value:
-        oracleData[pairIndex] != null
-          ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
-          : '0.000%',
-      label: ''
-    },
-    {
-      name: 'Long Open Interest',
-      value: (longOi / 1e18).toFixed(0) + '/',
-      label: maxOi.toString() === '0' ? 'Unlimited' : (maxOi / 1e18).toString()
-    },
-    {
-      name: 'Short Open Interest',
-      value: (shortOi / 1e18).toFixed(0) + '/',
-      label: maxOi.toString() === '0' ? 'Unlimited' : (maxOi / 1e18).toString()
-    },
-    { name: 'Opening Fee', value: openFee, label: '' },
-    { name: 'Closing Fee', value: closeFee, label: '' },
-    {
-      name: 'Long Funding Fee',
-      value: (longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') as string) + '% Per Hour',
-      label: '',
-      active: longAPRHourly > 0 ? 2 : 1
-    },
-    {
-      name: 'Short Funding Fee',
-      value: (shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') as string) + '% Per Hour',
-      label: '',
-      active: shortAPRHourly > 0 ? 2 : 1
+  const [oi, setOi] = useState<any>({longOi: 0, shortOi: 0, maxOi: 0});
+  const liveOi = useOpenInterest(pairIndex);
+  useEffect(() => {
+    setOi(liveOi);
+  }, [liveOi]);
+
+  const [pairData, setPairData] = useState<any>({});
+  const livePairData = usePairData(pairIndex);
+  useEffect(() => {
+    setPairData(livePairData);
+  }, [livePairData]);
+
+  const [openFees, setOpenFees] = useState<any>({});
+  const liveOpenFees = useOpenFees();
+  useEffect(() => {
+    setOpenFees(liveOpenFees);
+  }, [liveOpenFees]);
+
+  const [closeFees, setCloseFees] = useState<any>({});
+  const liveCloseFees = useCloseFees();
+  useEffect(() => {
+    setCloseFees(liveCloseFees);
+
+  }, [liveCloseFees]);
+
+  const [vaultFunding, setVaultFunding] = useState<any>({});
+  const liveVaultFunding = useVaultFunding();
+  useEffect(() => {
+    setVaultFunding(liveVaultFunding);
+  }, [liveVaultFunding]);
+
+  const [referral, setReferral] = useState<any>({});
+  const liveReferral = useReferral();
+  useEffect(() => {
+    setReferral(liveReferral);
+  }, [liveReferral]);
+
+  useEffect(() => {
+    calculateFundingAPR();
+  }, [vaultFunding, pairData, oi]);
+
+  const [longAPRHourly, setLongAPRHourly] = useState(0);
+  const [shortAPRHourly, setShortAPRHourly] = useState(0);
+
+  function calculateFundingAPR() {
+    const longOi = Number(oi?.longOi);
+    const shortOi = Number(oi?.shortOi);
+
+    const diff = longOi > shortOi ? longOi - shortOi : shortOi - longOi;
+
+    const baseFundingRate = pairData?.baseFundingRate;
+    const base = diff * baseFundingRate;
+
+    let shortAPR = base/shortOi;
+    let longAPR = base/longOi;
+
+    if(longOi > shortOi) shortAPR = shortAPR * -1;
+    else longAPR = longAPR * -1;
+
+    let shortAPRHourly = shortAPR/365/24/1e8;
+    let longAPRHourly = longAPR/365/24/1e8;
+
+    if (longOi < shortOi) {
+      longAPRHourly = longAPRHourly*(1e10-vaultFunding)/1e10;
+    } else if (shortOi < longOi) {
+      shortAPRHourly = shortAPRHourly*(1e10-vaultFunding)/1e10;
+    } else if (longOi === 0 && shortOi === 0) {
+      longAPRHourly = 0;
+      shortAPRHourly = 0;
     }
-  ];
+    setShortAPRHourly(shortAPRHourly);
+    setLongAPRHourly(longAPRHourly);
+  }
 
   function onWheel(apiObj: scrollVisibilityApiType, ev: React.WheelEvent): void {
     const isTouchpad = Math.abs(ev.deltaX) !== 0 || Math.abs(ev.deltaY) < 15;
@@ -156,9 +171,9 @@ export const TokenDetails = ({
           <KindOfToken onClick={handleTokenClick}>
             <Tokens>
               <img src={LogoArray[pairIndex]} style={{ height: '28px' }} />
-              <span className="token-name">{getNetwork(0).assets[pairIndex].name}</span>
+              <span className="token-name">{pairData?.name}</span>
               <Box className="multi-value">
-                <span>{getNetwork(0).assets[pairIndex].maxLev}X</span>
+                <span>{pairData?.maxLeverage/1e18}X</span>
               </Box>
             </Tokens>
             <AiFillStar />
@@ -171,33 +186,149 @@ export const TokenDetails = ({
           />
           <DesktopStatusInfos onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} onWheel={onWheel}>
-              {INFOS.map((item: any, index: number) => (
-                <Box className="index-info" key={index}>
-                  <p className="title">{item.name}</p>
-                  <p
-                    className="value"
-                    style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
-                  >
-                    {item.value}
-                    <span>{item.label}</span>
-                  </p>
-                </Box>
-              ))}
+              <Box className="index-info">
+                <p className="title">Oracle Price</p>
+                <p className="value">
+                  {
+                    oracleData[pairIndex]
+                      ? (parseInt(oracleData[pairIndex].price) / 1e18).toPrecision(6)
+                      : 'Loading...'
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Price Spread</p>
+                <p className="value">
+                  {
+                    oracleData[pairIndex] != null
+                      ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
+                      : '0.000%'
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Long Open Interest</p>
+                <p className="value">
+                  {
+                    (oi?.longOi / 1e18).toFixed(0) + '/'
+                  }
+                  <span>{oi?.maxOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Short Open Interest</p>
+                <p className="value">
+                  {
+                    (oi?.shortOi / 1e18).toFixed(0) + '/'
+                  }
+                  <span>{oi?.shortOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Open Fee</p>
+                <p className="value">
+                  {
+                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.HashZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Close Fee</p>
+                <p className="value">
+                  {
+                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.HashZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Long Funding Fee</p>
+                <p className="value" style={{ color: longAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                  {
+                    longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Short Funding Fee</p>
+                <p className="value" style={{ color: shortAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                  {
+                    shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                  }
+                </p>
+              </Box>
             </ScrollMenu>
           </DesktopStatusInfos>
           <MobileStatusInfos>
-            {INFOS.map((item: any, index: number) => (
-              <Box className="index-info" key={index}>
-                <p className="title">{item.name}</p>
-                <p
-                  className="value"
-                  style={{ color: item.active === 1 ? '#26A69A' : item.active === 2 ? '#EF534F' : '#E5E3EC' }}
-                >
-                  {item.value}
-                  <span>{item.label}</span>
+          <Box className="index-info">
+                <p className="title">Oracle Price</p>
+                <p className="value">
+                  {
+                    oracleData[pairIndex]
+                      ? (parseInt(oracleData[pairIndex].price) / 1e18).toPrecision(6)
+                      : 'Loading...'
+                  }
                 </p>
               </Box>
-            ))}
+              <Box className="index-info">
+                <p className="title">Price Spread</p>
+                <p className="value">
+                  {
+                    oracleData[pairIndex] != null
+                      ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
+                      : '0.000%'
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Long Open Interest</p>
+                <p className="value">
+                  {
+                    (oi?.longOi / 1e18).toFixed(0) + '/'
+                  }
+                  <span>{oi?.maxOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Short Open Interest</p>
+                <p className="value">
+                  {
+                    (oi?.shortOi / 1e18).toFixed(0) + '/'
+                  }
+                  <span>{oi?.shortOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Open Fee</p>
+                <p className="value">
+                  {
+                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.HashZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Close Fee</p>
+                <p className="value">
+                  {
+                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.HashZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Long Funding Fee</p>
+                <p className="value" style={{ color: longAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                  {
+                    longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                  }
+                </p>
+              </Box>
+              <Box className="index-info">
+                <p className="title">Short Funding Fee</p>
+                <p className="value" style={{ color: shortAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
+                  {
+                    shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
+                  }
+                </p>
+              </Box>
           </MobileStatusInfos>
         </TradeWrapper>
       </Container>

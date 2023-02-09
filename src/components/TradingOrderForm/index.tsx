@@ -11,6 +11,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
+import { useOpenInterest } from 'src/hook/useTradeInfo';
 
 import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet, checkShellWallet } from '../../../src/shell_wallet/index';
 
@@ -19,12 +20,9 @@ const { ethereum } = window;
 
 interface IOrderForm {
   pairIndex: number;
-  longOi: any;
-  shortOi: any;
-  maxOi: any;
 }
 
-export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderForm) => {
+export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -110,6 +108,11 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   useEffect(() => {
     setIsTokenAllowed(currentMargin.marginAssetDrop.address === getNetwork(chain?.id).addresses.tigusd ? true : tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
   }, [tokenLiveAllowance, currentMargin]);
+  const [oi, setOi] = useState<any>({longOi: 0, shortOi: 0, maxOi: 0});
+  const liveOi = useOpenInterest(pairIndex);
+  useEffect(() => {
+    setOi(liveOi);
+  }, [liveOi]);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -477,7 +480,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
           !isTokenAllowed ? status = "Approve" :
             !isProxyApproved ? status = "Proxy" :
               parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-                maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? longOi/1e18 : shortOi/1e18) > maxOi/1e18 ? status = "MaxOi" :
+                oi?.maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? oi?.longOi/1e18 : oi?.shortOi/1e18) > oi?.maxOi/1e18 ? status = "MaxOi" :
                   parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
                     status = "Ready";
     return status;

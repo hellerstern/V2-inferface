@@ -99,9 +99,7 @@ export const unlockShellWallet = async () => {
     }
 }
 
-export const getShellAddress = async () => {
-    if (!currentAddress) return ""; // await unlockShellWallet();
-
+export const getShellAddress = () => {
     return currentAddress;
 }
 

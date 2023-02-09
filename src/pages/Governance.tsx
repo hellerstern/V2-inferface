@@ -3,7 +3,7 @@ import { Box, Button, FormControlLabel, FormGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { OpenInNew } from '@mui/icons-material';
-import { ArbiScanSvg, LOGO, PolygonSvg } from 'src/config/images';
+import { ArbiScanSvg, LOGO, PolygonSvg, tigusdLogo } from 'src/config/images';
 import { Notification } from 'src/components/Notification';
 import { InputField } from 'src/components/Input';
 import { IconDropDownMenu } from 'src/components/Dropdown/IconDrop';
@@ -11,6 +11,7 @@ import { TigrisCheckBox } from 'src/components/CheckBox';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { getNetwork } from 'src/constants/networks';
+import { useTokenSupply } from 'src/hook/useToken';
 
 declare const window: any
 const { ethereum } = window;
@@ -139,6 +140,11 @@ export const Governance = () => {
   const [selectedNfts, setSelectedNfts] = useState<any[]>([]);
 
   const [isBridgeError, setBridgeError] = useState(false);
+  const govnftLiveSupply = useTokenSupply(getNetwork(chain?.id).addresses.govnft);
+  
+  useEffect(() => {
+    setGovSupply(govnftLiveSupply ? Number(govnftLiveSupply) : 0);
+  }, [govnftLiveSupply]);
 
   async function getInfo() {
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -161,10 +167,6 @@ export const Governance = () => {
 
     const av = await nftsaleContract.available();
     setAvailable(av);
-
-    const supply = await govnftContract.totalSupply();
-    const contractBalance = await govnftContract.balanceOf(currentNetwork.addresses.nftsale);
-    setGovSupply(supply-contractBalance);
 
     const pending = await govnftContract.pending(address, currentNetwork.addresses.tigusd);
     setPending(pending);
@@ -284,7 +286,7 @@ export const Governance = () => {
               <FeeCard>
                 <FeeCardTitle>Fee distribution</FeeCardTitle>
                 <FeeCardContent>
-                  <img src={LOGO} alt="logo" width={30} height={30} />
+                  <img src={tigusdLogo} alt="tigusd" width={30} height={30} />
                   {(pending/1e18).toFixed(2)} tigUSD
                 </FeeCardContent>
                 <PrimaryButton>Claim</PrimaryButton>

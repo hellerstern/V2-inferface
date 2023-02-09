@@ -17,8 +17,9 @@ import { NavList } from '../../src/components/List/NavList';
 import { AccountSetting } from '../../src/components/List/AccountSetting';
 import { useNavigate } from 'react-router-dom';
 import { TraderProfile } from 'src/context/profile';
-import { getShellBalance } from 'src/shell_wallet';
+import { getShellAddress, checkShellWallet } from 'src/shell_wallet';
 import NotificationMenu from 'src/components/Menu/NotificationMenu';
+import { useGasBalance } from 'src/hook/useGasBalance';
 
 // import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
@@ -29,24 +30,19 @@ export const Header = () => {
   const [notiData, setNotiData] = useState<string[]>([]);
   const [notiCount, setNotiCount] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [shellAddress, setShellAddress] = useState("");
 
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const { disconnect } = useDisconnect();
 
-  const [gasBalance, setGasBalance] = React.useState('0.000');
-
+  const [gasBalanceData, setGasBalanceData] = useState<any>({formatted: "0", symbol: "ETH"});
+  const liveGasBalance = useGasBalance(shellAddress);
   useEffect(() => {
-    const x = async () => {
-      const gBalance = await getShellBalance();
-      const b = parseFloat(gBalance.toString()).toFixed(4);
-      setGasBalance(b);
-    };
-
-    setInterval(() => {
-      x();
-    }, 10000);
-  }, []);
+    checkShellWallet(address as string);
+    setShellAddress(getShellAddress());
+    setGasBalanceData(liveGasBalance);
+  }, [liveGasBalance, address, chain]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
@@ -58,7 +54,6 @@ export const Header = () => {
       fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/data/${chain?.id}/${address}`).then(
         (response) => {
           response.json().then((data) => {
-            console.log({ data });
             setNotiData(data);
             setNotiCount(data.length);
           });
@@ -150,10 +145,14 @@ export const Header = () => {
                 <Dehaze />
               </MobileTab>
               <Actions>
-                <ShellButton onClick={() => navigate('/proxy')}>
-                  <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                  <GasAmount>{gasBalance + (chain?.id === 137 ? ' MATIC' : ' ETH')}</GasAmount>
-                </ShellButton>
+                {
+                  isConnected ? 
+                    <ShellButton onClick={() => navigate('/proxy')}>
+                      <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
+                      <GasAmount>{gasBalanceData?.formatted.slice(0, 6)} {gasBalanceData?.symbol}</GasAmount>
+                    </ShellButton>
+                  : <></>
+                }
                 <ConnectButton
                   accountStatus="address"
                   showBalance={{
