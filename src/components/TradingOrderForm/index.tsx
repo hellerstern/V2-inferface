@@ -516,6 +516,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   async function getProxyApproval() {
     if (!isConnected) return;
     const tradingContract = await getTradingContractForApprove();
+    const { minProxyGas } = getNetwork(chain?.id);
 
     const proxy = await tradingContract.proxyApprovals(address);
 
@@ -524,7 +525,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentTime = Date.now() / 1000;
     const shellBalance = await getShellBalance();
 
-    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.002) {
+    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < minProxyGas) {
       setIsProxyApproved(false);
     } else {
       setIsProxyApproved(true);

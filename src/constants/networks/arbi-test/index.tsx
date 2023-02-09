@@ -49,6 +49,7 @@ export const NETWORK = {
     icon: "assets/images/arbtest.png",
     gasLimit: 10_000_000,
     proxyGas: "0.01",
+    minProxyGas: 0.002,
     assets: [],
     marginAssets: [
         {

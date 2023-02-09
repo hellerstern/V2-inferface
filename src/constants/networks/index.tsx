@@ -72,7 +72,8 @@ export const getNetwork = (networkId: any) => {
           staking: STAKING_ABI,
           referrals: REF_ABI
         },
-        proxyGas: "0.1",
+        proxyGas: "0.01",
+        minProxyGas: 0.002,
         assets: [
           {
             name: 'BTC/USD',

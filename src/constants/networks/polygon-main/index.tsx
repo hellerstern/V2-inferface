@@ -64,6 +64,7 @@ export const NETWORK = {
   icon: PolygonSvg,
   gasLimit: 2_000_000,
   proxyGas: "1",
+  minProxyGas: 0.2,
   assets: [],
   marginAssets: [
     {
