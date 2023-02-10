@@ -6,16 +6,23 @@ import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
 import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
-import { getNetwork } from "../../../src/constants/networks";
+import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 import { useOpenInterest } from 'src/hook/useTradeInfo';
 
-import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet, checkShellWallet } from '../../../src/shell_wallet/index';
+import {
+  getShellWallet,
+  getShellAddress,
+  getShellBalance,
+  getShellNonce,
+  unlockShellWallet,
+  checkShellWallet
+} from '../../../src/shell_wallet/index';
 
-declare const window: any
+declare const window: any;
 const { ethereum } = window;
 
 interface IOrderForm {
@@ -23,7 +30,6 @@ interface IOrderForm {
 }
 
 export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
-
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
@@ -37,12 +43,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       socket.on('data', (data: any) => {
         if (!data[currentPairIndex.current]) {
           setMarketAvailable(false);
-          setOpenPrice("");
+          setOpenPrice('');
           return;
         }
         setMarketAvailable(true);
         setMarketClosed(data[currentPairIndex.current].is_closed);
-        if (orderTypeRef.current === "Market") {
+        if (orderTypeRef.current === 'Market') {
           setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
           setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
         }
@@ -73,28 +79,28 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     currentPairIndex.current = pairIndex;
     try {
       setOpenPrice(((oracleData[currentPairIndex.current] as any).price / 1e18).toPrecision(5));
-      setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));      
+      setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));
     } catch {}
   }, [pairIndex]);
 
   const [isLong, setLong] = useState(true);
-  const [openPrice, setOpenPrice] = useState("0");
-  const [spread, setSpread] = useState("0.0002");
+  const [openPrice, setOpenPrice] = useState('0');
+  const [spread, setSpread] = useState('0.0002');
 
-  const [margin, setMargin] = useState("5");
-  const [leverage, setLeverage] = useState("2");
+  const [margin, setMargin] = useState('5');
+  const [leverage, setLeverage] = useState('2');
 
-  const [stopLossPrice, setStopLossPrice] = useState("0");
-  const [takeProfitPrice, setTakeProfitPrice] = useState("0");
-  const [stopLossPercent, setStopLossPercent] = useState("0");
-  const [takeProfitPercent, setTakeProfitPercent] = useState("500");
+  const [stopLossPrice, setStopLossPrice] = useState('0');
+  const [takeProfitPrice, setTakeProfitPrice] = useState('0');
+  const [stopLossPercent, setStopLossPercent] = useState('0');
+  const [takeProfitPercent, setTakeProfitPercent] = useState('500');
 
   const [isSlFixed, setSlFixed] = useState(false);
   const [isTpFixed, setTpFixed] = useState(false);
 
-  const [orderType, setOrderType] = useState("Market");
+  const [orderType, setOrderType] = useState('Market');
 
-  const [tokenBalance, setTokenBalance] = useState("Loading...");
+  const [tokenBalance, setTokenBalance] = useState('Loading...');
   const [isBalanceVisible, setBalanceVisible] = useState(true);
 
   const [isProxyApproved, setIsProxyApproved] = useState(true);
@@ -102,14 +108,25 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
 
   const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
-  const tokenLiveAllowance = useTokenAllowance(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
+  const tokenLiveAllowance = useTokenAllowance(
+    currentMargin.marginAssetDrop.address,
+    getNetwork(chain?.id).addresses.trading
+  );
   useEffect(() => {
-    setTokenBalance(((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** (currentMargin.marginAssetDrop.decimals)).toFixed(2));
+    setTokenBalance(
+      ((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** currentMargin.marginAssetDrop.decimals).toFixed(2)
+    );
   }, [tokenLiveBalance, currentMargin]);
   useEffect(() => {
-    setIsTokenAllowed(currentMargin.marginAssetDrop.address === getNetwork(chain?.id).addresses.tigusd ? true : tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
+    setIsTokenAllowed(
+      currentMargin.marginAssetDrop.address === getNetwork(chain?.id).addresses.tigusd
+        ? true
+        : tokenLiveAllowance
+        ? Number(tokenLiveAllowance) > 0
+        : false
+    );
   }, [tokenLiveAllowance, currentMargin]);
-  const [oi, setOi] = useState<any>({longOi: 0, shortOi: 0, maxOi: 0});
+  const [oi, setOi] = useState<any>({ longOi: 0, shortOi: 0, maxOi: 0 });
   const liveOi = useOpenInterest(pairIndex);
   useEffect(() => {
     setOi(liveOi);
@@ -131,7 +148,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   function handleLeverageChange(event: any) {
-    setLeverage((event.target.value).toString());
+    setLeverage(event.target.value.toString());
     if (!isTpFixed) {
       handleTakeProfitChange({ target: { value: parseFloat(takeProfitPercent) } });
     } else {
@@ -148,9 +165,19 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function handleStopLossChange(event: any) {
     setSlFixed(false);
     if (isLong) {
-      setStopLossPrice((parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
+      setStopLossPrice(
+        (
+          parseFloat(getOpenPrice()) -
+          (parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage))) / 100
+        ).toPrecision(7)
+      );
     } else {
-      setStopLossPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
+      setStopLossPrice(
+        (
+          parseFloat(getOpenPrice()) +
+          (parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage))) / 100
+        ).toPrecision(7)
+      );
     }
     setStopLossPercent(event.target.value.toString());
   }
@@ -159,11 +186,17 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function handleTakeProfitChange(event: any) {
     setTpFixed(false);
     if (isLong) {
-      setTakeProfitPrice((parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100).toPrecision(7));
+      setTakeProfitPrice(
+        (
+          parseFloat(getOpenPrice()) +
+          (parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage))) / 100
+        ).toPrecision(7)
+      );
     } else {
-      let _tpPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage)) / 100);
+      let _tpPrice =
+        parseFloat(getOpenPrice()) - (parseFloat(getOpenPrice()) * (event.target.value / parseFloat(leverage))) / 100;
       if (_tpPrice < 0) _tpPrice = 0;
-      setTakeProfitPrice(_tpPrice.toPrecision(7))
+      setTakeProfitPrice(_tpPrice.toPrecision(7));
     }
     setTakeProfitPercent(event.target.value.toString());
   }
@@ -173,9 +206,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setSlFixed(true);
     setStopLossPrice(value);
     if (isLong) {
-      setStopLossPercent(((1 - parseFloat(value) / parseFloat(getOpenPrice())) * 100 * parseFloat(leverage)).toString());
+      setStopLossPercent(
+        ((1 - parseFloat(value) / parseFloat(getOpenPrice())) * 100 * parseFloat(leverage)).toString()
+      );
     } else {
-      setStopLossPercent(((1 - parseFloat(getOpenPrice()) / parseFloat(value)) * 100 * parseFloat(leverage)).toString());
+      setStopLossPercent(
+        ((1 - parseFloat(getOpenPrice()) / parseFloat(value)) * 100 * parseFloat(leverage)).toString()
+      );
     }
   }
 
@@ -184,15 +221,19 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setTpFixed(true);
     setTakeProfitPrice(value);
     if (isLong) {
-      setTakeProfitPercent(((parseFloat(value) / parseFloat(getOpenPrice()) - 1) * 100 * parseFloat(leverage)).toString());
+      setTakeProfitPercent(
+        ((parseFloat(value) / parseFloat(getOpenPrice()) - 1) * 100 * parseFloat(leverage)).toString()
+      );
     } else {
-      setTakeProfitPercent(((parseFloat(getOpenPrice()) / parseFloat(value) - 1) * 100 * parseFloat(leverage)).toString());
+      setTakeProfitPercent(
+        ((parseFloat(getOpenPrice()) / parseFloat(value) - 1) * 100 * parseFloat(leverage)).toString()
+      );
     }
   }
 
   function handleSetOpenPrice(value: any) {
-    if (orderType === "Market") {
-      setOrderType("Limit");
+    if (orderType === 'Market') {
+      setOrderType('Limit');
       setOpenPrice(value.slice(0, 7));
     } else {
       setOpenPrice(value);
@@ -203,7 +244,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const _currentMargin = { ...currentMargin, [prop]: value };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
-    setTokenBalance("Loading...");
+    setTokenBalance('Loading...');
   };
 
   return (
@@ -234,45 +275,72 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
         </FormAction>
         <FormAction sx={{ marginTop: '30px' }}>
           <OrderTypeButton
-            onClick={() => setOrderType("Market")}
+            onClick={() => setOrderType('Market')}
             sx={{
-              backgroundColor: orderType === "Market" ? '#3772ff' : '#222630',
-              color: orderType === "Market" ? '#FFFFFF' : '#B1B5C3',
-              '&:hover': { backgroundColor: orderType === "Market" ? '#3772ff' : '#222630', color: orderType === "Market" ? '#FFFFFF' : '#3772ff' }
+              backgroundColor: orderType === 'Market' ? '#3772ff' : '#222630',
+              color: orderType === 'Market' ? '#FFFFFF' : '#B1B5C3',
+              '&:hover': {
+                backgroundColor: orderType === 'Market' ? '#3772ff' : '#222630',
+                color: orderType === 'Market' ? '#FFFFFF' : '#3772ff'
+              }
             }}
           >
             Market
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => {setOrderType("Limit"); setOpenPrice(openPrice.slice(0, 8));}}
+            onClick={() => {
+              setOrderType('Limit');
+              setOpenPrice(openPrice.slice(0, 8));
+            }}
             sx={{
-              backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630',
-              color: orderType === "Limit" ? '#FFFFFF' : '#B1B5C3',
-              '&:hover': { backgroundColor: orderType === "Limit" ? '#3772ff' : '#222630', color: orderType === "Limit" ? '#FFFFFF' : '#3772ff' }
+              backgroundColor: orderType === 'Limit' ? '#3772ff' : '#222630',
+              color: orderType === 'Limit' ? '#FFFFFF' : '#B1B5C3',
+              '&:hover': {
+                backgroundColor: orderType === 'Limit' ? '#3772ff' : '#222630',
+                color: orderType === 'Limit' ? '#FFFFFF' : '#3772ff'
+              }
             }}
           >
             Limit
           </OrderTypeButton>
           <OrderTypeButton
-            onClick={() => {setOrderType("Stop"); setOpenPrice(openPrice.slice(0, 8));}}
+            onClick={() => {
+              setOrderType('Stop');
+              setOpenPrice(openPrice.slice(0, 8));
+            }}
             sx={{
-              backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630',
-              color: orderType === "Stop" ? '#FFFFFF' : '#B1B5C3',
-              '&:hover': { backgroundColor: orderType === "Stop" ? '#3772ff' : '#222630', color: orderType === "Stop" ? '#FFFFFF' : '#3772ff' }
+              backgroundColor: orderType === 'Stop' ? '#3772ff' : '#222630',
+              color: orderType === 'Stop' ? '#FFFFFF' : '#B1B5C3',
+              '&:hover': {
+                backgroundColor: orderType === 'Stop' ? '#3772ff' : '#222630',
+                color: orderType === 'Stop' ? '#FFFFFF' : '#3772ff'
+              }
             }}
           >
             Stop
           </OrderTypeButton>
         </FormAction>
         <FormArea>
-          <TigrisInput label="Price" placeholder='-' value={
-            !isMarketAvailable ? "" : orderType === "Market" ? getOpenPrice().replace("NaN", "-") : openPrice.replace("NaN", "-")
-          } setValue={
-            handleSetOpenPrice
-          } />
+          <TigrisInput
+            label="Price"
+            placeholder="-"
+            value={
+              !isMarketAvailable
+                ? ''
+                : orderType === 'Market'
+                ? getOpenPrice().replace('NaN', '-')
+                : openPrice.replace('NaN', '-')
+            }
+            setValue={handleSetOpenPrice}
+          />
           <div style={{ cursor: 'not-allowed' }}>
             <div style={{ pointerEvents: 'none' }}>
-              <TigrisInput label="Liq Price" placeholder='-' value={!isMarketAvailable ? "" : liqPrice()} setValue={() => null} />
+              <TigrisInput
+                label="Liq Price"
+                placeholder="-"
+                value={!isMarketAvailable ? '' : liqPrice()}
+                setValue={() => null}
+              />
             </div>
           </div>
           <TigrisInput label="Margin" value={margin} setValue={setMargin} />
@@ -288,9 +356,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             min={Math.sqrt(5)}
             step={0.001}
             max={100}
-            scale={(value: number) =>
-              marginScale(value)
-            }
+            scale={(value: number) => marginScale(value)}
             onChange={(event: any) => handleMarginChange(event)}
             value={Math.sqrt(parseFloat(margin))}
           />
@@ -325,8 +391,36 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             onChange={(event: any) => handleLeverageChange(event)}
             value={parseFloat(leverage)}
           />
-          <TigrisInput label="Stop Loss" placeholder={"-"} value={!isMarketAvailable ? "" : stopLossPercent === "0" ? "" : isSlFixed ? stopLossPrice : getStopLossPrice().replace('NaN', '-')} setValue={handleStopLossPriceChange} />
-          <TigrisInput label="Take Profit" placeholder={"-"} value={!isMarketAvailable ? "" : takeProfitPercent === "0" ? "" : isTpFixed ? takeProfitPrice : parseFloat(getTakeProfitPrice()) < 0 ? "0.00000" : getTakeProfitPrice().replace('NaN', '-')} setValue={handleTakeProfitPriceChange} />
+          <TigrisInput
+            label="Stop Loss"
+            placeholder={'-'}
+            value={
+              !isMarketAvailable
+                ? ''
+                : stopLossPercent === '0'
+                ? ''
+                : isSlFixed
+                ? stopLossPrice
+                : getStopLossPrice().replace('NaN', '-')
+            }
+            setValue={handleStopLossPriceChange}
+          />
+          <TigrisInput
+            label="Take Profit"
+            placeholder={'-'}
+            value={
+              !isMarketAvailable
+                ? ''
+                : takeProfitPercent === '0'
+                ? ''
+                : isTpFixed
+                ? takeProfitPrice
+                : parseFloat(getTakeProfitPrice()) < 0
+                ? '0.00000'
+                : getTakeProfitPrice().replace('NaN', '-')
+            }
+            setValue={handleTakeProfitPriceChange}
+          />
           <TigrisSlider // Stop Loss
             defaultValue={0}
             aria-label="Default"
@@ -343,7 +437,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
               { value: 90, label: '-90' }
             ]}
             onChange={(event: any) => handleStopLossChange(event)}
-            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4).replace("NaN", "0"))}
+            value={parseFloat(parseFloat(stopLossPercent).toPrecision(4).replace('NaN', '0'))}
           />
           <TigrisSlider // Take profit
             defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
@@ -357,10 +451,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
             marks={[
               { value: 0, label: '0' },
-              { value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500, label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500 }
+              {
+                value: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500,
+                label: isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500
+              }
             ]}
             onChange={(event: any) => handleTakeProfitChange(event)}
-            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4).replace("NaN", "0"))}
+            value={parseFloat(parseFloat(takeProfitPercent).toPrecision(4).replace('NaN', '0'))}
           />
           <IconDropDownMenu
             arrayData={marginAssets.marginAssetDrop}
@@ -376,51 +473,66 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
             {isBalanceVisible ? tokenBalance : '• • • • • • •'}
           </AssetBalance>
         </FormArea>
-        <ApproveButton onClick={() => routeTrade()} isOnline={getButtonOnline()}>{getButtonText()}</ApproveButton>
+        <ApproveButton onClick={() => routeTrade()} status={getButtonOnline()}>
+          {getButtonText()}
+        </ApproveButton>
         <Alert>
-          {
-            chain === undefined || address === undefined ?
-              <Alert>
-                <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
-                <AlertContent>
-                  Wallet is not connected. Connect your wallet to approve and begin trading.
-                </AlertContent>
-              </Alert>
-              :
-              <></>
-          }
+          {chain === undefined || address === undefined ? (
+            <Alert>
+              <ErrorOutline sx={{ color: '#EB5757' }} fontSize="small" />
+              <AlertContent>Wallet is not connected. Connect your wallet to approve and begin trading.</AlertContent>
+            </Alert>
+          ) : (
+            <></>
+          )}
         </Alert>
       </FormContainer>
     </Container>
   );
 
   function getStopLossPrice() {
-    if (stopLossPercent === "0") return "0";
+    if (stopLossPercent === '0') return '0';
     if (isLong) {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(7);
+      return (
+        parseFloat(getOpenPrice()) -
+        (parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage))) / 100
+      ).toPrecision(7);
     } else {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage)) / 100).toPrecision(7);
+      return (
+        parseFloat(getOpenPrice()) +
+        (parseFloat(getOpenPrice()) * (parseFloat(stopLossPercent) / parseFloat(leverage))) / 100
+      ).toPrecision(7);
     }
   }
 
   function getTakeProfitPrice() {
-    if (takeProfitPercent === "0") return "0";
+    if (takeProfitPercent === '0') return '0';
     if (isLong) {
-      return (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(7);
+      return (
+        parseFloat(getOpenPrice()) +
+        (parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage))) / 100
+      ).toPrecision(7);
     } else {
-      return (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage)) / 100).toPrecision(7);
+      return (
+        parseFloat(getOpenPrice()) -
+        (parseFloat(getOpenPrice()) * (parseFloat(takeProfitPercent) / parseFloat(leverage))) / 100
+      ).toPrecision(7);
     }
   }
 
   function liqPrice() {
     let _liqPrice;
     if (isLong) {
-      _liqPrice = (parseFloat(getOpenPrice()) - parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(7);
+      _liqPrice = (parseFloat(getOpenPrice()) - (parseFloat(getOpenPrice()) * 0.9) / parseFloat(leverage)).toPrecision(
+        7
+      );
     } else {
-      _liqPrice = (parseFloat(getOpenPrice()) + parseFloat(getOpenPrice()) * 0.9 / parseFloat(leverage)).toPrecision(7);
+      _liqPrice = (parseFloat(getOpenPrice()) + (parseFloat(getOpenPrice()) * 0.9) / parseFloat(leverage)).toPrecision(
+        7
+      );
     }
-    if (_liqPrice === "NaN") {
-      return "-";
+    if (_liqPrice === 'NaN') {
+      return '-';
     }
     return _liqPrice;
   }
@@ -428,21 +540,22 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getOpenPrice() {
     let _openPrice;
     if (isLong) {
-      _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * (orderType === "Market" ? parseFloat(spread) : 0);
+      _openPrice = parseFloat(openPrice) + parseFloat(openPrice) * (orderType === 'Market' ? parseFloat(spread) : 0);
       return _openPrice.toPrecision(7);
     } else {
-      _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * (orderType === "Market" ? parseFloat(spread) : 0);
+      _openPrice = parseFloat(openPrice) - parseFloat(openPrice) * (orderType === 'Market' ? parseFloat(spread) : 0);
       return _openPrice.toPrecision(7);
     }
   }
 
   function marginScale(value: number) {
-    return Math.round((
-      parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
-        ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
-        : value ** 2
-    ) / 10
-    ) * 10;
+    return (
+      Math.round(
+        (parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
+          ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
+          : value ** 2) / 10
+      ) * 10
+    );
   }
 
   /*
@@ -453,51 +566,72 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function getButtonOnline() {
     const s = getTradeStatus();
-    const isOnline =
-      s === "Approve" ||
-      s === "Proxy" ||
-      s === "Ready"
-      ;
-    return isOnline;
+    const isOnline = s === 'Approve' || s === 'Proxy' || s === 'Ready';
+    return isOnline ? 1 : 0;
   }
 
   function getButtonText() {
     const s = getTradeStatus();
     const txt =
-      s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
-        s === "Proxy" ? "APPROVE PROXY" :
-          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (assets[pairIndex].name) :
-            s === "NotConnected" ? "CONNECT WALLET" :
-              s === "Unavailable" ? "MARKET UNAVAILABLE" :
-                s === "Closed" ? "MARKET CLOSED" :
-                  s === "MaxOi" ? "OPEN INTEREST LIMIT REACHED" :
-                    s === "Balance" ? "NOT ENOUGH BALANCE" :
-                      s === "PosSize" ? "POSITION SIZE TOO LOW" :
-                        "You found a bug!"
-    ;
+      s === 'Approve'
+        ? 'APPROVE ' + currentMargin.marginAssetDrop.name
+        : s === 'Proxy'
+        ? 'APPROVE PROXY'
+        : s === 'Ready'
+        ? (isLong ? 'LONG $' : 'SHORT $') +
+          Math.round(parseFloat(margin) * parseFloat(leverage))
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
+          ' ' +
+          assets[pairIndex].name
+        : s === 'NotConnected'
+        ? 'CONNECT WALLET'
+        : s === 'Unavailable'
+        ? 'MARKET UNAVAILABLE'
+        : s === 'Closed'
+        ? 'MARKET CLOSED'
+        : s === 'MaxOi'
+        ? 'OPEN INTEREST LIMIT REACHED'
+        : s === 'Balance'
+        ? 'NOT ENOUGH BALANCE'
+        : s === 'PosSize'
+        ? 'POSITION SIZE TOO LOW'
+        : 'You found a bug!';
     return txt;
   }
 
   function getTradeStatus() {
     let status;
-    (chain === undefined || address === undefined) ? status = "NotConnected" :
-      !isMarketAvailable ? status = "Unavailable" :
-        isMarketClosed ? status = "Closed" :
-          !isTokenAllowed ? status = "Approve" :
-            !isProxyApproved ? status = "Proxy" :
-              parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-                oi?.maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? oi?.longOi/1e18 : oi?.shortOi/1e18) > oi?.maxOi/1e18 ? status = "MaxOi" :
-                  parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
-                    status = "Ready";
+    chain === undefined || address === undefined
+      ? (status = 'NotConnected')
+      : !isMarketAvailable
+      ? (status = 'Unavailable')
+      : isMarketClosed
+      ? (status = 'Closed')
+      : !isTokenAllowed
+      ? (status = 'Approve')
+      : !isProxyApproved
+      ? (status = 'Proxy')
+      : parseFloat(margin) > parseFloat(tokenBalance)
+      ? (status = 'Balance')
+      : oi?.maxOi > 0 &&
+        parseFloat(margin) * parseFloat(leverage) + (isLong ? oi?.longOi / 1e18 : oi?.shortOi / 1e18) > oi?.maxOi / 1e18
+      ? (status = 'MaxOi')
+      : parseFloat(margin) * parseFloat(leverage) < 500
+      ? (status = 'PosSize')
+      : (status = 'Ready');
     return status;
   }
 
   function routeTrade() {
     const s = getTradeStatus();
-    s === "NotConnected" ? openConnectModal?.() :
-      s === "Approve" ? approve?.() :
-        s === "Proxy" ? approveProxy() :
-          s === "Ready" && (orderType === "Market" ? initiateMarketOrder() : initiateLimitOrder())
+    s === 'NotConnected'
+      ? openConnectModal?.()
+      : s === 'Approve'
+      ? approve?.()
+      : s === 'Proxy'
+      ? approveProxy()
+      : s === 'Ready' && (orderType === 'Market' ? initiateMarketOrder() : initiateLimitOrder());
   }
 
   async function getTradingContract() {
@@ -525,7 +659,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentTime = Date.now() / 1000;
     const shellBalance = await getShellBalance();
 
-    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < minProxyGas) {
+    if (
+      (await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() ||
+      currentTime > proxyTime ||
+      Number(shellBalance) < minProxyGas
+    ) {
       setIsProxyApproved(false);
     } else {
       setIsProxyApproved(true);
@@ -537,39 +675,34 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const traderGas = await tradingContract.provider.getBalance(address as string);
     const proxyGas = getNetwork(chain?.id).proxyGas;
-    if (Number(traderGas)/1e18 < Number(proxyGas)) {
-      toast.error("Not enough gas for proxy wallet");
+    if (Number(traderGas) / 1e18 < Number(proxyGas)) {
+      toast.error('Not enough gas for proxy wallet');
       return;
     }
     await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(proxyGas) });
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Proxy approval pending...',
-        success: undefined,
-        error: 'Proxy approval failed!'
-      }
-    );
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, {
+      gasPrice: gasPriceEstimate,
+      value: ethers.utils.parseEther(proxyGas)
+    });
+    const response: any = await toast.promise(tx, {
+      pending: 'Proxy approval pending...',
+      success: undefined,
+      error: 'Proxy approval failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Proxy approval failed!'
-        );
-      } else if(receipt.status === 1) {
-        toast.success(
-          'Successfully approved proxy!'
-        );    
+        toast.error('Proxy approval failed!');
+      } else if (receipt.status === 1) {
+        toast.success('Successfully approved proxy!');
       }
       getProxyApproval();
     }, 2000);
   }
 
   async function initiateMarketOrder() {
-
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 
     const _margin = ethers.utils.parseEther(margin);
@@ -609,14 +742,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       ];
 
       if (isLong && parseInt(_sl.toString()) > parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
-        toast.warn(
-          "Stop loss too high"
-        );
+        toast.warn('Stop loss too high');
         return;
       } else if (!isLong && parseInt(_sl.toString()) < parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
-        toast.warn(
-          "Stop loss too low"
-        );
+        toast.warn('Stop loss too low');
         return;
       }
 
@@ -632,35 +761,27 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           address,
           { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
         );
-        const response: any = await toast.promise(
-          tx,
-          {
-            pending: 'Opening market position...',
-            success: undefined,
-            error: 'Opening position failed!'
-          }
-        );
+        const response: any = await toast.promise(tx, {
+          pending: 'Opening market position...',
+          success: undefined,
+          error: 'Opening position failed!'
+        });
         // eslint-disable-next-line
         setTimeout(async () => {
           const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
           if (receipt.status === 0) {
-            toast.error(
-              'Opening position failed!'
-            );
+            toast.error('Opening position failed!');
           }
         }, 1000);
-
       } catch (err: any) {
         console.log(err);
       }
-
     } catch (err: any) {
       console.log(err);
     }
   }
 
   async function initiateLimitOrder() {
-
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
 
     const _margin = ethers.utils.parseEther(margin);
@@ -690,14 +811,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
     try {
       if (isLong && parseInt(_sl.toString()) > parseInt(_openPrice.toString()) && parseInt(_sl.toString()) !== 0) {
-        toast.warn(
-          "Stop loss too high"
-        );
+        toast.warn('Stop loss too high');
         return;
-      } else if (!isLong && parseInt(_sl.toString()) < parseInt(_openPrice.toString()) && parseInt(_sl.toString()) !== 0) {
-        toast.warn(
-          "Stop loss too low"
-        );
+      } else if (
+        !isLong &&
+        parseInt(_sl.toString()) < parseInt(_openPrice.toString()) &&
+        parseInt(_sl.toString()) !== 0
+      ) {
+        toast.warn('Stop loss too low');
         return;
       }
 
@@ -707,34 +828,27 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
         const tx = tradingContract.initiateLimitOrder(
           _tradeInfo,
-          (orderType === "Limit" ? 1 : 2),
+          orderType === 'Limit' ? 1 : 2,
           _openPrice,
           [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
           address,
           { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
         );
-        const response: any = await toast.promise(
-          tx,
-          {
-            pending: orderType === "Limit" ? 'Creating limit order...' : 'Creating stop order...',
-            success: undefined,
-            error: orderType === "Limit" ? 'Creating limit order failed!' : 'Creating stop order failed!'
-          }
-        );
+        const response: any = await toast.promise(tx, {
+          pending: orderType === 'Limit' ? 'Creating limit order...' : 'Creating stop order...',
+          success: undefined,
+          error: orderType === 'Limit' ? 'Creating limit order failed!' : 'Creating stop order failed!'
+        });
         // eslint-disable-next-line
         setTimeout(async () => {
           const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
           if (receipt.status === 0) {
-            toast.error(
-              orderType === "Limit" ? 'Creating limit order failed!' : 'Creating stop order failed!'
-            );
+            toast.error(orderType === 'Limit' ? 'Creating limit order failed!' : 'Creating stop order failed!');
           }
         }, 1000);
-
       } catch (err: any) {
         console.log(err);
       }
-
     } catch (err: any) {
       console.log(err);
     }
@@ -818,16 +932,16 @@ const AssetBalance = styled(Box)(({ theme }) => ({
 }));
 
 interface IApproveButton {
-  isOnline: boolean
+  status: number;
 }
-const ApproveButton = styled(Button)(({ isOnline }: IApproveButton) => ({
+const ApproveButton = styled(Button)(({ status }: IApproveButton) => ({
   marginTop: '17px',
   borderRadius: '0px',
   width: '100%',
   textTransform: 'none',
-  backgroundColor: (isOnline ? '#3772FF' : '#2F3135'),
+  backgroundColor: status === 1 ? '#3772FF' : '#2F3135',
   '&:hover': {
-    backgroundColor: (isOnline ? '#3772FF' : '#2F3135')
+    backgroundColor: status === 1 ? '#3772FF' : '#2F3135'
   }
 }));
 
