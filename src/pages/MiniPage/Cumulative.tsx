@@ -147,7 +147,10 @@ const CumulativeChartWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '6px',
-  width: '100%'
+  width: '1082px',
+  [theme.breakpoints.down(1440)]: {
+    width: '100%'
+  }
 }));
 
 const Bar = styled(Box)(({ theme }) => ({
@@ -171,7 +174,10 @@ const OverviewWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '6px',
-  minWidth: '310px'
+  minWidth: '430px',
+  [theme.breakpoints.down(450)]: {
+    minWidth: '320px'
+  }
 }));
 
 const OverviewContent = styled(Box)(({ theme }) => ({

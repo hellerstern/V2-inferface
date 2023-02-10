@@ -93,6 +93,10 @@ const TableContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '12px',
+  width: '1082px',
+  [theme.breakpoints.down(1440)]: {
+    width: '100%'
+  },
   [theme.breakpoints.down('desktop')]: {
     order: 4,
     gridColumn: '1 / 3'
