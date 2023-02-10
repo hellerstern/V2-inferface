@@ -5,9 +5,10 @@ import { TabPanel } from '../../src/components/TabPanel';
 import { useStore } from '../../src/context/StoreContext';
 import { Governance } from './Governance';
 import { Referral } from './Referral';
+import { Faucet } from './Faucet';
 import { Trade } from './Trade';
 import { Vault } from './Vault';
-import { oracleData, eu1oracleSocket } from 'src/context/socket';
+import { eu1oracleSocket } from 'src/context/socket';
 import { getNetwork } from 'src/constants/networks';
 import Cookies from 'universal-cookie';
 
@@ -52,6 +53,8 @@ export const Home = () => {
       document.title = "Governance | Tigris";
     } else if(page === 3) {
       document.title = "Referral | Tigris";
+    } else if(page === 4) {
+      document.title = "Faucet | Tigris";
     }
 	}, [page]);
   return (
@@ -67,6 +70,9 @@ export const Home = () => {
       </TabPanel>
       <TabPanel value={page} index={3}>
         <Referral />
+      </TabPanel>
+      <TabPanel value={page} index={4}>
+        <Faucet />
       </TabPanel>
     </>
   );

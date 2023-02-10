@@ -139,6 +139,19 @@ export const Header = () => {
                     }}
                     style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
                   />
+                  {
+                    chain?.id === 421613 ?
+                    <CustomTab
+                      label="Faucet"
+                      {...a11yProps(4)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                    />
+                    : <></>
+                  }
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
