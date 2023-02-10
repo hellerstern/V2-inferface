@@ -89,8 +89,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
         for (let i = 0; i < len; i++) {
           const position = data[i].position === true ? 'Long' : 'Short';
           const symbol_idx = data[i].symbol;
-          console.log('asset: ', getNetwork(chain?.id).assets[symbol_idx]);
-          const symbol = getNetwork(chain?.id).assets[symbol_idx].name;
+          const symbol = getNetwork(0).assets[symbol_idx].name;
           const positionSize = data[i].positionSize;
           const leverage = data[i].leverage;
           const entryPrice = data[i].entryPrice;
