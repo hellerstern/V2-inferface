@@ -3,67 +3,78 @@ import { styled } from '@mui/system';
 import { TokenDropMenu } from '../Dropdown/TokenDrop';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
+import { ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import './index.css';
 import { useEffect, useState } from 'react';
 import { useNetwork, useAccount } from 'wagmi';
 
 export const DailyPerformanceChart = () => {
-
   const [token, setToken] = useState('ALL');
-  const [data, setData] = useState<any>([]);
-  const { address } = useAccount();
+  const [data, setData] = useState([]);
+  const [zoomIndex, setZoomIndex] = useState(4);
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
-  useEffect(() => {
-    const x = async () => {
-      if (address && chain?.id) {
-        const toFetch = "https://stats-bg6gz.ondigitalocean.app/"+chain.id.toString()+"/"+address;
-        const response = await fetch(toFetch);
-        const resData = await response.json();
-        setData(resData);        
+  const fetchData = async () => {
+    const chainId = chain?.id;
+    console.log('chainId', chainId);
+    if (address && chainId) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const toFetch = `https://trader-stats-tr8mu.ondigitalocean.app/performance/${chainId}/${address}`;
+      const response = await fetch(toFetch);
+      const resData = await response.json();
+      console.log({ resData });
+      if (resData !== data) {
+        setData(resData);
       }
     }
-    x();
-  }, []);
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      fetchData();
+    }
+  }, [isConnected, chain]);
 
   const configPrice = {
-    yAxis: [
-      {
-        offset: 20,
-        labels: {
-          x: -15,
-          style: {
-            color: '#777E90',
-            position: 'absolute'
-          },
-          align: 'left'
-        }
-      }
-    ],
+    yAxis: {
+      offset: 60,
+      tickLength: 60,
+      tickPosition: 'outside'
+    },
     tooltip: {
+      split: false,
       shared: true,
-      style: {
-        color: '#777E90'
-      }
+      x: XAxis,
+      y: YAxis,
+      formatter: function () {
+        let tooltip = '<div style="color:#00DBE3;">' + '$' + Number(this.y).toFixed(2) + '</div><br/>';
+        const temp = Highcharts.dateFormat('%b %eth %Y, %H:%M', Number(this.x));
+        tooltip += `<div style = "color : #C4C4F6; padding-top : 10px;">${temp}</div>`;
+        return tooltip;
+      },
+      style: { opacity: 0.9 },
+      padding: 10,
+      backgroundColor: '#040218'
     },
     plotOptions: {
       spline: {
-          lineWidth: 4,
-          states: {
-              hover: {
-                  lineWidth: 5
-              }
-          },
-          marker: {
-              enabled: true
-          },
-          pointInterval: 3600000, // one hour
-          pointStart: Date.UTC(2022, 5, 13, 0, 0, 0)
+        lineWidth: 4,
+        states: {
+          hover: {
+            lineWidth: 5
+          }
+        },
+        marker: {
+          enabled: true
+        },
+        pointInterval: 3600000, // one hour
+        pointStart: Date.UTC(2022, 5, 13, 0, 0, 0)
       },
       series: {
         animation: false
       }
-  },
+    },
     chart: {
       height: 600,
       animation: false
@@ -79,37 +90,73 @@ export const DailyPerformanceChart = () => {
         backgroundColor: 'red'
       }
     },
-    xAxis: {
-      type: 'date'
-    },
     rangeSelector: {
+      inputEnabled: true,
+      inputLabel: true,
+      labelStyle: {
+        display: 'none'
+      },
+      allButtonsEnabled: true,
+      xAxis: {
+        minRange: 3600000
+      },
+      selected: zoomIndex,
       buttons: [
         {
-          type: 'day',
-          count: 1,
-          text: '1d'
+          type: 'hour',
+          count: 24,
+          text: '1d',
+          events: {
+            click() {
+              setZoomIndex(0);
+              fetchData();
+            }
+          }
         },
         {
           type: 'day',
           count: 7,
-          text: '7d'
+          text: '7d',
+          events: {
+            click() {
+              setZoomIndex(1);
+              fetchData();
+            }
+          }
         },
         {
           type: 'month',
           count: 1,
-          text: '1m'
+          text: '1m',
+          events: {
+            click() {
+              setZoomIndex(2);
+              fetchData();
+            }
+          }
         },
         {
           type: 'month',
           count: 3,
-          text: '3m'
+          text: '3m',
+          events: {
+            click() {
+              setZoomIndex(3);
+              fetchData();
+            }
+          }
         },
         {
           type: 'all',
-          text: 'All'
+          text: 'All',
+          events: {
+            click() {
+              setZoomIndex(4);
+              fetchData();
+            }
+          }
         }
-      ],
-      selected: 4
+      ]
     },
     series: [
       {
@@ -139,15 +186,24 @@ export const DailyPerformanceChart = () => {
         </LabelGroup>
       </ChartAction>
       <ChartContainer>
-        <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={configPrice} />
+        {/* <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={configPrice} /> */}
+
+        <ResponsiveContainer>
+          {data.length > 0 ? (
+            <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={configPrice} />
+          ) : (
+            <NoData>
+              <p>Start trading to see your performance</p>
+            </NoData>
+          )}
+        </ResponsiveContainer>
       </ChartContainer>
     </Container>
   );
 };
 
 const Container = styled(Box)(({ theme }) => ({
-  minHeight: '560px',
-  height: '100%',
+  height: '560px',
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: '#18191D',
@@ -213,4 +269,14 @@ const ChartContainer = styled(Box)(({ theme }) => ({
 const LabelPnL = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '5px'
+}));
+
+const NoData = styled(Box)(({ theme }) => ({
+  fontSize: '20px',
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center'
 }));
