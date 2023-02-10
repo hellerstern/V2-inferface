@@ -2,9 +2,9 @@ import { Star, StarBorder } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { btcLogo, eurLogo, gbpLogo } from '../../config/images';
+import { btcLogo, cadLogo, eurLogo, jpyLogo, gbpLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
-import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
@@ -84,11 +84,6 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
         setOraclePrice(data[pairIndex].price);
       }
     });
-    eu2oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
-        setOraclePrice(data[pairIndex].price);
-      }
-    });
   }, []);
 
   const [oraclePrice, setOraclePrice] = useState(
@@ -133,10 +128,10 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
   const rows = [
     createData(
       <PairField
-        favor={FavPairs.includes('CAD/USD')}
+        favor={FavPairs.includes('USD/CAD')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
-        name={'CAD/USD'}
+        icon={cadLogo}
+        name={'USD/CAD'}
       />,
       <Benefit percent={0.63} value={110} />,
       10
@@ -163,10 +158,10 @@ export const ForexPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) =
     ),
     createData(
       <PairField
-        favor={FavPairs.includes('JPY/USD')}
+        favor={FavPairs.includes('USD/JPY')}
         handleFavoriteToggle={handleFavoriteToggle}
-        icon={btcLogo}
-        name={'JPY/USD'}
+        icon={jpyLogo}
+        name={'USD/JPY'}
       />,
       <Benefit percent={0.63} value={110} />,
       7

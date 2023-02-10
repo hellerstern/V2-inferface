@@ -1,6 +1,7 @@
 import Wallet from "ethereumjs-wallet";
 import { ethers } from 'ethers';
 import Cookies from 'universal-cookie';
+import { useAccount } from "wagmi";
 // eslint-disable-next-line
 const encryptpwd = require('encrypt-with-password');
 
@@ -47,6 +48,21 @@ export const generateShellWallet = async () => {
     shell_private = privateKey;
 }
 
+export const checkShellWallet = async (address: string) => {
+    if (localStorage.getItem(address + '_public_key') && localStorage.getItem(address + '_e_private_key')) {
+        const e_privateKey = localStorage.getItem(address + '_e_private_key');
+        const _currentAddress = localStorage.getItem(address + '_public_key');
+        const signature = cookies.get(address + "_k");
+        if (signature) {
+            currentAddress = _currentAddress as string;
+            shell_private = encryptpwd.decrypt(e_privateKey, signature);
+        }
+    } else {
+        currentAddress = "";
+        shell_private = "";
+    }
+}
+
 export const unlockShellWallet = async () => {
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
@@ -54,8 +70,6 @@ export const unlockShellWallet = async () => {
     if (!signerAddress || signerAddress === "") {
         return;
     }
-
-    console.log(signerAddress);
 
     if (localStorage.getItem(signerAddress + '_public_key') === null || localStorage.getItem(signerAddress + '_e_private_key') === null) {
         await generateShellWallet();
@@ -85,9 +99,7 @@ export const unlockShellWallet = async () => {
     }
 }
 
-export const getShellAddress = async () => {
-    if (!currentAddress) return ""; // await unlockShellWallet();
-
+export const getShellAddress = () => {
     return currentAddress;
 }
 

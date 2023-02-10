@@ -13,6 +13,7 @@ const { ethereum } = window;
 export const PositionData = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { assets } = getNetwork(0);
 
   const [openPositions, setOpenPositions] = useState<any[]>([]);
   const [limitOrders, setLimitOrders] = useState<any[]>([]);
@@ -149,7 +150,7 @@ export const PositionData = () => {
             toast.success((
               (data.tradeInfo.direction ? "Longed " : "Shorted ") +
               (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
-              currentNetwork.assets[data.tradeInfo.asset].name +
+              assets[data.tradeInfo.asset].name +
               " @ " +
               (parseFloat(data.price) / 1e18).toPrecision(6)
             ));
@@ -197,7 +198,7 @@ export const PositionData = () => {
             toast.success((
               (data.tradeInfo.direction ? "Limit long " : "Limit short ") +
               (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
-              currentNetwork.assets[data.tradeInfo.asset].name +
+              assets[data.tradeInfo.asset].name +
               " @ " +
               (parseFloat(data.price) / 1e18).toPrecision(6)
             ));
@@ -208,14 +209,13 @@ export const PositionData = () => {
       });
 
       socket.on('PositionLiquidated', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
               toast.info((
                 (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[openP[i].asset].name +
+                assets[openP[i].asset].name +
                 (openP[i].direction ? " long " : " short ") +
                 "liquidated @ " +
                 (parseFloat((oracleData[openP[i].asset] as any).price) / 1e18).toPrecision(6)
@@ -230,7 +230,6 @@ export const PositionData = () => {
       });
 
       socket.on('PositionClosed', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
@@ -238,7 +237,7 @@ export const PositionData = () => {
               if (data.percent === 10000000000) {
                 toast.success((
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
+                  assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
                   "closed @ " +
                   (parseFloat(data.price) / 1e18).toPrecision(6)
@@ -264,7 +263,7 @@ export const PositionData = () => {
                 }
                 toast.success((
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
+                  assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
                   (data.percent / 1e8).toFixed(2) +
                   "% closed @ " +
@@ -285,7 +284,6 @@ export const PositionData = () => {
       });
 
       socket.on('LimitOrderExecuted', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const limitO: any[] = limitOrders.slice();
           const openP: any[] = openPositions.slice();
@@ -293,7 +291,7 @@ export const PositionData = () => {
             if (limitO[i].id === data.id) {
               toast.info((
                 (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[limitO[i].asset].name +
+                assets[limitO[i].asset].name +
                 (limitO[i].direction ? " long " : " short ") +
                 (limitO[i].orderType === 1 ? "limit" : "stop") + " order filled @ " +
                 (parseFloat(data.oPrice) / 1e18).toPrecision(6)
@@ -327,14 +325,13 @@ export const PositionData = () => {
       });
 
       socket.on('LimitCancelled', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const limitO: any[] = limitOrders.slice();
           for (let i = 0; i < limitO.length; i++) {
             if (limitO[i].id === data.id) {
               toast.success((
                 (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
-                currentNetwork.assets[limitO[i].asset].name +
+                assets[limitO[i].asset].name +
                 (limitO[i].direction ? " long " : " short ") +
                 "limit order cancelled"
               ));
@@ -348,7 +345,6 @@ export const PositionData = () => {
       });
 
       socket.on('MarginModified', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
@@ -377,7 +373,7 @@ export const PositionData = () => {
                   ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
                   " margin to " +
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
+                  assets[openP[i].asset].name +
                   (openP[i].direction ? " long" : " short")
                 ));
               } else {
@@ -386,7 +382,7 @@ export const PositionData = () => {
                   ((parseFloat(openP[i].margin) - parseFloat(data.newMargin)) / 1e18).toFixed(2) +
                   " margin from " +
                   (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  currentNetwork.assets[openP[i].asset].name +
+                  assets[openP[i].asset].name +
                   (openP[i].direction ? " long" : " short")
                 ));
               }
@@ -400,7 +396,6 @@ export const PositionData = () => {
       });
 
       socket.on('AddToPosition', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
@@ -425,7 +420,7 @@ export const PositionData = () => {
                 (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
                 ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
                 " position on " +
-                currentNetwork.assets[openP[i].asset].name +
+                assets[openP[i].asset].name +
                 (openP[i].direction ? " long" : " short")
               ));
               openP[i] = modP;
@@ -438,7 +433,6 @@ export const PositionData = () => {
       });
 
       socket.on('UpdateTPSL', (data: any) => {
-        const currentNetwork = getNetwork(0);
         if (data.trader === address && data.chainId === chain?.id) {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
@@ -464,13 +458,13 @@ export const PositionData = () => {
                     "Successfully removed TP from " +
                     (openP[i].direction ? "long " : "short ") +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    currentNetwork.assets[openP[i].asset].name
+                    assets[openP[i].asset].name
                   ));
                 } else {
                   toast.success((
                     "Successfully set " +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    currentNetwork.assets[openP[i].asset].name +
+                    assets[openP[i].asset].name +
                     (openP[i].direction ? " long TP to " : " short TP to ") +
                     (parseFloat(data.price) / 1e18).toPrecision(7)
                   ));
@@ -498,13 +492,13 @@ export const PositionData = () => {
                     "Successfully removed SL from " +
                     (openP[i].direction ? "long " : "short ") +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    currentNetwork.assets[openP[i].asset].name
+                    assets[openP[i].asset].name
                   ));
                 } else {
                   toast.success((
                     "Successfully set " +
                     (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    currentNetwork.assets[openP[i].asset].name +
+                    assets[openP[i].asset].name +
                     (openP[i].direction ? " long SL to " : " short SL to ") +
                     (parseFloat(data.price) / 1e18).toPrecision(7)
                   ));

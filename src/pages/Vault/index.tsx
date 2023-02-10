@@ -3,7 +3,7 @@ import { styled } from "@mui/system";
 import { useState, useEffect } from "react";
 import { Container } from "src/components/Container"
 import { TigrisInput } from "src/components/Input";
-import { DAISvg, LOGO, tigusdLogo } from "src/config/images";
+import { LOGO, tigusdLogo } from "src/config/images";
 import {LockOutlined, SwapHoriz , HelpOutline, MoreHoriz } from '@mui/icons-material'
 import { ClaimModal } from "src/components/Modal/VaultClaimModal";
 import { useTokenAllowance, useTokenBalance, useContractTokenBalance, useTokenSupply, useApproveToken } from 'src/hook/useToken';

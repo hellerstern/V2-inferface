@@ -29,16 +29,17 @@ function isClosed(asset) {
 }
 
 async function getAllSymbols() {
+  const { assets } = getNetwork(0);
   let TradingAssets = [];
-  for (let i = 0; i < getNetwork(0).assets.length; i++) {
+  for (let i = 0; i < assets.length; i++) {
     TradingAssets.push({
-      symbol: getNetwork(0).assets[i].name,
-      full_name: getNetwork(0).assets[i].name,
-      description: getNetwork(0).assets[i].name,
+      symbol: assets[i].name,
+      full_name: assets[i].name,
+      description: assets[i].name,
       exchange: 'Tigris',
       type: 'crypto',
       id: i,
-      pricescale: 10 ** getNetwork(0).assets[i].decimals
+      pricescale: 10 ** assets[i].decimals
     });
   }
   return TradingAssets;

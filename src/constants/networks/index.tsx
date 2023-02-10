@@ -72,6 +72,8 @@ export const getNetwork = (networkId: any) => {
           staking: STAKING_ABI,
           referrals: REF_ABI
         },
+        proxyGas: "0.01",
+        minProxyGas: 0.002,
         assets: [
           {
             name: 'BTC/USD',
@@ -119,7 +121,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 4
+            decimals: 5
           },
           {
             name: 'LINK/USD',
@@ -131,7 +133,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 3
+            decimals: 5
           },
           {
             name: 'EUR/USD',
@@ -158,7 +160,7 @@ export const getNetwork = (networkId: any) => {
             decimals: 5
           },
           {
-            name: 'JPY/USD',
+            name: 'USD/JPY',
             minPosition: 500,
             minLev: 4,
             maxLev: 500,
@@ -167,7 +169,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 6
+            decimals: 3
           },
           {
             name: 'RUB/USD',
@@ -182,7 +184,7 @@ export const getNetwork = (networkId: any) => {
             decimals: 5
           },
           {
-            name: 'CHF/USD',
+            name: 'USD/CHF',
             minPosition: 500,
             minLev: 4,
             maxLev: 500,
@@ -194,7 +196,7 @@ export const getNetwork = (networkId: any) => {
             decimals: 5
           },
           {
-            name: 'CAD/USD',
+            name: 'USD/CAD',
             minPosition: 500,
             minLev: 4,
             maxLev: 500,
@@ -407,7 +409,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 4
+            decimals: 5
           },
           {
             name: 'XLM/USD',
@@ -431,7 +433,7 @@ export const getNetwork = (networkId: any) => {
             defaultLev: 100,
             spread: 0,
             defaultMargin: 5,
-            decimals: 4
+            decimals: 5
           },
           {
             name: 'ALGO/USD',

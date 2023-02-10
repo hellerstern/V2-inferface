@@ -15,7 +15,6 @@ interface NotificationMenuProps {
 export default function NotificationMenu(props: NotificationMenuProps) {
   const { state, setState, data } = props;
   const isOpen = Boolean(state);
-  console.log({ data });
   const handleClose = () => {
     setState(null);
   };
@@ -25,9 +24,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
   React.useEffect(() => {
     if (address !== undefined && data.length > 0) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/clear/${address}`).then((data) => {
-        console.log(data);
-      });
+      fetch(`https://notification-server-jjubf.ondigitalocean.app/notification/clear/${address}`);
     }
   }, [state]);
 
@@ -72,7 +69,7 @@ export default function NotificationMenu(props: NotificationMenuProps) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         {data?.length === 0 ? (
-          <MenuItem onClick={handleClose}>There is no notification for now.</MenuItem>
+          <MenuItem onClick={handleClose}>You have no notifications for now.</MenuItem>
         ) : (
           data.map((item) => (
             <div key={item}>
@@ -94,7 +91,6 @@ export default function NotificationMenu(props: NotificationMenuProps) {
 
 export const parseDate = (dateTime: string) => {
   const date = new Date(dateTime);
-  console.log({ date });
   return date.toLocaleString();
 };
 

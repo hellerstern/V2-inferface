@@ -3,19 +3,14 @@ import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Container } from 'src/components/Container';
 import { Notification } from 'src/components/Notification';
-import { useAccount, useNetwork, useBalance } from 'wagmi';
-import { getShellBalance, getShellAddress, sendGasBack, getShellWallet, unlockShellWallet } from 'src/shell_wallet';
+import { useAccount, useNetwork } from 'wagmi';
+import { getShellAddress, sendGasBack, checkShellWallet } from 'src/shell_wallet';
 import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { toast } from 'react-toastify';
 import { VaultInput } from 'src/components/Input';
 import { PolygonSvg, ethLogo } from 'src/config/images';
-
-const reduceAddress = (address: any) => {
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  const res = address.slice(0, 8) + '...' + address.slice(-8);
-  return res;
-};
+import { useGasBalance } from 'src/hook/useGasBalance';
 
 declare const window: any
 const { ethereum } = window;
@@ -23,19 +18,23 @@ const { ethereum } = window;
 export const Proxy = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const [tokenSymbol, setTokenSymbol] = useState<string | undefined>('ETH')
-  const { data } = useBalance({ address: '0xE6Aa61C88BC4a178E53aD2d2A3BC0b07Fcfd576a' });
+  const { proxyGas } = getNetwork(chain?.id);
 
-  useEffect(() => {
-    setTokenSymbol(data?.symbol);
-  }, [data])
-  const [gasBalance, setGasBalance] = useState(0);
   const [shellAddress, setShellAddress] = useState("Loading...");
+  const [gasBalanceData, setGasBalanceData] = useState<any>({formatted: "0", symbol: "ETH"});
+  const liveGasBalance = useGasBalance(getShellAddress());
+  useEffect(() => {
+    checkShellWallet(address as string);
+    setShellAddress(getShellAddress());
+    setGasBalanceData(liveGasBalance);
+    getProxy();
+  }, [liveGasBalance, address, chain]);
+
   const shellExpire = useRef(0);
 
   const [editState, setEditState] = useState({
     extendValue: '1',
-    fundValue: tokenSymbol === 'ETH' ? '0.002' : '1'
+    fundValue: proxyGas
   });
   const handleEditState = (prop: string, value: any) => {
     setEditState({ ...editState, [prop]: value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0')});
@@ -65,15 +64,6 @@ export const Proxy = () => {
   }
 
   useEffect(() => {
-    const x = async () => {
-      await unlockShellWallet();
-      const shellBalance = await getShellBalance();
-      const b = parseFloat(shellBalance.toString());
-      setGasBalance(b);
-      setShellAddress(await getShellAddress());
-      await getProxy();
-    }
-    x();
     setInterval(() => {
       getApprovalHours();
       getApprovalMinutes();
@@ -82,7 +72,7 @@ export const Proxy = () => {
   }, []);
 
   async function getTradingContract() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const currentNetwork = getNetwork(chain?.id);
     return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, new ethers.providers.Web3Provider(ethereum).getSigner());
   }
 
@@ -105,7 +95,6 @@ export const Proxy = () => {
         error: "Failed to send gas back!"
       }
     );
-    setGasBalance(0);
   }
 
   function handleExtendShell() {
@@ -142,13 +131,6 @@ export const Proxy = () => {
         error: "Failed to fund proxy wallet!"
       }
     );
-    setGasBalance(gasBalance + parseFloat(editState.fundValue));
-  }
-
-  const update = async () => {
-    setGasBalance(parseFloat(await getShellBalance()));
-    setShellAddress(await getShellAddress());
-    getProxy();
   }
 
   function copy() {
@@ -157,15 +139,19 @@ export const Proxy = () => {
 
   const handleAddressClick = () => {
     let newLink = "";
-    if(shellAddress !== undefined) {
+    if(shellAddress !== undefined && isConnected) {
         if(chain?.id === 137) {
           newLink = "https://polygonscan.com/address/";
         } else if(chain?.id === 42161) {
           newLink = "https://arbiscan.io/address/"
         } else if(chain?.id === 421613) {
           newLink = "https://goerli.arbiscan.io/address/"
+        } else {
+          newLink = "https://etherscan.io/"
         }
         window.open(`${newLink}${shellAddress}`, "_blank");
+    } else {
+      window.open("https://etherscan.io/", "_blank");
     }
   }
 
@@ -191,7 +177,7 @@ export const Proxy = () => {
         </ShellWalletMedia>
         <ShellWalletAction>
           <GasBalanceContainer>
-            <GasBalance>{gasBalance.toFixed(4) + (chain?.id === 137 ? " MATIC" : " ETH")}</GasBalance>
+            <GasBalance>{gasBalanceData?.formatted.slice(0, 6)} {gasBalanceData?.symbol}</GasBalance>
             <p style={{ color: '#B1B5C3', fontSize: '15px', lineHeight: '20px' }}>Proxy wallet gas balance</p>
           </GasBalanceContainer>
           <ApproveContainer>
@@ -219,7 +205,7 @@ export const Proxy = () => {
               <ExtendApproveButton onClick={() => handleExtendShell()}>Set approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={tokenSymbol} />} />
+              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={gasBalanceData?.symbol} />} />
               <SendGasButton onClick={() => handleFundShell()}>Fund proxy wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>

@@ -22,7 +22,7 @@ import {
   xmrLogo
 } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
-import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
   return {
@@ -96,13 +96,9 @@ interface PriceCellProps {
 }
 
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
+  const { assets } = getNetwork(0);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
-      if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
-        setOraclePrice(data[pairIndex].price);
-      }
-    });
-    eu2oracleSocket.on('data', (data: any) => {
       if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
@@ -122,7 +118,7 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
       <TableCell align="center" sx={{ width: '125px' }} onClick={() => setPairIndex(pairIndex)}>
         {oraclePrice === 'Loading...'
           ? 'Loading...'
-          : (oraclePrice / 1e18).toFixed(getNetwork(0).assets[pairIndex].decimals)}
+          : (oraclePrice / 1e18).toFixed(assets[pairIndex].decimals)}
       </TableCell>
     </>
   );

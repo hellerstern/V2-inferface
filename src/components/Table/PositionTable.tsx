@@ -13,8 +13,8 @@ import { EditModal } from '../Modal/EditModal';
 import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
-import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
-import { oracleData, eu1oracleSocket, eu2oracleSocket } from 'src/context/socket';
+import { getShellWallet, getShellNonce } from '../../../src/shell_wallet/index';
+import { oracleData, eu1oracleSocket } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -49,9 +49,6 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     eu1oracleSocket.on('data', (data: any) => {
       setData(data);
     });
-    eu2oracleSocket.on('data', (data: any) => {
-      setData(data);
-    });
   }, []);
 
   const openPositions = positionData.openPositions;
@@ -60,11 +57,9 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
 
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { assets } = getNetwork(0);
 
   const [forceRerender, setForceRerender] = useState(Math.random());
-  useEffect(() => {
-    setForceRerender(Math.random());
-  }, [positionData]);
 
   const [clickedPosition, setClickedPosition] = useState<any>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -126,7 +121,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   }
   async function cancelOrder(id: number) {
     try {
-      const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+      const currentNetwork = getNetwork(chain?.id);
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
@@ -162,7 +157,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   }
   async function updateTPSL(position: any, isTP: boolean, limitPrice: string) {
     try {
-      const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+      const currentNetwork = getNetwork(chain?.id);
       const _oracleData: any = oracleData[position.asset];
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
@@ -349,7 +344,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
                 <TableCell>{position.orderType === 1 ? "Limit" : "Stop"}</TableCell> :
                 <></>
               }
-              <TableCell>{getNetwork(chain?.id).assets[position.asset].name}</TableCell>
+              <TableCell>{assets[position.asset].name}</TableCell>
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>

@@ -4,37 +4,36 @@ import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
 import { useAccount, useNetwork } from 'wagmi';
-import { eu1oracleSocket, eu2oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from "../../../src/constants/networks";
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
+import { useOpenInterest } from 'src/hook/useTradeInfo';
 
-import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet } from '../../../src/shell_wallet/index';
+import { getShellWallet, getShellAddress, getShellBalance, getShellNonce, unlockShellWallet, checkShellWallet } from '../../../src/shell_wallet/index';
 
 declare const window: any
 const { ethereum } = window;
 
 interface IOrderForm {
   pairIndex: number;
-  longOi: any;
-  shortOi: any;
-  maxOi: any;
 }
 
-export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderForm) => {
+export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
   const [isMarketAvailable, setMarketAvailable] = useState(true);
   const [isMarketClosed, setMarketClosed] = useState(false);
+  const { assets } = getNetwork(0);
 
   // First render
   useEffect(() => {
-    [eu1oracleSocket, eu2oracleSocket].forEach((socket) => {
+    [eu1oracleSocket].forEach((socket) => {
       socket.on('data', (data: any) => {
         if (!data[currentPairIndex.current]) {
           setMarketAvailable(false);
@@ -52,25 +51,21 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   }, []);
 
   useEffect(() => {
-    if (address === undefined) return;
-    const x = async () => {
-      await unlockShellWallet();
-    }
-    x();
-  }, [address]);
+    checkShellWallet(address as string);
+    getProxyApproval();
+  }, [address, chain]);
 
   useEffect(() => {
-    setMarginAssets({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
-    const _currentMargin = { marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] };
+    setMarginAssets({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
+    const _currentMargin = { marginAssetDrop: getNetwork(chain?.id).marginAssets[1] };
     setCurrentMargin(_currentMargin);
     currentMarginRef.current = _currentMargin;
-    getProxyApproval();
   }, [chain]);
 
-  const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets });
+  const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
 
-  const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain === undefined ? 0 : chain.id).marginAssets[0] });
-  const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[0]);
+  const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets[1] });
+  const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[1]);
 
   const currentPairIndex = useRef(pairIndex);
 
@@ -114,6 +109,11 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   useEffect(() => {
     setIsTokenAllowed(currentMargin.marginAssetDrop.address === getNetwork(chain?.id).addresses.tigusd ? true : tokenLiveAllowance ? Number(tokenLiveAllowance) > 0 : false);
   }, [tokenLiveAllowance, currentMargin]);
+  const [oi, setOi] = useState<any>({longOi: 0, shortOi: 0, maxOi: 0});
+  const liveOi = useOpenInterest(pairIndex);
+  useEffect(() => {
+    setOi(liveOi);
+  }, [liveOi]);
 
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
@@ -331,6 +331,9 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
             defaultValue={0}
             aria-label="Default"
             valueLabelDisplay="auto"
+            valueLabelFormat={(value: number, index: number) => {
+              return `${value}%`;
+            }}
             min={0}
             step={1}
             max={90}
@@ -346,6 +349,9 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
             defaultValue={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
             aria-label="Default"
             valueLabelDisplay="auto"
+            valueLabelFormat={(value: number, index: number) => {
+              return `${value}%`;
+            }}
             min={0}
             step={1}
             max={isLong ? 500 : parseFloat(leverage) < 5 ? parseFloat(leverage) * 100 : 500}
@@ -456,12 +462,11 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   }
 
   function getButtonText() {
-    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const s = getTradeStatus();
     const txt =
       s === "Approve" ? "APPROVE " + currentMargin.marginAssetDrop.name :
         s === "Proxy" ? "APPROVE PROXY" :
-          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (currentNetwork.assets[pairIndex].name) :
+          s === "Ready" ? (isLong ? "LONG $" : "SHORT $") + Math.round(parseFloat(margin) * parseFloat(leverage)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " " + (assets[pairIndex].name) :
             s === "NotConnected" ? "CONNECT WALLET" :
               s === "Unavailable" ? "MARKET UNAVAILABLE" :
                 s === "Closed" ? "MARKET CLOSED" :
@@ -481,7 +486,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
           !isTokenAllowed ? status = "Approve" :
             !isProxyApproved ? status = "Proxy" :
               parseFloat(margin) > parseFloat(tokenBalance) ? status = "Balance" :
-                maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? longOi/1e18 : shortOi/1e18) > maxOi/1e18 ? status = "MaxOi" :
+                oi?.maxOi > 0 && parseFloat(margin)*parseFloat(leverage) + (isLong ? oi?.longOi/1e18 : oi?.shortOi/1e18) > oi?.maxOi/1e18 ? status = "MaxOi" :
                   parseFloat(margin)*parseFloat(leverage) < 500 ? status = "PosSize" :
                     status = "Ready";
     return status;
@@ -510,7 +515,8 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
 
   async function getProxyApproval() {
     if (!isConnected) return;
-    const tradingContract = await getTradingContract();
+    const tradingContract = await getTradingContractForApprove();
+    const { minProxyGas } = getNetwork(chain?.id);
 
     const proxy = await tradingContract.proxyApprovals(address);
 
@@ -519,7 +525,7 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
     const currentTime = Date.now() / 1000;
     const shellBalance = await getShellBalance();
 
-    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < 0.002) {
+    if ((await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() || currentTime > proxyTime || Number(shellBalance) < minProxyGas) {
       setIsProxyApproved(false);
     } else {
       setIsProxyApproved(true);
@@ -529,9 +535,15 @@ export const TradingOrderForm = ({ pairIndex, longOi, shortOi, maxOi }: IOrderFo
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-
+    const traderGas = await tradingContract.provider.getBalance(address as string);
+    const proxyGas = getNetwork(chain?.id).proxyGas;
+    if (Number(traderGas)/1e18 < Number(proxyGas)) {
+      toast.error("Not enough gas for proxy wallet");
+      return;
+    }
+    await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 86400, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther("0.005") });
+    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, { gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(proxyGas) });
     const response: any = await toast.promise(
       tx,
       {
