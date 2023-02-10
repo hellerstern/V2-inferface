@@ -203,7 +203,7 @@ export const DailyPerformanceChart = () => {
 };
 
 const Container = styled(Box)(({ theme }) => ({
-  height: '560px',
+  minHeight: '560px',
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: '#18191D',
@@ -278,5 +278,6 @@ const NoData = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  textAlign: 'center'
+  textAlign: 'center',
+  paddingTop: '4rem'
 }));

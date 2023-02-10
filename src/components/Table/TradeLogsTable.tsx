@@ -89,6 +89,7 @@ export const TradeLogsTable = (props: LogsTableProps) => {
         for (let i = 0; i < len; i++) {
           const position = data[i].position === true ? 'Long' : 'Short';
           const symbol_idx = data[i].symbol;
+          console.log('asset: ', getNetwork(chain?.id).assets[symbol_idx]);
           const symbol = getNetwork(chain?.id).assets[symbol_idx].name;
           const positionSize = data[i].positionSize;
           const leverage = data[i].leverage;
@@ -168,8 +169,16 @@ export const TradeLogsTable = (props: LogsTableProps) => {
                   <TableCell>{row.leverage}x</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.entryPrice}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.exitPrice}</TableCell>
-                  <TableCell sx={{ minWidth: '100px' }}><span style={{ color: row.pnlPro > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>{row.pnlPro}</span></TableCell>
-                  <TableCell sx={{ minWidth: '100px' }}><span style={{ color: row.pnlDollar > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>{row.pnlDollar}</span></TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>
+                    <span style={{ color: row.pnlPro > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>
+                      {row.pnlPro}
+                    </span>
+                  </TableCell>
+                  <TableCell sx={{ minWidth: '100px' }}>
+                    <span style={{ color: row.pnlDollar > 0 ? 'rgb(38, 166, 154)' : 'rgb(239, 83, 80)' }}>
+                      {row.pnlDollar}
+                    </span>
+                  </TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.orderType}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.date}</TableCell>
                   <TableCell sx={{ minWidth: '100px' }}>{row.time}</TableCell>
