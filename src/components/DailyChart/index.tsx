@@ -38,8 +38,8 @@ export const DailyPerformanceChart = () => {
 
   const configPrice = {
     yAxis: {
-      offset: 60,
-      tickLength: 60,
+      offset: 40,
+      tickLength: 40,
       tickPosition: 'outside'
     },
     tooltip: {
