@@ -140,7 +140,7 @@ export const Header = () => {
                     style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
                   />
                   {
-                    chain?.id === 421613 ?
+                    chain?.id === 421613 &&
                     <CustomTab
                       label="Faucet"
                       {...a11yProps(4)}
@@ -150,7 +150,6 @@ export const Header = () => {
                       }}
                       style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
                     />
-                    : <></>
                   }
                 </Tabs>
               </TabContainer>
