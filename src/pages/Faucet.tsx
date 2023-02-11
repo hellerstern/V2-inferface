@@ -27,12 +27,15 @@ export const Faucet = () => {
     if (isConnected) {
       setIsEligible(false);
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      toast.loading("Claiming tokens...");
       axios
         .post(`${PRIVATE_ROUTES.faucet_serverUrl}/claim/${address as string}`)
         .then(() => {
-          toast.success("Successfully claimed tokens!");
+          toast.dismiss();
+          toast.success("Claimed 0.011 ETH + 1000 DAI");
         })
         .catch(() => {
+          toast.dismiss();
           toast.error("Faucet error!");
         });
     }
