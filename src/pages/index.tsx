@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PRIVATE_ROUTES } from 'src/config/routes';
 import { TabPanel } from '../../src/components/TabPanel';

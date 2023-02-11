@@ -10,6 +10,7 @@ export const PUBLIC_ROUTES = {
 export const PRIVATE_ROUTES = {
   referral_serverUrl: 'https://referral-server-oirhf.ondigitalocean.app',
   tradelogs_serverUrl: 'https://trade-logs-d2jut.ondigitalocean.app',
+  faucet_serverUrl: 'https://faucet-server-ikbg7.ondigitalocean.app',
   clientUrl: 'https://v2-interface.4everland.app'
   // serverUrl: 'http://localhost:5000',
   // clientUrl: 'http://localhost:3000'
