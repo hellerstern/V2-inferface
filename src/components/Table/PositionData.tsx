@@ -144,7 +144,6 @@ export const PositionData = () => {
       });
 
       socket.on('PositionOpened', (data: any) => {
-        const currentNetwork = getNetwork(chain?.id);
         if (data.trader === address && data.chainId === chain?.id) {
           if (data.orderType === 0) {
             toast.success((
@@ -294,14 +293,14 @@ export const PositionData = () => {
                 assets[limitO[i].asset].name +
                 (limitO[i].direction ? " long " : " short ") +
                 (limitO[i].orderType === 1 ? "limit" : "stop") + " order filled @ " +
-                (parseFloat(data.oPrice) / 1e18).toPrecision(6)
+                (parseFloat(data.openPrice) / 1e18).toPrecision(6)
               ));
               openP.push(
                 {
                   trader: data.trader,
                   margin: data.margin,
                   leverage: limitO[i].leverage,
-                  price: data.oPrice,
+                  price: data.openPrice,
                   tpPrice: limitO[i].tpPrice,
                   slPrice: limitO[i].slPrice,
                   orderType: 0,
@@ -309,8 +308,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: limitO[i].asset,
                   accInterest: 0,
-                  liqPrice: limitO[i].direction ? (parseInt(data.oPrice) - parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
-                  : (parseInt(data.oPrice) + parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
+                  liqPrice: limitO[i].direction ? (parseInt(data.openPrice) - parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
+                  : (parseInt(data.openPrice) + parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
                   isVisible: true
                 }
               );
