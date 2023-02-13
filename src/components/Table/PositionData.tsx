@@ -239,7 +239,7 @@ export const PositionData = () => {
                   assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
                   "closed @ " +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
                 ));
                 openP.splice(i, 1);
                 break;
@@ -266,7 +266,7 @@ export const PositionData = () => {
                   (openP[i].direction ? " long " : " short ") +
                   (data.percent / 1e8).toFixed(2) +
                   "% closed @ " +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
                 ));
                 openP[i] = modP;
                 break;
