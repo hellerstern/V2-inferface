@@ -161,7 +161,7 @@ export const Header = () => {
                   isConnected ? 
                     <ShellButton onClick={() => navigate('/proxy')}>
                       <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                      <GasAmount>{gasBalanceData?.formatted.slice(0, 6)} {gasBalanceData?.symbol}</GasAmount>
+                      <GasAmount>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasAmount>
                     </ShellButton>
                   : <></>
                 }
