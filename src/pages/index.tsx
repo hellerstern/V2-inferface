@@ -37,9 +37,9 @@ export const Home = () => {
       fetch(`${PRIVATE_ROUTES.referral_serverUrl}/${refCode}`).then((response) => {
         response.json().then((data) => {
           navigate('/');
-          const sender = data.toString();
-          console.log({ sender });
-          cookies.set('sender', sender);
+          const ref = data.toString();
+          console.log({ ref });
+          cookies.set('ref', ref);
         });
       });
     }

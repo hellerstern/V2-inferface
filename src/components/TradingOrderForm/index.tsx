@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 import { useOpenInterest } from 'src/hook/useTradeInfo';
+import Cookies from 'universal-cookie';
 
 import {
   getShellWallet,
@@ -24,6 +25,7 @@ import {
 
 declare const window: any;
 const { ethereum } = window;
+const cookies = new Cookies();
 
 interface IOrderForm {
   pairIndex: number;
@@ -714,8 +716,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    // TODO referral cookie
-    const _ref = ethers.constants.HashZero;
+    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,
@@ -794,8 +795,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    // TODO referral cookie
-    const _ref = ethers.constants.HashZero;
+    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,
