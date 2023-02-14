@@ -303,7 +303,7 @@ export const TokenDetails = ({
                 <p className="title">Open Fee</p>
                 <p className="value">
                   {
-                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.HashZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.AddressZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
                   }
                 </p>
               </Box>
@@ -311,7 +311,7 @@ export const TokenDetails = ({
                 <p className="title">Close Fee</p>
                 <p className="value">
                   {
-                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.HashZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
+                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.AddressZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
                   }
                 </p>
               </Box>

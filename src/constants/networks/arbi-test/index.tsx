@@ -23,15 +23,15 @@ export const NETWORK = {
     rpc: "https://goerli-rollup.arbitrum.io/rpc/",
     layerzero: 0,
     addresses: {
-        positions: "0xa6065A5114dFc7b53e0e31C2Fd96Abc10a43eCC8",
-        trading: "0x90fAd78284d1C24e3D5aE06BC91afE62a9F6aa13",
-        tradinglibrary: "0x08046aBBe9631089A4dCb15bBa24d1021B77E785",
-        tigusd: "0x3BE218e5Bd1fb137031Aa828edb500687390A74e",
-        tigusdvault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
-        pairscontract: "0x6D1D6Fbd0D43a31a48F63BB80383729da7Aef8Fc",
+        positions: "0xca8DEDA5F2f358fE22e6631FfAa1FCA89dbd8a87",
+        trading: "0xf946b45c95F00C8Ff2D97D988F52cab00CB02A45",
+        tradinglibrary: "0xD79A0A81F63273EF829702ddAfc2a8c5F505d0f7",
+        tigusd: "0xfE7080BcD5E19cCE206Da4FE8D29816CeAff4a32",
+        tigusdvault: "0x183414B0AE96Bf27558bE26E0F8B810BA854517D",
+        pairscontract: "0x8B2DF26893ce180b961FDe89B7d246c8A3756cFc",
         treasury: "0x1727FC1d930912FA075ff82741d9f50362350589",
-        govnft: "0x72c2361A2Da2a98855539c0d596036E364eB8bE4",
-        referrals: "0x0ccBc6232AD9C1E2c2fD783FfcBAD16e34846479",
+        govnft: "0x231EeD5a0ceD421672ca6E578C0c1790eb736b29",
+        referrals: "0x156336d00b6f365FB8522886BCD74f3c015B50f5",
         nftsale: "0xd1bF71b53E32C089A26C3bFD880d9DdF08425636"
     },
     abis: {
@@ -54,8 +54,8 @@ export const NETWORK = {
     marginAssets: [
         {
             name: "tigUSD",
-            address: "0x3BE218e5Bd1fb137031Aa828edb500687390A74e",
-            stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
+            address: "0xfE7080BcD5E19cCE206Da4FE8D29816CeAff4a32",
+            stablevault: "0x183414B0AE96Bf27558bE26E0F8B810BA854517D",
             decimals: 18,
             hasPermit: true,
             icon: tigusdLogo
@@ -63,7 +63,7 @@ export const NETWORK = {
         {
             name: "DAI",
             address: "0xE94Aa6479601544a32e43CAF082A2F7FC7fB0720",
-            stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
+            stablevault: "0x183414B0AE96Bf27558bE26E0F8B810BA854517D",
             decimals: 18,
             hasPermit: true,
             icon: daiLogo
@@ -71,7 +71,7 @@ export const NETWORK = {
         {
             name: "USDT",
             address: "0xfb59C8Cac513440cD93306987BcfC53202940868",
-            stablevault: "0xA69247138a605720ce9d0bb6707A2eb7F87Fe7b5",
+            stablevault: "0x183414B0AE96Bf27558bE26E0F8B810BA854517D",
             decimals: 6,
             hasPermit: true,
             icon: usdtLogo

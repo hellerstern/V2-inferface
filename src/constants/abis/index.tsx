@@ -1164,7 +1164,7 @@ export const POSITIONS_ABI = [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
   
 export const TRADING_ABI = [
   {
@@ -1195,6 +1195,11 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
+    "name": "BadConstructor",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "BadDeposit",
     "type": "error"
   },
@@ -1205,12 +1210,37 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
+    "name": "BadSetter",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BadStopLoss",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "BadWithdraw",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "BelowMinPositionSize",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CloseToMaxPnL",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IsLimit",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LimitNotMet",
     "type": "error"
   },
   {
@@ -1230,7 +1260,17 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
+    "name": "NotAllowedInVault",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotAllowedPair",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotLimit",
     "type": "error"
   },
   {
@@ -1245,6 +1285,21 @@ export const TRADING_ABI = [
   },
   {
     "inputs": [],
+    "name": "NotOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotProxy",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotVault",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "TradingPaused",
     "type": "error"
   },
@@ -1254,30 +1309,41 @@ export const TRADING_ABI = [
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "WaitDelay",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_newMargin",
+        "name": "newMargin",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_newPrice",
+        "name": "newPrice",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "addMargin",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       }
     ],
@@ -1290,37 +1356,37 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_tigAsset",
+        "name": "tigAsset",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_daoFees",
+        "name": "daoFees",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_burnFees",
+        "name": "burnFees",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_refFees",
+        "name": "refFees",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_botFees",
+        "name": "botFees",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_referrer",
+        "name": "referrer",
         "type": "address"
       }
     ],
@@ -1333,13 +1399,13 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       }
     ],
@@ -1352,49 +1418,49 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_asset",
+        "name": "asset",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "bool",
-        "name": "_direction",
+        "name": "direction",
         "type": "bool"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_openPrice",
+        "name": "openPrice",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_lev",
+        "name": "lev",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_margin",
+        "name": "margin",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_executor",
+        "name": "executor",
         "type": "address"
       }
     ],
@@ -1407,31 +1473,31 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_newMargin",
+        "name": "newMargin",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_newLeverage",
+        "name": "newLeverage",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "bool",
-        "name": "_isMarginAdded",
+        "name": "isMarginAdded",
         "type": "bool"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       }
     ],
@@ -1463,37 +1529,37 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_closePrice",
+        "name": "closePrice",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_percent",
+        "name": "percent",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_payout",
+        "name": "payout",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_executor",
+        "name": "executor",
         "type": "address"
       }
     ],
@@ -1506,19 +1572,19 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_executor",
+        "name": "executor",
         "type": "address"
       }
     ],
@@ -1571,44 +1637,44 @@ export const TRADING_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "bytes32",
-            "name": "referral",
-            "type": "bytes32"
+            "internalType": "address",
+            "name": "referrer",
+            "type": "address"
           }
         ],
         "indexed": false,
         "internalType": "struct ITrading.TradeInfo",
-        "name": "_tradeInfo",
+        "name": "tradeInfo",
         "type": "tuple"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_orderType",
+        "name": "orderType",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_price",
+        "name": "price",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_marginAfterFees",
+        "name": "marginAfterFees",
         "type": "uint256"
       }
     ],
@@ -1621,25 +1687,25 @@ export const TRADING_ABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "bool",
-        "name": "_isTp",
+        "name": "isTp",
         "type": "bool"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_price",
+        "name": "price",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_trader",
+        "name": "trader",
         "type": "address"
       }
     ],
@@ -1655,18 +1721,60 @@ export const TRADING_ABI = [
       },
       {
         "internalType": "address",
-        "name": "_marginAsset",
+        "name": "_stableVault",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_stableVault",
+        "name": "_marginAsset",
         "type": "address"
       },
       {
         "internalType": "uint256",
         "name": "_addMargin",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "asset",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spread",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PriceData",
+        "name": "_priceData",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
       },
       {
         "components": [
@@ -1724,16 +1832,16 @@ export const TRADING_ABI = [
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "_addMargin",
-        "type": "uint256"
-      },
-      {
         "components": [
           {
             "internalType": "address",
             "name": "provider",
             "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -1754,11 +1862,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -1779,6 +1882,11 @@ export const TRADING_ABI = [
         "internalType": "address",
         "name": "_marginAsset",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_addMargin",
+        "type": "uint256"
       },
       {
         "components": [
@@ -1866,43 +1974,6 @@ export const TRADING_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "blockDelay",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "blockDelayPassed",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "delay",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "actionType",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -1963,6 +2034,11 @@ export const TRADING_ABI = [
             "type": "address"
           },
           {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "asset",
             "type": "uint256"
@@ -1981,11 +2057,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2023,6 +2094,11 @@ export const TRADING_ABI = [
             "type": "address"
           },
           {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "asset",
             "type": "uint256"
@@ -2041,11 +2117,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2123,9 +2194,9 @@ export const TRADING_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "bytes32",
-            "name": "referral",
-            "type": "bytes32"
+            "internalType": "address",
+            "name": "referrer",
+            "type": "address"
           }
         ],
         "internalType": "struct ITrading.TradeInfo",
@@ -2235,9 +2306,9 @@ export const TRADING_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "bytes32",
-            "name": "referral",
-            "type": "bytes32"
+            "internalType": "address",
+            "name": "referrer",
+            "type": "address"
           }
         ],
         "internalType": "struct ITrading.TradeInfo",
@@ -2250,6 +2321,11 @@ export const TRADING_ABI = [
             "internalType": "address",
             "name": "provider",
             "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -2270,11 +2346,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2357,6 +2428,25 @@ export const TRADING_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "lastLimitUpdate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
       },
@@ -2371,6 +2461,11 @@ export const TRADING_ABI = [
             "internalType": "address",
             "name": "provider",
             "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -2391,11 +2486,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2411,25 +2501,6 @@ export const TRADING_ABI = [
     "name": "limitClose",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "limitDelay",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2460,6 +2531,11 @@ export const TRADING_ABI = [
             "type": "address"
           },
           {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "asset",
             "type": "uint256"
@@ -2478,11 +2554,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2498,6 +2569,25 @@ export const TRADING_ABI = [
     "name": "liquidatePosition",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "marginApproved",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2608,6 +2698,11 @@ export const TRADING_ABI = [
             "type": "address"
           },
           {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "asset",
             "type": "uint256"
@@ -2626,11 +2721,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2674,19 +2764,6 @@ export const TRADING_ABI = [
       }
     ],
     "name": "setAllowedVault",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_blockDelay",
-        "type": "uint256"
-      }
-    ],
-    "name": "setBlockDelay",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2758,6 +2835,19 @@ export const TRADING_ABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_timeDelay",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTimeDelay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_ext",
         "type": "address"
@@ -2784,6 +2874,43 @@ export const TRADING_ABI = [
     "name": "setTrustedForwarder",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "timeDelay",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "timeDelayPassed",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "delay",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "actionType",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2824,6 +2951,11 @@ export const TRADING_ABI = [
             "type": "address"
           },
           {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "asset",
             "type": "uint256"
@@ -2842,11 +2974,6 @@ export const TRADING_ABI = [
             "internalType": "uint256",
             "name": "timestamp",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
           }
         ],
         "internalType": "struct PriceData",
@@ -2882,7 +3009,7 @@ export const TRADING_ABI = [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
 
 export const TRADINGLIBRARY_ABI = [
   {
@@ -5810,32 +5937,6 @@ export const STAKING_ABI = [
 
 export const REF_ABI = [
   {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_codeOwners",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_ownedCodes",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_referredA",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_referredTo",
-        "type": "bytes32[]"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -5860,69 +5961,18 @@ export const REF_ABI = [
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_referrer",
+        "name": "referredTrader",
         "type": "address"
       },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "_hash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "ReferralCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_referredTrader",
+        "name": "referrer",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "_hash",
-        "type": "bytes32"
       }
     ],
     "name": "Referred",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_hash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "createReferralCode",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_hash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getReferral",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [
@@ -5935,9 +5985,9 @@ export const REF_ABI = [
     "name": "getReferred",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "",
-        "type": "bytes32"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -5997,9 +6047,9 @@ export const REF_ABI = [
         "type": "address"
       },
       {
-        "internalType": "bytes32",
-        "name": "_hash",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "_referrer",
+        "type": "address"
       }
     ],
     "name": "setReferred",
