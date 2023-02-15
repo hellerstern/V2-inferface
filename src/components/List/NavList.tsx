@@ -1,6 +1,6 @@
 import { Box, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
-import { GovernanceSvg, TradeSvg, VaultSvg, ReferralSvg, DocumentSvg, Indicator } from '../../../src/config/images';
+import { GovernanceSvg, TradeSvg, VaultSvg, ReferralSvg, Indicator } from '../../../src/config/images';
 import { useStore } from '../../../src/context/StoreContext';
 
 export const NavList = () => {
@@ -30,6 +30,12 @@ export const NavList = () => {
           <Img src={ReferralSvg} alt="Referral-svg" />
         </ListItemIcon>
         <ListItemText primary={'Referral'} />
+      </ListItemButton>
+      <ListItemButton sx={{ paddingX: '1.5rem' }} onClick={() => setPage(4)}>
+        <ListItemIcon sx={{ minWidth: 30 }}>
+          <Img src={Indicator} alt="Referral-svg" />
+        </ListItemIcon>
+        <ListItemText primary={'Faucet'} />
       </ListItemButton>
     </List>
   );
