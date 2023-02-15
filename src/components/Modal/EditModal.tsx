@@ -421,7 +421,7 @@ export const EditModal = (props: EditModalProps) => {
 		
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.addToPosition(position.id, priceData, _oracleData.signature, editState.addMenu.stablevault, editState.addMenu.address, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+		const tx = tradingContract.addToPosition(position.id, priceData, _oracleData.signature, editState.addMenu.stablevault, editState.posDrop.address, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
     setState(false);
     const response: any = await toast.promise(
       tx,
