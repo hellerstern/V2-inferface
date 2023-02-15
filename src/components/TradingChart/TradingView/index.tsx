@@ -358,7 +358,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				isTP,
 				position.id,
 				price,
-				[_oracleData.provider, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp, _oracleData.isClosed],
+				[_oracleData.provider, _oracleData.is_closed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
 				_oracleData.signature,
 				address,
 				{ gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
@@ -437,11 +437,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 			else if (newLiqPrice > currentLiq) {
 				const _priceData = [
 					_oracleData.provider,
+					_oracleData.is_closed,
 					position.asset,
 					_oracleData.price,
 					_oracleData.spread,
-					_oracleData.timestamp,
-					_oracleData.isClosed
+					_oracleData.timestamp
 				];
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
 				if (newLeverage > 100) {
@@ -521,11 +521,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 			else if (newLiqPrice < currentLiq) {
 				const _priceData = [
 					_oracleData.provider,
+					_oracleData.is_closed,
 					position.asset,
 					_oracleData.price,
 					_oracleData.spread,
-					_oracleData.timestamp,
-					_oracleData.isClosed
+					_oracleData.timestamp
 				];
 				const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
 				if (newLeverage > 100) {
