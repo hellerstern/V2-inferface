@@ -18,9 +18,6 @@ import { getShellWallet, getShellNonce } from 'src/shell_wallet';
 import { toast } from 'react-toastify';
 import { oracleData } from 'src/context/socket';
 
-declare const window: any
-const { ethereum } = window;
-
 const marginArr = ['Add', 'Remove'];
 
 export interface DialogTitleProps {
@@ -143,11 +140,11 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
+      _oracleData.isClosed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
-      _oracleData.timestamp,
-      _oracleData.isClosed
+      _oracleData.timestamp
     ];
 
     if (position.direction && parseInt(slInput.toString()) > parseInt(_oracleData.price) && parseInt(slInput.toString()) !== 0) {
@@ -196,11 +193,11 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
+      _oracleData.isClosed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
-      _oracleData.timestamp,
-      _oracleData.isClosed
+      _oracleData.timestamp
     ];
 
     if (position.direction && parseInt(tpInput.toString()) < parseInt(_oracleData.price) && parseInt(tpInput.toString()) !== 0) {
@@ -252,11 +249,11 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
+      _oracleData.isClosed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
-      _oracleData.timestamp,
-      _oracleData.isClosed
+      _oracleData.timestamp
     ];
 		
     const tradingContract = await getTradingContract();
@@ -319,11 +316,11 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
+      _oracleData.isClosed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
-      _oracleData.timestamp,
-      _oracleData.isClosed
+      _oracleData.timestamp
     ];
 		
     const tradingContract = await getTradingContract();

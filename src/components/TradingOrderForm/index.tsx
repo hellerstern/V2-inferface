@@ -735,11 +735,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
       const _priceData = [
         _oracleData.provider,
+        _oracleData.is_closed,
         pairIndex,
         _oracleData.price,
         _oracleData.spread,
-        _oracleData.timestamp,
-        _oracleData.is_closed
+        _oracleData.timestamp
       ];
 
       if (isLong && parseInt(_sl.toString()) > parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
