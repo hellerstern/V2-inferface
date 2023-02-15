@@ -24,8 +24,8 @@ export const NETWORK = {
     layerzero: 0,
     addresses: {
         positions: "0xca8DEDA5F2f358fE22e6631FfAa1FCA89dbd8a87",
-        trading: "0xf946b45c95F00C8Ff2D97D988F52cab00CB02A45",
-        tradinglibrary: "0xD79A0A81F63273EF829702ddAfc2a8c5F505d0f7",
+        trading: "0x73e6773c481fd55DBb776eDFABbA1D6e057FF360",
+        tradinglibrary: "0x4e7C137CA43b2003a84481F32354684d386F6F63",
         tigusd: "0xfE7080BcD5E19cCE206Da4FE8D29816CeAff4a32",
         tigusdvault: "0x183414B0AE96Bf27558bE26E0F8B810BA854517D",
         pairscontract: "0x8B2DF26893ce180b961FDe89B7d246c8A3756cFc",
