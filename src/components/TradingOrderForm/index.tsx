@@ -39,7 +39,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [isMarketClosed, setMarketClosed] = useState(false);
   const { assets } = getNetwork(0);
 
-  // First render
   useEffect(() => {
     [eu1oracleSocket].forEach((socket) => {
       socket.on('data', (data: any) => {

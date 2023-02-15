@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState, useRef} from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -16,7 +16,8 @@ import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { getShellWallet, getShellNonce } from 'src/shell_wallet';
 import { toast } from 'react-toastify';
-import { oracleData } from 'src/context/socket';
+import { oracleData, eu1oracleSocket } from 'src/context/socket';
+import { useReferral, useCloseFees, useOpenFees, usePairData } from 'src/hook/useTradeInfo';
 
 const marginArr = ['Add', 'Remove'];
 
@@ -62,8 +63,10 @@ interface EditModalProps {
 export const EditModal = (props: EditModalProps) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const { assets } = getNetwork(0);
   const { isState, setState, position } = props;
   const partialArr = getNetwork(chain === undefined ? 0 : chain.id).marginAssets;
+  const positionRef = useRef<any>(position);
   const initialState = {
     stopLoss: '',
     profit: '',
@@ -73,14 +76,55 @@ export const EditModal = (props: EditModalProps) => {
     addNum: '',
     addDrop: 'Add',
     posDrop: partialArr[0],
-    position: ''
+    addToPositionMargin: ''
   };
-  const [editState, setEditState] = React.useState(initialState);
+  const [editState, setEditState] = useState(initialState);
   const handleClose = () => {
     setState(false);
   };
 
-  React.useEffect(() => {
+  const [referral, setReferral] = useState<any>({});
+  const liveReferral = useReferral();
+  useEffect(() => {
+    setReferral(liveReferral);
+  }, [liveReferral]);
+
+  const [openFees, setOpenFees] = useState<any>({});
+  const liveOpenFees = useOpenFees();
+  useEffect(() => {
+    setOpenFees(liveOpenFees);
+  }, [liveOpenFees]);
+
+  const [closeFees, setCloseFees] = useState<any>({});
+  const liveCloseFees = useCloseFees();
+  useEffect(() => {
+    setCloseFees(liveCloseFees);
+
+  }, [liveCloseFees]);
+
+  const [pairData, setPairData] = useState<any>({});
+  const livePairData = usePairData(position ? position.asset : 0);
+  useEffect(() => {
+    setPairData(livePairData);
+  }, [livePairData]);
+
+  const [openPrice, setOpenPrice] = useState(0);
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
+
+  useEffect(() => {
+    [eu1oracleSocket].forEach((socket) => {
+      socket.on('data', (data: any) => {
+        if (positionRef.current) {
+          setOpenPrice(((data[positionRef.current.asset].price/1e18) + (data[positionRef.current.asset].price/1e18) * (data[positionRef.current.asset].spread / 1e10) * (positionRef.current.direction ? 1 : -1))); 
+        }
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     if (isState) {
       setEditState({
         ...editState,
@@ -91,7 +135,7 @@ export const EditModal = (props: EditModalProps) => {
         'partial': partialArr[0],
         'addMenu': partialArr[0],
         'posDrop': partialArr[0],
-        'position': ''
+        'addToPositionMargin': ''
       });      
     }
   }, [isState]);
@@ -116,8 +160,8 @@ export const EditModal = (props: EditModalProps) => {
     setEditState({ ...editState, 'addNum': value });
   };
 
-  const handleEditPosition = (value: any) => {
-    setEditState({ ...editState, 'position': value });
+  const handleEditAddToPositionMargin = (value: any) => {
+    setEditState({ ...editState, 'addToPositionMargin': value });
   };
 
   // =======
@@ -285,10 +329,21 @@ export const EditModal = (props: EditModalProps) => {
   async function addMargin() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const addMarginInput = ethers.utils.parseEther(editState.addNum === '' ? "0" : editState.addNum);
+
+    const _oracleData: any = oracleData[position.asset];
+
+    const priceData = [
+      _oracleData.provider,
+      _oracleData.is_closed,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp
+    ];
 		
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.addMargin(position.id, editState.addMenu.address, editState.addMenu.stablevault, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+		const tx = tradingContract.addMargin(position.id, editState.addMenu.address, editState.addMenu.stablevault, addMarginInput, priceData, _oracleData.signature, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
     setState(false);
     const response: any = await toast.promise(
       tx,
@@ -346,6 +401,47 @@ export const EditModal = (props: EditModalProps) => {
     }, 1000);
 	}
 
+  function handleAddToPosition() {
+    addToPosition();
+  }
+  async function addToPosition() {
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const addMarginInput = ethers.utils.parseEther(editState.addToPositionMargin === '' ? "0" : editState.addToPositionMargin);
+
+    const _oracleData: any = oracleData[position.asset];
+
+    const priceData = [
+      _oracleData.provider,
+      _oracleData.is_closed,
+      position.asset,
+      _oracleData.price,
+      _oracleData.spread,
+      _oracleData.timestamp
+    ];
+		
+    const tradingContract = await getTradingContract();
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
+		const tx = tradingContract.addToPosition(position.id, priceData, _oracleData.signature, editState.addMenu.stablevault, editState.addMenu.address, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    setState(false);
+    const response: any = await toast.promise(
+      tx,
+      {
+        pending: 'Adding to position...',
+        success: undefined,
+        error: 'Adding to position failed!'
+      }
+    );
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error(
+          'Adding to position failed!'
+        );
+      }
+    }, 1000);
+	}
+
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={isState}>
       <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
@@ -353,14 +449,6 @@ export const EditModal = (props: EditModalProps) => {
       </BootstrapDialogTitle>
       <EditDialogContent>
         <FeeLabelGroup>
-          <FeeLabel>
-            <TextLabel>Payout before fees</TextLabel>
-            <FeeLabelValue>$15.01</FeeLabelValue>
-          </FeeLabel>
-          <FeeLabel>
-            <TextLabel>Payout after fees</TextLabel>
-            <FeeLabelValue>$15.01</FeeLabelValue>
-          </FeeLabel>
           <FeeLabel>
             <TextLabel>Funding fees paid</TextLabel>
             <FeeLabelValue>{(-parseFloat(position?.accInterest)/1e18).toFixed(2)}</FeeLabelValue>
@@ -496,23 +584,45 @@ export const EditModal = (props: EditModalProps) => {
             <TigrisInput
               label="Margin"
               placeholder="-"
-              value={editState.position}
-              setValue={handleEditPosition}
+              value={editState.addToPositionMargin}
+              setValue={handleEditAddToPositionMargin}
             />
-            <OpenButton variant="outlined">Open</OpenButton>
+            <OpenButton variant="outlined" onClick={handleAddToPosition}>Open</OpenButton>
           </FieldAction>
         </EditField>
         <FieldLabel>
           <TextLabel>New margin</TextLabel>
-          <SecondaryLabel>$20.00</SecondaryLabel>
+          <SecondaryLabel>
+            {
+              (
+                parseFloat(position?.margin)/1e18
+                + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0)))
+              )
+              .toFixed(2)
+            }
+          </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New position size</TextLabel>
-          <SecondaryLabel>$2000.00</SecondaryLabel>
+          <SecondaryLabel>
+            {
+              (
+                (parseFloat(position?.margin)/1e18 + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))))
+                * parseFloat(position?.leverage)/1e18
+              ).toFixed(2)
+            }
+          </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New open price</TextLabel>
-          <SecondaryLabel>$19,177.42</SecondaryLabel>
+          <SecondaryLabel>
+            {
+              (
+                (parseFloat(position?.price)/1e18) * (openPrice) * (parseFloat(position?.margin)/1e18 + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))))
+                / ((parseFloat(position?.margin)/1e18) * (openPrice) + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))) * (parseFloat(position?.price)/1e18))
+              ).toPrecision(6)
+            }
+          </SecondaryLabel>
         </FieldLabel>
       </EditDialogContent>
     </BootstrapDialog>
@@ -567,7 +677,7 @@ const TextLabel = styled(Box)(({ theme }) => ({
 const FeeLabelValue = styled(Box)(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '16px',
-  fontWeight: '700',
+  fontWeight: '400',
   color: '#B1B5C3'
 }));
 
@@ -604,37 +714,16 @@ const ApplyButton = styled(Button)(({ theme }) => ({
   textTransform: 'none'
 }));
 
-const CancelButton = styled(Box)(({ theme }) => ({
-  color: '#FFF',
-  backgroundColor: 'none',
-  height: '36px',
-  width: '45px',
-  fontSize: '12px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  cursor: 'pointer',
-  paddingLeft: '10px'
-}));
-
 const FieldLabel = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '100%',
   justifyContent: 'space-between'
 }));
 
-const PrimaryLabel = styled(Box)(({ theme }) => ({
-  fontSize: '12px',
-  lineHeight: '12px',
-  color: '#B1B5C3',
-  cursor: 'pointer'
-}));
-
 const SecondaryLabel = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: '12px',
-  color: '#B1B5C3',
-  cursor: 'pointer'
+  color: '#B1B5C3'
 }));
 
 const ClosePositionButton = styled(Button)(({ theme }) => ({
