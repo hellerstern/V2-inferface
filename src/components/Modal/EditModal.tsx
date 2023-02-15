@@ -140,7 +140,7 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
-      _oracleData.isClosed,
+      _oracleData.is_closed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
@@ -193,7 +193,7 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
-      _oracleData.isClosed,
+      _oracleData.is_closed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
@@ -241,7 +241,7 @@ export const EditModal = (props: EditModalProps) => {
   async function partialClose() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const _oracleData: any = oracleData[position.asset];
-    if (_oracleData.isClosed) {
+    if (_oracleData.is_closed) {
       toast.warn(
         "Cannot trade while market is closed"
       );
@@ -249,7 +249,7 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
-      _oracleData.isClosed,
+      _oracleData.is_closed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,
@@ -316,7 +316,7 @@ export const EditModal = (props: EditModalProps) => {
 
     const priceData = [
       _oracleData.provider,
-      _oracleData.isClosed,
+      _oracleData.is_closed,
       position.asset,
       _oracleData.price,
       _oracleData.spread,

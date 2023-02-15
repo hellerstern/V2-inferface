@@ -87,7 +87,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       const tx = tradingContract.initiateCloseOrder(
         position.id,
         10000000000,
-        [_oracleData.provider, _oracleData.isClosed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
+        [_oracleData.provider, _oracleData.is_closed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
         _oracleData.signature,
         currentNetwork.addresses.tigusdvault,
         currentNetwork.addresses.tigusd,
@@ -207,7 +207,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
         isTP,
         position.id,
         price,
-        [_oracleData.provider, _oracleData.isClosed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
+        [_oracleData.provider, _oracleData.is_closed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
         _oracleData.signature,
         address,
         { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
