@@ -4,12 +4,11 @@ import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { goldLogo, silverLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
-import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
+import { eu1oracleSocket, oracleData, priceChangeData, priceChangeSocket } from '../../../src/context/socket';
 
-function createData(pair: React.ReactElement, profit: React.ReactElement, pairIndex: number) {
+function createData(pair: React.ReactElement, pairIndex: number) {
   return {
     pair,
-    profit,
     pairIndex
   };
 }
@@ -54,14 +53,14 @@ const PairField = ({ favor, handleFavoriteToggle, icon, name }: PairFieldProps) 
 };
 
 interface BenefitProps {
-  percent: number;
-  value: number;
+  percent: string;
+  value: string;
 }
 
 const Benefit = ({ percent, value }: BenefitProps) => {
   return (
-    <BenefitContainer sx={{ color: percent > 0 ? '#26A69A' : '#EF534F' }}>
-      {percent > 0 ? `+${percent}` : percent.toFixed(2)}%<p>{value.toFixed(2)}</p>
+    <BenefitContainer sx={{ color: Number(percent) > 0 ? '#26A69A' : Number(percent) < 0 ? '#EF534F' : "#B1B5C3" }}>
+      {Number(percent) > 0 ? `+${percent}%` : `${percent}%`.replace("NaN", "0")}<p>{(Number(value) > 0 ? "+" : "") + value.replace("NaN", "0")}</p>
     </BenefitContainer>
   );
 };
@@ -106,6 +105,30 @@ export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   );
 };
 
+export const ChangeCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
+  useEffect(() => {
+    priceChangeSocket.on('data', (data: any) => {
+      if (data.priceChange) {
+        setPriceChange({priceChange: data.priceChange[pairIndex], priceChangePercent: data.priceChangePercent[pairIndex]});
+      }
+    });
+  }, []);
+
+  const [priceChange, setPriceChange] = useState(
+    priceChangeData === 'Loading...'
+      ? "Loading..."
+      : {priceChange: (priceChangeData as any).priceChange[pairIndex] as number, priceChangePercent: (priceChangeData as any).priceChangePercent[pairIndex] as number}
+  );
+
+  return (
+    <>
+      <TableCell align="center" sx={{ width: '100px' }} onClick={() => setPairIndex(pairIndex)}>
+        <Benefit value={priceChange === "Loading..." ? "Loading..." : (priceChange as any).priceChange.toPrecision(4)} percent={priceChange === "Loading..." ? "Loading..." : (priceChange as any).priceChangePercent.toFixed(2)}/>
+      </TableCell>
+    </>
+  );
+};
+
 export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => {
   const [FavPairs, setFavPairs] = useState<string[]>(
     JSON.parse(
@@ -134,7 +157,6 @@ export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Prop
         icon={silverLogo}
         name={'XAG/USD'}
       />,
-      <Benefit percent={0.63} value={110} />,
       32
     ),
     createData(
@@ -144,7 +166,6 @@ export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Prop
         icon={goldLogo}
         name={'XAU/USD'}
       />,
-      <Benefit percent={0.63} value={110} />,
       2
     )
   ].filter((pair) => pair.pair.props.name.includes(searchQuery));
@@ -169,7 +190,7 @@ export const CommodityPairsTable = ({ setPairIndex, searchQuery, onClose }: Prop
               <CustomTableRow key={index} onClick={() => {setPairIndex(row.pairIndex); onClose();}}>
                 <TableCell sx={{ width: '150px' }}>{row.pair}</TableCell>
                 <PriceCell setPairIndex={setPairIndex} pairIndex={row.pairIndex} />
-                <TableCell align="center">{row.profit}</TableCell>
+                <ChangeCell setPairIndex={setPairIndex} pairIndex={row.pairIndex} />
               </CustomTableRow>
             ))}
           </TableBody>
