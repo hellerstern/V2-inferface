@@ -38,30 +38,22 @@ export const Cumulative = () => {
             </Bar>
             <OverviewContent>
               <OverviewSeparator>
-                <OverviewItem title={'Daily PNL ($)'} value="65,254 k" colorValue="rgba(255, 255, 255, 0.6)" />
-                <OverviewItem title={'Daily PNL ($)'} value="140 %" colorValue="rgba(255, 255, 255, 0.6)" />
+                <OverviewItem title={'Total PnL ($)'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                <OverviewItem title={'Total PnL (%)'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
                 <OverviewItem
-                  title={'Number of settled positions (Last 24 hours)'}
-                  value="7"
+                  title={'Total number of trades'}
+                  value="-"
                   colorValue="rgba(255, 255, 255, 0.6)"
                 />
-                <OverviewItem
-                  title={'Number of settled positions (Last 7 days)'}
-                  value="21"
-                  colorValue="rgba(255, 255, 255, 0.6)"
-                />
+                <OverviewItem title={'Total volume traded'} value="-" colorValue="#777E90" />
               </OverviewSeparator>
               <ResponsiveDevider1 />
               <ResponsiveDevider2 />
               <OverviewSeparator>
-                <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#27A69A" />
-                <OverviewItem title={'Entry price'} value="0.29039402" colorValue="rgba(255, 255, 255, 0.6)" />
-                <OverviewItem title={'Exit Price'} value="0.4598948585" colorValue="rgba(255, 255, 255, 0.6)" />
-                <OverviewItem title={'Stop limit price'} value="0.4590594" colorValue="rgba(255, 255, 255, 0.6)" />
-                <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#EF534F" />
-                <ResponsiveDevider2 />
-                <OverviewItem title={'Total volume traded'} value="8,3million" colorValue="#777E90" />
-                <OverviewItem title={'Number of trades'} value="Number of trades" colorValue="#777E90" />
+                <OverviewItem title={'Longest win streak'} value="-" colorValue="#27A69A" />
+                <OverviewItem title={'Biggest win'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                <OverviewItem title={'Biggest loss'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                <OverviewItem title={'Most traded pair'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
               </OverviewSeparator>
             </OverviewContent>
           </OverviewWrapper>
