@@ -148,7 +148,7 @@ export const Header = () => {
                         setMiniPage(0);
                         navigate('/');
                       }}
-                      style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                      style={{ color: page === 4 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 4 ? 500 : 400 }}
                     />
                   }
                 </Tabs>
@@ -161,7 +161,7 @@ export const Header = () => {
                   isConnected ? 
                     <ShellButton onClick={() => navigate('/proxy')}>
                       <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                      <GasAmount>{gasBalanceData?.formatted.slice(0, 6)} {gasBalanceData?.symbol}</GasAmount>
+                      <GasAmount>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasAmount>
                     </ShellButton>
                   : <></>
                 }
@@ -245,7 +245,7 @@ export const Header = () => {
             </WalletButtons>
             <MobileShellButton onClick={() => navigate('/proxy')}>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-              <GasAmount>0.000 ETH</GasAmount>
+              <GasAmount>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasAmount>
             </MobileShellButton>
           </ModalContainer>
           <LanguageList />

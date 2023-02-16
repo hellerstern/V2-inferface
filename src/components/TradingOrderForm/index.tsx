@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
 import { useOpenInterest } from 'src/hook/useTradeInfo';
+import Cookies from 'universal-cookie';
 
 import {
   getShellWallet,
@@ -24,6 +25,7 @@ import {
 
 declare const window: any;
 const { ethereum } = window;
+const cookies = new Cookies();
 
 interface IOrderForm {
   pairIndex: number;
@@ -37,7 +39,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [isMarketClosed, setMarketClosed] = useState(false);
   const { assets } = getNetwork(0);
 
-  // First render
   useEffect(() => {
     [eu1oracleSocket].forEach((socket) => {
       socket.on('data', (data: any) => {
@@ -550,6 +551,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function marginScale(value: number) {
     return (
+      value === Math.sqrt(5) ? 5 :
       Math.round(
         (parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
           ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
@@ -714,8 +716,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    // TODO referral cookie
-    const _ref = ethers.constants.HashZero;
+    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,
@@ -734,11 +735,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
       const _priceData = [
         _oracleData.provider,
+        _oracleData.is_closed,
         pairIndex,
         _oracleData.price,
         _oracleData.spread,
-        _oracleData.timestamp,
-        _oracleData.is_closed
+        _oracleData.timestamp
       ];
 
       if (isLong && parseInt(_sl.toString()) > parseInt(_oracleData.price) && parseInt(_sl.toString()) !== 0) {
@@ -794,8 +795,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    // TODO referral cookie
-    const _ref = ethers.constants.HashZero;
+    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,

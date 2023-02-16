@@ -75,8 +75,8 @@ export default function NotificationMenu(props: NotificationMenuProps) {
             <div key={item}>
               <MenuItem onClick={handleClose}>
                 <ItemContainer>
-                  <Item>TradeID: {item[0]}</Item>
-                  <Item>EventType: {item[1]}</Item>
+                  <Item>Trade ID: {item[0]}</Item>
+                  <Item>{item[1] === "PositionLiquidated" ? "Liquidation" : item[1] === "LimitOrderExecuted" && "Limit order execution"}</Item>
                   <Item>Date: {parseDate(item[2])}</Item>
                 </ItemContainer>
               </MenuItem>

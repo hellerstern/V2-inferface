@@ -53,8 +53,7 @@ export const PositionData = () => {
       const contractCallContext: ContractCallContext[] = [
         {
           reference: 'library',
-          // TEMPORARY
-          contractAddress: chain.id === 421613 ? "0xB89E5860bc6a4214E5C5F677fecF002021fB5C68" : currentNetwork.addresses.tradinglibrary,
+          contractAddress: currentNetwork.addresses.tradinglibrary,
           abi: currentNetwork.abis.tradinglibrary,
           calls: _calls
         }
@@ -144,7 +143,6 @@ export const PositionData = () => {
       });
 
       socket.on('PositionOpened', (data: any) => {
-        const currentNetwork = getNetwork(chain?.id);
         if (data.trader === address && data.chainId === chain?.id) {
           if (data.orderType === 0) {
             toast.success((
@@ -240,7 +238,7 @@ export const PositionData = () => {
                   assets[openP[i].asset].name +
                   (openP[i].direction ? " long " : " short ") +
                   "closed @ " +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
                 ));
                 openP.splice(i, 1);
                 break;
@@ -267,7 +265,7 @@ export const PositionData = () => {
                   (openP[i].direction ? " long " : " short ") +
                   (data.percent / 1e8).toFixed(2) +
                   "% closed @ " +
-                  (parseFloat(data.price) / 1e18).toPrecision(6)
+                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
                 ));
                 openP[i] = modP;
                 break;
@@ -294,14 +292,14 @@ export const PositionData = () => {
                 assets[limitO[i].asset].name +
                 (limitO[i].direction ? " long " : " short ") +
                 (limitO[i].orderType === 1 ? "limit" : "stop") + " order filled @ " +
-                (parseFloat(data.oPrice) / 1e18).toPrecision(6)
+                (parseFloat(data.openPrice) / 1e18).toPrecision(6)
               ));
               openP.push(
                 {
                   trader: data.trader,
                   margin: data.margin,
                   leverage: limitO[i].leverage,
-                  price: data.oPrice,
+                  price: data.openPrice,
                   tpPrice: limitO[i].tpPrice,
                   slPrice: limitO[i].slPrice,
                   orderType: 0,
@@ -309,8 +307,8 @@ export const PositionData = () => {
                   id: data.id,
                   asset: limitO[i].asset,
                   accInterest: 0,
-                  liqPrice: limitO[i].direction ? (parseInt(data.oPrice) - parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
-                  : (parseInt(data.oPrice) + parseInt(data.oPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
+                  liqPrice: limitO[i].direction ? (parseInt(data.openPrice) - parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
+                  : (parseInt(data.openPrice) + parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
                   isVisible: true
                 }
               );

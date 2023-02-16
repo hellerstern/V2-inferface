@@ -67,7 +67,7 @@ export const Referral = () => {
           });
       }
     } else {
-      toast.error('Connect the wallet !');
+      toast.error('Wallet not connected!');
     }
   };
   return (

@@ -19,12 +19,32 @@ eu1oracleSocket.on('data', (data) => {
     lastOracleTime = Date.now();
 });
 
+export const priceChangeSocket = socketio.connect('https://price-change-server-n43ne.ondigitalocean.app', {transports: ['websocket'] });
+priceChangeSocket.on('connect', () => {
+    console.log('[priceChangeSocket] Connected');
+});
+  
+priceChangeSocket.on('disconnect', (reason) => {
+    console.log('[priceChangeSocket] Disconnected:', reason);
+});
+
+priceChangeSocket.on('error', (error) => {
+    console.log('[priceChangeSocket] Error:', error);
+});
+
+priceChangeSocket.on('data', (data) => {
+    priceChangeData = data;
+});
+
 export const chatSocket = socketio.connect('https://chatbox-server-l9yj9.ondigitalocean.app', {transports: ['websocket']});
 chatSocket.on('disconnect', (reason) => {
     console.log('[chatSocket] Disconnected:', reason);
 });
 
 export let oracleData = "Loading...";
+
+export let priceChangeData = "Loading...";
+
 export let lastOracleTime = 0;
 
 export const SocketContext = createContext();

@@ -177,7 +177,7 @@ export const Proxy = () => {
         </ShellWalletMedia>
         <ShellWalletAction>
           <GasBalanceContainer>
-            <GasBalance>{gasBalanceData?.formatted.slice(0, 6)} {gasBalanceData?.symbol}</GasBalance>
+            <GasBalance>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasBalance>
             <p style={{ color: '#B1B5C3', fontSize: '15px', lineHeight: '20px' }}>Proxy wallet gas balance</p>
           </GasBalanceContainer>
           <ApproveContainer>
@@ -205,7 +205,7 @@ export const Proxy = () => {
               <ExtendApproveButton onClick={() => handleExtendShell()}>Set approval period</ExtendApproveButton>
             </InputFieldContainer>
              <InputFieldContainer>
-              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={gasBalanceData?.symbol} />} />
+              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={chain?.nativeCurrency.symbol} />} />
               <SendGasButton onClick={() => handleFundShell()}>Fund proxy wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>

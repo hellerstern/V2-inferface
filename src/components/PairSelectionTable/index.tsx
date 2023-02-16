@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 import { SearchBar } from '../SearchBar';
 import { a11yProps, TabPanel } from '../TabPanel';
 import { Star } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 import { USDPairsTable } from './USDPairsTable';
 import { BTCPairsTable } from './BTCPairsTable';
 import { ForexPairsTable } from './ForexPairsTable';
@@ -35,8 +36,8 @@ export const PairSelectionTable = ({ setPairIndex, isMobile, onClose }: PairSele
         <Box sx={{ padding: '15px 20px 0 9px', display: 'flex', gap: '18px', alignItems: 'center' }}>
           <SearchBar onChange={handleSearch} />
           {isMobile && (
-            <Box sx={{ cursor: 'pointer' }} onClick={onClose}>
-              Close
+            <Box sx={{ cursor: 'pointer', marginBottom: '-6px' }} onClick={onClose}>
+              <CloseIcon sx={{color: '#777E90'}}/>
             </Box>
           )}
         </Box>
