@@ -551,6 +551,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function marginScale(value: number) {
     return (
+      value === Math.sqrt(5) ? 5 :
       Math.round(
         (parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
           ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
