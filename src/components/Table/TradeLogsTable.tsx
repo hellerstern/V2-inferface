@@ -75,13 +75,14 @@ export const TradeLogsTable = (props: LogsTableProps) => {
   const [logData, setLogData] = useState<logDataProps[]>([]);
   const [isLoading, setLoading] = useState(false);
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
   const fetchData = async () => {
     if (address !== undefined) {
       setLoading(true);
-      const result = await axios.get(`${PRIVATE_ROUTES.tradelogs_serverUrl}/tradelogs/${address}`);
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const result = await axios.get(`${PRIVATE_ROUTES.tradelogs_serverUrl}/tradelogs/${chain?.id}/${address}`);
       const data = result.data;
       const len = data.length;
       const createArr = [];
@@ -123,8 +124,12 @@ export const TradeLogsTable = (props: LogsTableProps) => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isConnected) {
+      fetchData();
+    } else {
+      setLogData([]);
+    }
+  }, [isConnected, chain]);
 
   useEffect(() => {
     setData(logData);
