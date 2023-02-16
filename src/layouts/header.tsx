@@ -99,7 +99,7 @@ export const Header = () => {
               <TabContainer>
                 <Tabs
                   TabIndicatorProps={{ style: { height: '0px' } }}
-                  value={page}
+                  value={page === 4 ? 1 : page}
                   onChange={handleChange}
                   aria-label="basic tabs example"
                 >
@@ -112,33 +112,42 @@ export const Header = () => {
                     }}
                     style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
                   />
-                  <CustomTab
-                    label="Vault"
-                    {...a11yProps(1)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
-                  />
-                  <CustomTab
-                    label="Governance"
-                    {...a11yProps(2)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
-                  />
-                  <CustomTab
-                    label="Referral"
-                    {...a11yProps(3)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
-                  />
+                  {
+                    chain?.id !== 421613 &&
+                    <CustomTab
+                      label="Vault"
+                      {...a11yProps(1)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
+                    />
+                  }
+                  {
+                    chain?.id !== 421613 &&
+                    <CustomTab
+                      label="Governance"
+                      {...a11yProps(2)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
+                    />
+                  }
+                  {
+                    chain?.id !== 421613 &&
+                    <CustomTab
+                      label="Referral"
+                      {...a11yProps(3)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                    />
+                  }
                   {
                     chain?.id === 421613 &&
                     <CustomTab
@@ -147,6 +156,7 @@ export const Header = () => {
                       onClick={() => {
                         setMiniPage(0);
                         navigate('/');
+                        setPage(4);
                       }}
                       style={{ color: page === 4 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 4 ? 500 : 400 }}
                     />
@@ -173,7 +183,7 @@ export const Header = () => {
                   }}
                 />
                 <IconButton
-                  onClick={() => navigate('/profile/' + (TraderProfile().username as string))}
+                  onClick={() => { /* navigate('/profile/' + (TraderProfile().username as string)) */ }}
                   sx={{ marginLeft: 1 }}
                 >
                   <Avatar sx={{ width: 30, height: 30 }}>
@@ -320,7 +330,9 @@ const TabContainer = styled(Box)(({ theme }) => ({
 
 const CustomTab = styled(Tab)({
   color: '#ffffff',
-  textTransform: 'none'
+  textTransform: 'none',
+  disableRipple: 'true',
+  disableFocusRipple: 'true'
 });
 
 const Actions = styled(Box)({
