@@ -393,6 +393,14 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 		const currentLiq = parseFloat(position.liqPrice) / 1e18;
 		const newLiqPrice = line.getPrice();
+		const _priceData = [
+			_oracleData.provider,
+			_oracleData.is_closed,
+			position.asset,
+			_oracleData.price,
+			_oracleData.spread,
+			_oracleData.timestamp
+		];
 
 		console.log(newLiqPrice);
 
@@ -408,9 +416,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				const toAdd = positionSize / newLeverage - (parseFloat(position.margin) / 1e18);
 				const tx = tradingContract.addMargin(
 					position.id,
-					currentNetwork.addresses.tigusd,
 					currentNetwork.addresses.tigusdvault,
+					currentNetwork.addresses.tigusd,
 					ethers.utils.parseEther(toAdd.toFixed(18)),
+					_priceData,
+					_oracleData.signature,
 					[0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
 					address,
 					{ gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
@@ -435,14 +445,6 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 				}, 1000);
 			}
 			else if (newLiqPrice > currentLiq) {
-				const _priceData = [
-					_oracleData.provider,
-					_oracleData.is_closed,
-					position.asset,
-					_oracleData.price,
-					_oracleData.spread,
-					_oracleData.timestamp
-				];
 				const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));
 				if (newLeverage > 100) {
 					toast.warning("Leverage too high!");
