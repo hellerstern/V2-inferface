@@ -7,16 +7,16 @@ import axios from 'axios';
 import { PRIVATE_ROUTES } from 'src/config/routes';
 
 export const Faucet = () => {
-
   const { address, isConnected } = useAccount();
   const [isEligible, setIsEligible] = useState(false);
   useEffect(() => {
     const x = async () => {
-      const res = await fetch(`${PRIVATE_ROUTES.faucet_serverUrl}/check/${address as string}`);
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const res = await fetch(`${PRIVATE_ROUTES.faucet_serverUrl}/check/${address}`);
       const result = await res.json();
       setIsEligible(result.eligible);
-    }
-    if(isConnected) {
+    };
+    if (isConnected) {
       x();
     } else {
       setIsEligible(false);
@@ -26,35 +26,31 @@ export const Faucet = () => {
   const claim = () => {
     if (isConnected) {
       setIsEligible(false);
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      toast.loading("Claiming tokens...");
+      toast.loading('Claiming tokens...');
       axios
-        .post(`${PRIVATE_ROUTES.faucet_serverUrl}/claim/${address as string}`)
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        .post(`${PRIVATE_ROUTES.faucet_serverUrl}/claim/${address}`)
         .then(() => {
           toast.dismiss();
-          toast.success("Claimed 0.011 ETH + 1000 DAI");
+          toast.success('Claimed 0.011 ETH + 1000 DAI');
         })
         .catch(() => {
           toast.dismiss();
-          toast.error("Faucet error!");
+          toast.error('Faucet error!');
         });
     }
-  }
+  };
 
   return (
     <PageContainer>
       <FaucetContainer>
         <Label>Faucet - 0.01 ETH and 1000 DAI for practice</Label>
         <ButtonContainer>
-          {
-            isEligible ?
-              <EnabledButton onClick={() => claim()}>
-                Request tokens
-              </EnabledButton>
-            : <DisabledButton>
-                Already claimed
-              </DisabledButton>
-          }
+          {isEligible ? (
+            <EnabledButton onClick={() => claim()}>Request tokens</EnabledButton>
+          ) : (
+            <DisabledButton>Already claimed</DisabledButton>
+          )}
         </ButtonContainer>
       </FaucetContainer>
     </PageContainer>
