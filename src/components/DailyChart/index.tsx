@@ -1,29 +1,26 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
-import { TokenDropMenu } from '../Dropdown/TokenDrop';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import './index.css';
 import { useEffect, useState } from 'react';
 import { useNetwork, useAccount } from 'wagmi';
+import socketio from "socket.io-client";
 
 export const DailyPerformanceChart = () => {
-  const [token, setToken] = useState('ALL');
   const [data, setData] = useState([]);
   const [zoomIndex, setZoomIndex] = useState(4);
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { chain } = useNetwork();
 
   const fetchData = async () => {
     const chainId = chain?.id;
-    console.log('chainId', chainId);
     if (address && chainId) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const toFetch = `https://trader-stats-tr8mu.ondigitalocean.app/performance/${chainId}/${address}`;
       const response = await fetch(toFetch);
       const resData = await response.json();
-      console.log({ resData });
       if (resData !== data) {
         setData(resData);
       }
@@ -31,10 +28,27 @@ export const DailyPerformanceChart = () => {
   };
 
   useEffect(() => {
-    if (isConnected) {
+    if (address) {
       fetchData();
     }
-  }, [isConnected, chain]);
+
+    const socket = socketio('https://us1events.tigristrade.info', { transports: ['websocket'] });
+
+    socket.on('error', (error: any) => {
+      console.log('Events Socket Error:', error);
+    });
+
+    socket.on('AddressEvent', (data) => {
+      console.log(data.chainId, data.trader);
+      if (chain?.id === data.chainId && data.trader === address) {
+        fetchData();
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    }
+  }, [chain, address]);
 
   const configPrice = {
     yAxis: {
@@ -174,17 +188,6 @@ export const DailyPerformanceChart = () => {
   };
   return (
     <Container>
-      <ChartAction>
-        <TokenDropMenu state={token} setState={setToken} />
-        <LabelGroup>
-          <LabelPnL>
-            <Label title="Daily PNL:" value="65.254K" valueColor="#27A69A" />
-            <Label title="Weekly PNL:" value="2.418B" valueColor="#27A69A" />
-          </LabelPnL>
-          <Label title="N. of settled positions (24h):" value="0" valueColor="#FFFFFF" />
-          <Label title="N. of settled positions (7d):" value="0" valueColor="#FFFFFF" />
-        </LabelGroup>
-      </ChartAction>
       <ChartContainer>
         {/* <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={configPrice} /> */}
 

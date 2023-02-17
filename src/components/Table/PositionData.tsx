@@ -136,7 +136,7 @@ export const PositionData = () => {
 
   useEffect(() => {
     if (address !== undefined) {
-      const socket = socketio('https://trading-events-zcxv7.ondigitalocean.app/', { transports: ['websocket'] });
+      const socket = socketio('https://us1events.tigristrade.info', { transports: ['websocket'] });
 
       socket.on('error', (error: any) => {
         console.log('Events Socket Error:', error);
