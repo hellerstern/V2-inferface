@@ -25,24 +25,6 @@ import './toast.css';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 window.Buffer = require('buffer').Buffer;
 
-const arbitrum: Chain = {
-  id: 42161,
-  name: 'Arbitrum',
-  network: 'arbitrum',
-  iconUrl: 'https://i.ibb.co/XCxK6J6/arb.png',
-  iconBackground: 'rgba(0,0,0,0)',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://arb1.arbitrum.io/rpc']
-    }
-  },
-  blockExplorers: {
-    etherscan: { name: 'Arbiscan', url: 'https://arbiscan.io' },
-    default: { name: 'Arbiscan', url: 'https://arbiscan.io' }
-  }
-};
-
 const arbitrumTestnet: Chain = {
   id: 421613,
   name: 'Arbitrum Görli',
@@ -66,32 +48,8 @@ const arbitrumTestnet: Chain = {
   testnet: true
 };
 
-const polygon = {
-  id: 137,
-  name: 'Polygon',
-  network: 'matic',
-  iconUrl: 'https://i.ibb.co/dQQJ8Xy/polygon.png',
-  iconBackground: 'rgba(0,0,0,0)',
-  nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://polygon-rpc.com']
-    }
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'PolygonScan',
-      url: 'https://polygonscan.com'
-    },
-    default: {
-      name: 'PolygonScan',
-      url: 'https://polygonscan.com'
-    }
-  }
-};
-
 const { chains, provider } = configureChains(
-  [polygon, arbitrum, arbitrumTestnet],
+  [arbitrumTestnet],
   [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
 );
 
