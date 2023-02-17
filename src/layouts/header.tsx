@@ -173,7 +173,7 @@ export const Header = () => {
                   }}
                 />
                 <IconButton
-                  onClick={() => { /* navigate('/profile/' + (TraderProfile().username as string)) */ }}
+                  onClick={() => {navigate('/profile/' + (TraderProfile().username as string))}}
                   sx={{ marginLeft: 1 }}
                 >
                   <Avatar sx={{ width: 30, height: 30 }}>
