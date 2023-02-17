@@ -147,7 +147,6 @@ export const Header = () => {
                       onClick={() => {
                         setMiniPage(0);
                         navigate('/');
-                        setPage(4);
                       }}
                       style={{ color: page === 4 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 4 ? 500 : 400 }}
                     />

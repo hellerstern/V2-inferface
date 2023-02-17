@@ -34,9 +34,10 @@ export const Faucet = () => {
           toast.dismiss();
           toast.success('Claimed 0.011 ETH + 1000 DAI');
         })
-        .catch(() => {
+        .catch((err) => {
           toast.dismiss();
           toast.error('Faucet error!');
+          console.log(err);
         });
     }
   };
