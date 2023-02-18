@@ -49912,10 +49912,9 @@
           removeEntity(e, t) {
             var i = this._chartWidget.model().chartModel().dataSourceForId(e);
             i
-              ? t && t.disableUndo
+              && t && t.disableUndo
                 ? new x(this._chartWidget.model().chartModel(), [i], "").redo()
                 : this._chartWidget.model().removeSource(i, !0, !0)
-              : console.warn("Can't find a source with id: " + e);
           }
           removeEntityWithUndo(e) {
             var t = this._chartWidget.model().chartModel().dataSourceForId(e);
