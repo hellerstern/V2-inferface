@@ -112,33 +112,42 @@ export const Header = () => {
                     }}
                     style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
                   />
-                  <CustomTab
-                    label="Vault"
-                    {...a11yProps(1)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
-                  />
-                  <CustomTab
-                    label="Governance"
-                    {...a11yProps(2)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
-                  />
-                  <CustomTab
-                    label="Referral"
-                    {...a11yProps(3)}
-                    onClick={() => {
-                      setMiniPage(0);
-                      navigate('/');
-                    }}
-                    style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
-                  />
+                  {
+                    chain?.id === 42161 || chain?.id === 137 &&
+                    <CustomTab
+                      label="Vault"
+                      {...a11yProps(1)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
+                    />
+                  }
+                  {
+                    chain?.id === 42161 || chain?.id === 137 &&
+                    <CustomTab
+                      label="Governance"
+                      {...a11yProps(2)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
+                    />
+                  }
+                  {
+                    chain?.id === 42161 || chain?.id === 137 &&
+                    <CustomTab
+                      label="Referral"
+                      {...a11yProps(3)}
+                      onClick={() => {
+                        setMiniPage(0);
+                        navigate('/');
+                      }}
+                      style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                    />
+                  }
                   {
                     chain?.id === 421613 &&
                     <CustomTab
@@ -147,6 +156,7 @@ export const Header = () => {
                       onClick={() => {
                         setMiniPage(0);
                         navigate('/');
+                        setPage(4);
                       }}
                       style={{ color: page === 4 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 4 ? 500 : 400 }}
                     />
