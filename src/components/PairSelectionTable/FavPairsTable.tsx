@@ -14,6 +14,8 @@ import {
   dogeLogo,
   dotLogo,
   ethLogo,
+  eurLogo,
+  gbpLogo,
   jpyLogo,
   linkLogo,
   ltcLogo,
@@ -21,6 +23,8 @@ import {
   nearLogo,
   solLogo,
   uniLogo,
+  silverLogo,
+  goldLogo,
   xmrLogo
 } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
@@ -79,7 +83,7 @@ interface BenefitProps {
 
 const Benefit = ({ percent, value }: BenefitProps) => {
   return (
-    <BenefitContainer sx={{ color: Number(percent) > 0 ? '#26A69A' : Number(percent) < 0 ? '#EF534F' : "#B1B5C3" }}>
+    <BenefitContainer sx={{ color: Number(value) > 0 ? '#26A69A' : Number(value) < 0 ? '#EF534F' : "#B1B5C3" }}>
       {Number(percent) > 0 ? `+${percent}%` : `${percent}%`.replace("NaN", "0")}<p>{(Number(value) > 0 ? "+" : "") + value.replace("NaN", "0")}</p>
     </BenefitContainer>
   );
@@ -283,7 +287,7 @@ export const FavPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
         <PairField
           favor={FavPairs.includes('EUR/USD')}
           handleFavoriteToggle={handleFavoriteToggle}
-          icon={btcLogo}
+          icon={eurLogo}
           name={'EUR/USD'}
         />,
         5
@@ -292,7 +296,7 @@ export const FavPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
         <PairField
           favor={FavPairs.includes('GBP/USD')}
           handleFavoriteToggle={handleFavoriteToggle}
-          icon={btcLogo}
+          icon={gbpLogo}
           name={'GBP/USD'}
         />,
         6
@@ -373,7 +377,7 @@ export const FavPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
         <PairField
           favor={FavPairs.includes('XAG/USD')}
           handleFavoriteToggle={handleFavoriteToggle}
-          icon={btcLogo}
+          icon={silverLogo}
           name={'XAG/USD'}
         />,
         32
@@ -382,7 +386,7 @@ export const FavPairsTable = ({ setPairIndex, searchQuery, onClose }: Props) => 
         <PairField
           favor={FavPairs.includes('XAU/USD')}
           handleFavoriteToggle={handleFavoriteToggle}
-          icon={btcLogo}
+          icon={goldLogo}
           name={'XAU/USD'}
         />,
         2

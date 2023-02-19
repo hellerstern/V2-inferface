@@ -76,7 +76,7 @@ interface BenefitProps {
 
 const Benefit = ({ percent, value }: BenefitProps) => {
   return (
-    <BenefitContainer sx={{ color: Number(percent) > 0 ? '#26A69A' : Number(percent) < 0 ? '#EF534F' : "#B1B5C3" }}>
+    <BenefitContainer sx={{ color: Number(value) > 0 ? '#26A69A' : Number(value) < 0 ? '#EF534F' : "#B1B5C3" }}>
       {Number(percent) > 0 ? `+${percent}%` : `${percent}%`.replace("NaN", "0")}<p>{(Number(value) > 0 ? "+" : "") + value.replace("NaN", "0")}</p>
     </BenefitContainer>
   );

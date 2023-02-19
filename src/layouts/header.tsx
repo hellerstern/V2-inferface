@@ -113,7 +113,7 @@ export const Header = () => {
                     style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
                   />
                   {
-                    chain?.id !== 421613 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Vault"
                       {...a11yProps(1)}
@@ -125,7 +125,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    chain?.id !== 421613 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Governance"
                       {...a11yProps(2)}
@@ -137,7 +137,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    chain?.id !== 421613 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Referral"
                       {...a11yProps(3)}
@@ -183,7 +183,7 @@ export const Header = () => {
                   }}
                 />
                 <IconButton
-                  onClick={() => { /* navigate('/profile/' + (TraderProfile().username as string)) */ }}
+                  onClick={() => {navigate('/profile/' + (TraderProfile().username as string))}}
                   sx={{ marginLeft: 1 }}
                 >
                   <Avatar sx={{ width: 30, height: 30 }}>
