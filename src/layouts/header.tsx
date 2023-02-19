@@ -21,7 +21,6 @@ import { getShellAddress, checkShellWallet } from 'src/shell_wallet';
 import NotificationMenu from 'src/components/Menu/NotificationMenu';
 import { useGasBalance } from 'src/hook/useGasBalance';
 
-// import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
   const navigate = useNavigate();
   const { page, setPage } = useStore();
