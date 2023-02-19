@@ -74,23 +74,22 @@ export const Profile = () => {
                   <OverviewWrapper>
                     <OverviewContent>
                       <OverviewSeparator>
-                        <OverviewItem title={'Total PNL ($)'} value="12300.45" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Biggest win ($)'} value="6000.23" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Biggest win %'} value="453.15%" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Total trades'} value="1243" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Winrate %'} value="52.7%" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Total PnL ($)'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Total PnL (%)'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem
+                          title={'Total number of trades'}
+                          value="-"
+                          colorValue="rgba(255, 255, 255, 0.6)"
+                        />
+                        <OverviewItem title={'Total volume traded'} value="-" colorValue="#777E90" />
                       </OverviewSeparator>
                       <ResponsiveDevider1 />
                       <ResponsiveDevider2 />
                       <OverviewSeparator>
-                        <OverviewItem title={'Take profit price'} value="0.34789247" colorValue="#58BD7D" />
-                        <OverviewItem title={'Entry price'} value="0.29039402" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Exit Price'} value="0.4598948585" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Stop limit price'} value="0.4590594" colorValue="rgba(255, 255, 255, 0.6)" />
-                        <OverviewItem title={'Liq price'} value="0.3840934804" colorValue="#D33535" />
-                        <ResponsiveDevider2 />
-                        <OverviewItem title={'Total volume traded'} value="8,3million" colorValue="#777E90" />
-                        <OverviewItem title={'Number of trades'} value="Number of trades" colorValue="#777E90" />
+                        <OverviewItem title={'Longest win streak'} value="-" colorValue="#27A69A" />
+                        <OverviewItem title={'Biggest win'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Biggest loss'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
+                        <OverviewItem title={'Most traded pair'} value="-" colorValue="rgba(255, 255, 255, 0.6)" />
                       </OverviewSeparator>
                     </OverviewContent>
                   </OverviewWrapper>
