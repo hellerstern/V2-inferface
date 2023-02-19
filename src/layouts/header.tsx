@@ -125,7 +125,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    chain?.id === 42161 || chain?.id === 137 &&
+                    // chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Governance"
                       {...a11yProps(2)}
@@ -137,7 +137,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    chain?.id === 42161 || chain?.id === 137 &&
+                    // chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Referral"
                       {...a11yProps(3)}
@@ -149,7 +149,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    chain?.id === 421613 &&
+                    // chain?.id === 421613 &&
                     <CustomTab
                       label="Faucet"
                       {...a11yProps(4)}
