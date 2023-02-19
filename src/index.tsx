@@ -91,7 +91,7 @@ const polygon = {
 };
 
 const { chains, provider } = configureChains(
-  [ /* polygon, arbitrum, */ arbitrumTestnet],
+  [polygon, arbitrum, arbitrumTestnet],
   [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
 );
 
