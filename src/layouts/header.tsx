@@ -21,7 +21,6 @@ import { getShellAddress, checkShellWallet } from 'src/shell_wallet';
 import NotificationMenu from 'src/components/Menu/NotificationMenu';
 import { useGasBalance } from 'src/hook/useGasBalance';
 
-// import { getShellBalance } from 'src/utils/shellWallet';
 export const Header = () => {
   const navigate = useNavigate();
   const { page, setPage } = useStore();
@@ -113,7 +112,7 @@ export const Header = () => {
                     style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
                   />
                   {
-                    // chain?.id === 42161 || chain?.id === 137 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Vault"
                       {...a11yProps(1)}
@@ -125,7 +124,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    // chain?.id === 42161 || chain?.id === 137 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Governance"
                       {...a11yProps(2)}
@@ -137,7 +136,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    // chain?.id === 42161 || chain?.id === 137 &&
+                    chain?.id === 42161 || chain?.id === 137 &&
                     <CustomTab
                       label="Referral"
                       {...a11yProps(3)}
@@ -149,7 +148,7 @@ export const Header = () => {
                     />
                   }
                   {
-                    // chain?.id === 421613 &&
+                    chain?.id === 421613 &&
                     <CustomTab
                       label="Faucet"
                       {...a11yProps(4)}

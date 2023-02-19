@@ -261,76 +261,76 @@ export const TokenDetails = ({
             </ScrollMenu>
           </DesktopStatusInfos>
           <MobileStatusInfos>
-          <Box className="index-info">
-                <p className="title">Oracle Price</p>
-                <p className="value">
-                  {
-                    oracleData[pairIndex]
-                      ? (parseInt(oracleData[pairIndex].price) / 1e18).toPrecision(6)
-                      : 'Loading...'
-                  }
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Price Spread</p>
-                <p className="value">
-                  {
-                    oracleData[pairIndex] != null
-                      ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
-                      : '0.000%'
-                  }
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Long Open Interest</p>
-                <p className="value">
-                  {
-                    (oi?.longOi / 1e18).toFixed(0) + '/'
-                  }
-                  <span>{oi?.maxOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Short Open Interest</p>
-                <p className="value">
-                  {
-                    (oi?.shortOi / 1e18).toFixed(0) + '/'
-                  }
-                  <span>{oi?.shortOi.toString() === '0' ? 'Unlimited' : (oi?.maxOi / 1e18).toString()}</span>
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Open Fee</p>
-                <p className="value">
-                  {
-                    (((Number(openFees?.daoFees) + Number(openFees?.burnFees) - (referral !== ethers.constants.AddressZero ? openFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
-                  }
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Close Fee</p>
-                <p className="value">
-                  {
-                    (((Number(closeFees?.daoFees) + Number(closeFees?.burnFees) - (referral !== ethers.constants.AddressZero ? closeFees?.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%"
-                  }
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Long Funding Fee</p>
-                <p className="value" style={{ color: longAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
-                  {
-                    longAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
-                  }
-                </p>
-              </Box>
-              <Box className="index-info">
-                <p className="title">Short Funding Fee</p>
-                <p className="value" style={{ color: shortAPRHourly <= 0 ? '#26A69A' : '#EF534F' }}>
-                  {
-                    shortAPRHourly.toFixed(5).replace('NaN', '0').replace('Infinity', 'ထ') + '% Per Hour'
-                  }
-                </p>
-              </Box>
+            <Box className="index-info">
+              <p className="title">Oracle Price</p>
+              <p className="value">
+                {
+                  oracleData[pairIndex]
+                    ? (parseInt(oracleData[pairIndex].price) / 1e18).toPrecision(6)
+                    : 'Loading...'
+                }
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Price Spread</p>
+              <p className="value">
+                {
+                  oracleData[pairIndex] != null
+                    ? ((oracleData[pairIndex].spread as unknown as number) / 1e8).toFixed(3) + '%'
+                    : '0.000%'
+                }
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Long Open Interest</p>
+              <p className="value">
+                {
+                  (oi ? oi.longOi / 1e18 : 0).toFixed(0) + '/'
+                }
+                <span>{oi ? oi.maxOi.toString() === '0' ? 'Unlimited' : (oi.maxOi / 1e18).toString() : "Unlimited"}</span>
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Short Open Interest</p>
+              <p className="value">
+                {
+                  (oi ? oi.shortOi / 1e18 : 0).toFixed(0) + '/'
+                }
+                <span>{oi ? oi.maxOi.toString() === '0' ? 'Unlimited' : (oi.maxOi / 1e18).toString() : "Unlimited"}</span>
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Open Fee</p>
+              <p className="value">
+                {
+                  openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%" : "0.100%"
+                }
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Close Fee</p>
+              <p className="value">
+                {
+                  closeFees ? (((Number(closeFees.daoFees) + Number(closeFees.burnFees) - (referral !== ethers.constants.AddressZero ? closeFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e8).toFixed(3) + "%" : "0.100%"
+                }
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Long Funding Fee</p>
+              <p className="value" style={{ color: longAPRHourly <= 0 || isNaN(longAPRHourly) ? '#26A69A' : '#EF534F' }}>
+                {
+                  longAPRHourly.toFixed(5).replace('NaN', '0.00000').replace('Infinity', 'ထ') + '% Per Hour'
+                }
+              </p>
+            </Box>
+            <Box className="index-info">
+              <p className="title">Short Funding Fee</p>
+              <p className="value" style={{ color: shortAPRHourly <= 0 || isNaN(shortAPRHourly) ? '#26A69A' : '#EF534F' }}>
+                {
+                  shortAPRHourly.toFixed(5).replace('NaN', '0.00000').replace('Infinity', 'ထ') + '% Per Hour'
+                }
+              </p>
+            </Box>
           </MobileStatusInfos>
         </TradeWrapper>
       </Container>
