@@ -29,7 +29,7 @@ const arbitrum: Chain = {
   id: 42161,
   name: 'Arbitrum',
   network: 'arbitrum',
-  iconUrl: 'https://i.ibb.co/XCxK6J6/arb.png',
+  iconUrl: './assets/images/arb.png',
   iconBackground: 'rgba(0,0,0,0)',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
@@ -70,7 +70,7 @@ const polygon = {
   id: 137,
   name: 'Polygon',
   network: 'matic',
-  iconUrl: 'https://i.ibb.co/dQQJ8Xy/polygon.png',
+  iconUrl: './assets/images/polygon.png',
   iconBackground: 'rgba(0,0,0,0)',
   nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
   rpcUrls: {
