@@ -64,7 +64,8 @@ export const checkShellWallet = async (address: string) => {
 }
 
 export const unlockShellWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : null;
+    if (provider === null) return;
     const signer = provider.getSigner();
     const signerAddress = await signer.getAddress();
     if (!signerAddress || signerAddress === "") {
@@ -106,14 +107,14 @@ export const getShellAddress = () => {
 export const getShellBalance = async () => {
     if (!currentAddress) return "0";
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
     const balance = await provider.getBalance(currentAddress);
 
     return ethers.utils.formatEther(balance);
 }
 
 export const getShellNonce = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
     return await provider.getTransactionCount(currentAddress, "pending");
 }
 
@@ -122,7 +123,7 @@ export const getShellWallet = async () => {
         await unlockShellWallet();
     }
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
     const wallet = new ethers.Wallet(shell_private, provider);
 
     return wallet;
