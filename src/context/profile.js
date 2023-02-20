@@ -1,5 +1,4 @@
 import { createContext } from "react";
-const { ethereum } = window;
 
 export const TraderProfile = () => {
     getTraderProfile().then((result) => {

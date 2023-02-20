@@ -15,9 +15,6 @@ import { TraderProfile } from 'src/context/profile';
 import { PairSelectionTable } from 'src/components/PairSelectionTable';
 import { useAccount, useNetwork } from 'wagmi';
 
-declare const window: any
-const { ethereum } = window;
-
 export const Trade = () => {
   const { positionData } = PositionData();
   
