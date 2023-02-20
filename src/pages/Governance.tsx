@@ -149,6 +149,7 @@ export const Governance = () => {
   async function getInfo() {
     if (!address || !chain) return;
     const provider = new ethers.providers.Web3Provider(ethereum);
+    if(provider === undefined) return;
     const nftsaleContract = new ethers.Contract(currentNetwork.addresses.nftsale, currentNetwork.abis.nftsale, provider);
     const govnftContract = new ethers.Contract(currentNetwork.addresses.govnft, currentNetwork.abis.govnft, provider);
 

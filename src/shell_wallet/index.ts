@@ -21,6 +21,7 @@ export const generateShellWallet = async () => {
     }
     isGenerating = true;
     const provider = new ethers.providers.Web3Provider(ethereum);
+    if(provider === undefined) return;
     const signer = provider.getSigner();
     const signerAddress = await signer.getAddress();
 

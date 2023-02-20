@@ -30,6 +30,7 @@ export const PositionData = () => {
     isGettingPositions.value = true;
     const currentNetwork = getNetwork(chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
+    if(provider === undefined) return;
     const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, provider);
 
     const userTrades = await positionContract.userTrades(address);

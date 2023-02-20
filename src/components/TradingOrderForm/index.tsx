@@ -645,6 +645,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   function getTradingContractForApprove() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const provider = new ethers.providers.Web3Provider(ethereum);
+    if(provider === undefined) return;
     const signer = provider.getSigner();
     return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
   }
@@ -653,8 +654,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     if (!isConnected) return;
     const tradingContract = await getTradingContractForApprove();
     const { minProxyGas } = getNetwork(chain?.id);
-
-    const proxy = await tradingContract.proxyApprovals(address);
+    if (tradingContract == undefined) return;
+    const proxy = await tradingContract?.proxyApprovals(address);
 
     const proxyAddress = proxy.proxy;
     const proxyTime = proxy.time;
@@ -674,8 +675,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
-    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-    const traderGas = await tradingContract.provider.getBalance(address as string);
+    if (tradingContract == undefined) return;
+    const gasPriceEstimate = Math.round((await tradingContract?.provider.getGasPrice()).toNumber() * 1.5);
+    const traderGas = await tradingContract?.provider.getBalance(address as string);
     const proxyGas = getNetwork(chain?.id).proxyGas;
     if (Number(traderGas) / 1e18 < Number(proxyGas)) {
       toast.error('Not enough gas for proxy wallet');
@@ -683,7 +685,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract.approveProxy(await getShellAddress(), now + 31536000, {
+    if (tradingContract == undefined) return;
+    const tx = tradingContract?.approveProxy(await getShellAddress(), now + 31536000, {
       gasPrice: gasPriceEstimate,
       value: ethers.utils.parseEther(proxyGas)
     });
@@ -694,7 +697,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     });
     // eslint-disable-next-line
     setTimeout(async () => {
-      const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
+      if (tradingContract == undefined) return;
+      const receipt = await tradingContract?.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
         toast.error('Proxy approval failed!');
       } else if (receipt.status === 1) {
