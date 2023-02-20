@@ -654,7 +654,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     if (!isConnected) return;
     const tradingContract = await getTradingContractForApprove();
     const { minProxyGas } = getNetwork(chain?.id);
-    if (tradingContract == undefined) return;
+    if (tradingContract === undefined) return;
     const proxy = await tradingContract?.proxyApprovals(address);
 
     const proxyAddress = proxy.proxy;
@@ -675,8 +675,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
-    if (tradingContract == undefined) return;
-    const gasPriceEstimate = Math.round((await tradingContract?.provider.getGasPrice()).toNumber() * 1.5);
+    if (tradingContract === undefined) return;
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const traderGas = await tradingContract?.provider.getBalance(address as string);
     const proxyGas = getNetwork(chain?.id).proxyGas;
     if (Number(traderGas) / 1e18 < Number(proxyGas)) {
@@ -685,7 +685,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     await unlockShellWallet();
     const now = Math.floor(Date.now() / 1000);
-    if (tradingContract == undefined) return;
+    if (tradingContract === undefined) return;
     const tx = tradingContract?.approveProxy(await getShellAddress(), now + 31536000, {
       gasPrice: gasPriceEstimate,
       value: ethers.utils.parseEther(proxyGas)
@@ -697,7 +697,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     });
     // eslint-disable-next-line
     setTimeout(async () => {
-      if (tradingContract == undefined) return;
+      if (tradingContract === undefined) return;
       const receipt = await tradingContract?.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
         toast.error('Proxy approval failed!');
