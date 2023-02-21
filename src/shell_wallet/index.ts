@@ -108,14 +108,14 @@ export const getShellAddress = () => {
 export const getShellBalance = async () => {
     if (!currentAddress) return "0";
 
-    const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : ethers.providers.getDefaultProvider();
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     const balance = await provider.getBalance(currentAddress);
 
     return ethers.utils.formatEther(balance);
 }
 
 export const getShellNonce = async () => {
-    const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : ethers.providers.getDefaultProvider();
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     return await provider.getTransactionCount(currentAddress, "pending");
 }
 
@@ -124,7 +124,7 @@ export const getShellWallet = async () => {
         await unlockShellWallet();
     }
 
-    const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : ethers.providers.getDefaultProvider();
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     const wallet = new ethers.Wallet(shell_private, provider);
 
     return wallet;
