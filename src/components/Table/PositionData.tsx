@@ -25,12 +25,11 @@ export const PositionData = () => {
 
   const isGettingPositions = { value: false };
   async function getPositionsIndex() {
-    try {
     if (!chain || !address) return;
     if (isGettingPositions.value) return;
     isGettingPositions.value = true;
     const currentNetwork = getNetwork(chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     if(provider === undefined) return;
     const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, provider);
 
@@ -134,9 +133,6 @@ export const PositionData = () => {
     setOpenPositions(openP);
     setLimitOrders(limitO);
     isGettingPositions.value = false;
-    } catch(err) {
-      console.log(err);
-    }
   }
 
   useEffect(() => {
