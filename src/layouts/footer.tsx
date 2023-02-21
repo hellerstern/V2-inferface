@@ -35,7 +35,7 @@ export const Footer = () => {
 
   useEffect(() => {
     if (!isConnected) return;
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     if(provider === undefined) return;
     provider.getGasPrice().then((r) => {
       setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
