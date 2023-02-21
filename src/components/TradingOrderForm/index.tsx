@@ -644,7 +644,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   function getTradingContractForApprove() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = new ethers.providers.JsonRpcProvider(ethereum);
     if(provider === undefined) return;
     const signer = provider.getSigner();
     return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
