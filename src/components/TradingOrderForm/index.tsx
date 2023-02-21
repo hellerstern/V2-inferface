@@ -104,7 +104,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [tokenBalance, setTokenBalance] = useState('Loading...');
   const [isBalanceVisible, setBalanceVisible] = useState(true);
 
-  const [isProxyApproved, setIsProxyApproved] = useState(true);
+  const [isProxyApproved, setIsProxyApproved] = useState(false);
   const [isTokenAllowed, setIsTokenAllowed] = useState(true);
   const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
 
@@ -651,8 +651,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getProxyApproval() {
-    if (!isConnected) return;
-    const tradingContract = await getTradingContractForApprove();
+    if (!address) return;
+    const tradingContract = getTradingContractForApprove();
     const { minProxyGas } = getNetwork(chain?.id);
     if (tradingContract === undefined) return;
     const proxy = await tradingContract?.proxyApprovals(address);
