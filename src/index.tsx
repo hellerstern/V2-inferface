@@ -91,8 +91,8 @@ const polygon = {
 };
 
 const { chains, provider } = configureChains(
-  [ /* polygon, arbitrum, */ arbitrumTestnet],
-  [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
+  [ polygon, arbitrum, arbitrumTestnet],
+  [alchemyProvider({ apiKey: 'wvN4L0nfcWjOeDHPaxQ4WotiwHRSnJE1' }), publicProvider()]
 );
 
 const connectors = connectorsForWallets([
