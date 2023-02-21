@@ -25,6 +25,7 @@ export const PositionData = () => {
 
   const isGettingPositions = { value: false };
   async function getPositionsIndex() {
+    try {
     if (!chain || !address) return;
     if (isGettingPositions.value) return;
     isGettingPositions.value = true;
@@ -133,6 +134,9 @@ export const PositionData = () => {
     setOpenPositions(openP);
     setLimitOrders(limitO);
     isGettingPositions.value = false;
+    } catch(err) {
+      console.log(err);
+    }
   }
 
   useEffect(() => {
