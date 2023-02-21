@@ -3,6 +3,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { RainbowKitProvider, Theme, connectorsForWallets, Chain, DisclaimerComponent } from '@rainbow-me/rainbowkit';
 import {
+  injectedWallet,
   metaMaskWallet,
   ledgerWallet,
   walletConnectWallet,
@@ -99,6 +100,7 @@ const connectors = connectorsForWallets([
   {
     groupName: 'Select your wallet',
     wallets: [
+      injectedWallet({ chains, shimDisconnect: true }),
       metaMaskWallet({ chains, shimDisconnect: true }),
       trustWallet({ chains, shimDisconnect: true }),
       walletConnectWallet({ chains }),
