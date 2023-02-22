@@ -7,7 +7,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from '../../../src/constants/networks';
-import { ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
@@ -22,6 +22,7 @@ import {
   unlockShellWallet,
   checkShellWallet
 } from '../../../src/shell_wallet/index';
+import { getProvider, getSigner } from 'src/contracts';
 
 declare const window: any;
 const { ethereum } = window;
@@ -550,14 +551,13 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   function marginScale(value: number) {
-    return (
-      value === Math.sqrt(5) ? 5 :
-      Math.round(
-        (parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
-          ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
-          : value ** 2) / 10
-      ) * 10
-    );
+    return value === Math.sqrt(5)
+      ? 5
+      : Math.round(
+          (parseInt((Math.ceil(value ** 2 / 100) * 100).toString()) % 1000 === 0
+            ? parseInt((Math.ceil(value ** 2 / 100) * 100).toString())
+            : value ** 2) / 10
+        ) * 10;
   }
 
   /*
@@ -643,11 +643,15 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   function getTradingContractForApprove() {
+    let contract: Contract;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    if(provider === undefined) return;
-    const signer = provider.getSigner();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    const provider = getProvider();
+    if (provider === undefined) return;
+    const signer = getSigner();
+    if (signer !== null && signer !== undefined) {
+      contract = new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+      return contract;
+    }
   }
 
   async function getProxyApproval() {
@@ -720,7 +724,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
+    const _ref = cookies.get('ref') ? cookies.get('ref') : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,
@@ -799,7 +803,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     const _sl = ethers.utils.parseEther(getStopLossPrice());
 
-    const _ref = cookies.get("ref") ? cookies.get("ref") : ethers.constants.AddressZero;
+    const _ref = cookies.get('ref') ? cookies.get('ref') : ethers.constants.AddressZero;
 
     const _tradeInfo = [
       _margin,

@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import socketio from "socket.io-client";
-import { useAccount, useNetwork } from 'wagmi';
-import { getNetwork } from "../../../src/constants/networks";
+import socketio from 'socket.io-client';
+import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { oracleData } from 'src/context/socket';
 import { toast } from 'react-toastify';
 import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
+import { getProvider } from 'src/contracts';
 
-declare const window: any
+declare const window: any;
 const { ethereum } = window;
 
 export const PositionData = () => {
@@ -29,27 +30,29 @@ export const PositionData = () => {
     if (isGettingPositions.value) return;
     isGettingPositions.value = true;
     const currentNetwork = getNetwork(chain.id);
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    if(provider === undefined) return;
-    const positionContract = new ethers.Contract(currentNetwork.addresses.positions, currentNetwork.abis.positions, provider);
+    const provider = getProvider();
+    if (provider === undefined) return;
+    const positionContract = new ethers.Contract(
+      currentNetwork.addresses.positions,
+      currentNetwork.abis.positions,
+      provider
+    );
 
     const userTrades = await positionContract.userTrades(address);
-    const loops = parseInt((userTrades.length/10).toString());
-    const remainder = userTrades.length%10;
+    const loops = parseInt((userTrades.length / 10).toString());
+    const remainder = userTrades.length % 10;
 
     // Get liq prices
     const liqPrices: any[] = [];
     for (let x = 0; x <= loops; x++) {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i = 0; i < (x===loops ? remainder : 10); i++) {
-        _calls.push(
-          {
-            reference: userTrades[i].toString(),
-            methodName: 'getLiqPrice(address,uint256,uint256)',
-            methodParameters: [currentNetwork.addresses.positions, userTrades[x*10+i].toString(), 9000000000]
-          }
-        )
+      for (let i = 0; i < (x === loops ? remainder : 10); i++) {
+        _calls.push({
+          reference: userTrades[i].toString(),
+          methodName: 'getLiqPrice(address,uint256,uint256)',
+          methodParameters: [currentNetwork.addresses.positions, userTrades[x * 10 + i].toString(), 9000000000]
+        });
       }
       const contractCallContext: ContractCallContext[] = [
         {
@@ -67,7 +70,7 @@ export const PositionData = () => {
               callsReturnContext: []
             }
           }
-        }
+        };
       }
       results.results.library.callsReturnContext.forEach((returnValue: any) => {
         liqPrices.push(parseInt(returnValue.returnValues[0].hex, 16).toString());
@@ -80,14 +83,12 @@ export const PositionData = () => {
     for (let x = 0; x <= loops; x++) {
       const multicall = new Multicall({ ethersProvider: provider, tryAggregate: false });
       const _calls: any[] = [];
-      for (let i = 0; i < (x===loops ? remainder : 10); i++) {
-        _calls.push(
-          {
-            reference: userTrades[i].toString(),
-            methodName: 'trades(uint256)',
-            methodParameters: [userTrades[x*10+i]]
-          }
-        )
+      for (let i = 0; i < (x === loops ? remainder : 10); i++) {
+        _calls.push({
+          reference: userTrades[i].toString(),
+          methodName: 'trades(uint256)',
+          methodParameters: [userTrades[x * 10 + i]]
+        });
       }
       const contractCallContext: ContractCallContext[] = [
         {
@@ -105,7 +106,7 @@ export const PositionData = () => {
               callsReturnContext: []
             }
           }
-        }
+        };
       }
       results.results.positions.callsReturnContext.forEach((returnValue: any, index: number) => {
         const pos = {
@@ -122,7 +123,7 @@ export const PositionData = () => {
           accInterest: parseInt(returnValue.returnValues[11].hex, 16).toString(),
           liqPrice: liqPrices[index],
           isVisible: true
-        }
+        };
         if (parseInt(returnValue.returnValues[7].hex, 16) === 0) {
           openP.push(pos);
         } else {
@@ -146,61 +147,73 @@ export const PositionData = () => {
       socket.on('PositionOpened', (data: any) => {
         if (data.trader === address && data.chainId === chain?.id) {
           if (data.orderType === 0) {
-            toast.success((
-              (data.tradeInfo.direction ? "Longed " : "Shorted ") +
-              (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
-              assets[data.tradeInfo.asset].name +
-              " @ " +
-              (parseFloat(data.price) / 1e18).toPrecision(6)
-            ));
-            const openP: any[] = openPositions.slice();
-            openP.push(
-              {
-                trader: data.trader,
-                margin: data.marginAfterFees,
-                leverage: data.tradeInfo.leverage,
-                price: data.price,
-                tpPrice: data.tradeInfo.tpPrice,
-                slPrice: data.tradeInfo.slPrice,
-                orderType: 0,
-                direction: data.tradeInfo.direction,
-                id: data.id,
-                asset: data.tradeInfo.asset,
-                accInterest: 0,
-                liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
-                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString(),
-                isVisible: true
-              }
+            toast.success(
+              (data.tradeInfo.direction ? 'Longed ' : 'Shorted ') +
+                (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) +
+                'x ' +
+                assets[data.tradeInfo.asset].name +
+                ' @ ' +
+                (parseFloat(data.price) / 1e18).toPrecision(6)
             );
+            const openP: any[] = openPositions.slice();
+            openP.push({
+              trader: data.trader,
+              margin: data.marginAfterFees,
+              leverage: data.tradeInfo.leverage,
+              price: data.price,
+              tpPrice: data.tradeInfo.tpPrice,
+              slPrice: data.tradeInfo.slPrice,
+              orderType: 0,
+              direction: data.tradeInfo.direction,
+              id: data.id,
+              asset: data.tradeInfo.asset,
+              accInterest: 0,
+              liqPrice: data.tradeInfo.direction
+                ? (
+                    parseInt(data.price) -
+                    (parseInt(data.price) * 0.9) / (parseInt(data.tradeInfo.leverage) / 1e18)
+                  ).toString()
+                : (
+                    parseInt(data.price) +
+                    (parseInt(data.price) * 0.9) / (parseInt(data.tradeInfo.leverage) / 1e18)
+                  ).toString(),
+              isVisible: true
+            });
             setOpenPositions(openP);
             console.log('EVENT: Market Trade Opened');
           } else {
             const limitO: any[] = limitOrders.slice();
-            limitO.push(
-              {
-                trader: data.trader,
-                margin: data.tradeInfo.margin,
-                leverage: data.tradeInfo.leverage,
-                orderType: data.orderType,
-                price: data.price,
-                tpPrice: data.tradeInfo.tpPrice,
-                slPrice: data.tradeInfo.slPrice,
-                direction: data.tradeInfo.direction,
-                id: data.id,
-                asset: data.tradeInfo.asset,
-                accInterest: 0,
-                liqPrice: data.tradeInfo.direction ? (parseInt(data.price) - parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString()
-                  : (parseInt(data.price) + parseInt(data.price) * 0.9 / (parseInt(data.tradeInfo.leverage) / 1e18)).toString(),
-                isVisible: true
-              }
+            limitO.push({
+              trader: data.trader,
+              margin: data.tradeInfo.margin,
+              leverage: data.tradeInfo.leverage,
+              orderType: data.orderType,
+              price: data.price,
+              tpPrice: data.tradeInfo.tpPrice,
+              slPrice: data.tradeInfo.slPrice,
+              direction: data.tradeInfo.direction,
+              id: data.id,
+              asset: data.tradeInfo.asset,
+              accInterest: 0,
+              liqPrice: data.tradeInfo.direction
+                ? (
+                    parseInt(data.price) -
+                    (parseInt(data.price) * 0.9) / (parseInt(data.tradeInfo.leverage) / 1e18)
+                  ).toString()
+                : (
+                    parseInt(data.price) +
+                    (parseInt(data.price) * 0.9) / (parseInt(data.tradeInfo.leverage) / 1e18)
+                  ).toString(),
+              isVisible: true
+            });
+            toast.success(
+              (data.tradeInfo.direction ? 'Limit long ' : 'Limit short ') +
+                (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) +
+                'x ' +
+                assets[data.tradeInfo.asset].name +
+                ' @ ' +
+                (parseFloat(data.price) / 1e18).toPrecision(6)
             );
-            toast.success((
-              (data.tradeInfo.direction ? "Limit long " : "Limit short ") +
-              (parseFloat(data.tradeInfo.leverage) / 1e18).toFixed(1) + "x " +
-              assets[data.tradeInfo.asset].name +
-              " @ " +
-              (parseFloat(data.price) / 1e18).toPrecision(6)
-            ));
             setLimitOrders(limitO);
             console.log('EVENT: Limit Order Created');
           }
@@ -212,13 +225,14 @@ export const PositionData = () => {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
-              toast.info((
-                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                assets[openP[i].asset].name +
-                (openP[i].direction ? " long " : " short ") +
-                "liquidated @ " +
-                (parseFloat((oracleData[openP[i].asset] as any).price) / 1e18).toPrecision(6)
-              ));
+              toast.info(
+                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                  'x ' +
+                  assets[openP[i].asset].name +
+                  (openP[i].direction ? ' long ' : ' short ') +
+                  'liquidated @ ' +
+                  (parseFloat((oracleData[openP[i].asset] as any).price) / 1e18).toPrecision(6)
+              );
               openP.splice(i, 1);
               break;
             }
@@ -234,20 +248,20 @@ export const PositionData = () => {
           for (let i = 0; i < openP.length; i++) {
             if (openP[i].id === data.id) {
               if (data.percent === 10000000000) {
-                toast.success((
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  assets[openP[i].asset].name +
-                  (openP[i].direction ? " long " : " short ") +
-                  "closed @ " +
-                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
-                ));
+                toast.success(
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                    'x ' +
+                    assets[openP[i].asset].name +
+                    (openP[i].direction ? ' long ' : ' short ') +
+                    'closed @ ' +
+                    (parseFloat(data.closePrice) / 1e18).toPrecision(6)
+                );
                 openP.splice(i, 1);
                 break;
-              }
-              else {
+              } else {
                 const modP = {
                   trader: openP[i].trader,
-                  margin: (parseFloat(openP[i].margin) * (1e10 - data.percent) / 1e10).toString(),
+                  margin: ((parseFloat(openP[i].margin) * (1e10 - data.percent)) / 1e10).toString(),
                   leverage: openP[i].leverage,
                   price: openP[i].price,
                   tpPrice: openP[i].tpPrice,
@@ -259,15 +273,16 @@ export const PositionData = () => {
                   accInterest: openP[i].accInterest,
                   liqPrice: openP[i].liqPrice,
                   isVisible: openP[i].isVisible
-                }
-                toast.success((
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  assets[openP[i].asset].name +
-                  (openP[i].direction ? " long " : " short ") +
-                  (data.percent / 1e8).toFixed(2) +
-                  "% closed @ " +
-                  (parseFloat(data.closePrice) / 1e18).toPrecision(6)
-                ));
+                };
+                toast.success(
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                    'x ' +
+                    assets[openP[i].asset].name +
+                    (openP[i].direction ? ' long ' : ' short ') +
+                    (data.percent / 1e8).toFixed(2) +
+                    '% closed @ ' +
+                    (parseFloat(data.closePrice) / 1e18).toPrecision(6)
+                );
                 openP[i] = modP;
                 break;
               }
@@ -288,31 +303,38 @@ export const PositionData = () => {
           const openP: any[] = openPositions.slice();
           for (let i = 0; i < limitO.length; i++) {
             if (limitO[i].id === data.id) {
-              toast.info((
-                (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
-                assets[limitO[i].asset].name +
-                (limitO[i].direction ? " long " : " short ") +
-                (limitO[i].orderType === 1 ? "limit" : "stop") + " order filled @ " +
-                (parseFloat(data.openPrice) / 1e18).toPrecision(6)
-              ));
-              openP.push(
-                {
-                  trader: data.trader,
-                  margin: data.margin,
-                  leverage: limitO[i].leverage,
-                  price: data.openPrice,
-                  tpPrice: limitO[i].tpPrice,
-                  slPrice: limitO[i].slPrice,
-                  orderType: 0,
-                  direction: limitO[i].direction,
-                  id: data.id,
-                  asset: limitO[i].asset,
-                  accInterest: 0,
-                  liqPrice: limitO[i].direction ? (parseInt(data.openPrice) - parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString()
-                  : (parseInt(data.openPrice) + parseInt(data.openPrice) * 0.9 / (parseInt(limitO[i].leverage) / 1e18)).toString(),
-                  isVisible: true
-                }
+              toast.info(
+                (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) +
+                  'x ' +
+                  assets[limitO[i].asset].name +
+                  (limitO[i].direction ? ' long ' : ' short ') +
+                  (limitO[i].orderType === 1 ? 'limit' : 'stop') +
+                  ' order filled @ ' +
+                  (parseFloat(data.openPrice) / 1e18).toPrecision(6)
               );
+              openP.push({
+                trader: data.trader,
+                margin: data.margin,
+                leverage: limitO[i].leverage,
+                price: data.openPrice,
+                tpPrice: limitO[i].tpPrice,
+                slPrice: limitO[i].slPrice,
+                orderType: 0,
+                direction: limitO[i].direction,
+                id: data.id,
+                asset: limitO[i].asset,
+                accInterest: 0,
+                liqPrice: limitO[i].direction
+                  ? (
+                      parseInt(data.openPrice) -
+                      (parseInt(data.openPrice) * 0.9) / (parseInt(limitO[i].leverage) / 1e18)
+                    ).toString()
+                  : (
+                      parseInt(data.openPrice) +
+                      (parseInt(data.openPrice) * 0.9) / (parseInt(limitO[i].leverage) / 1e18)
+                    ).toString(),
+                isVisible: true
+              });
               limitO.splice(i, 1);
               break;
             }
@@ -328,12 +350,13 @@ export const PositionData = () => {
           const limitO: any[] = limitOrders.slice();
           for (let i = 0; i < limitO.length; i++) {
             if (limitO[i].id === data.id) {
-              toast.success((
-                (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) + "x " +
-                assets[limitO[i].asset].name +
-                (limitO[i].direction ? " long " : " short ") +
-                "limit order cancelled"
-              ));
+              toast.success(
+                (parseFloat(limitO[i].leverage) / 1e18).toFixed(1) +
+                  'x ' +
+                  assets[limitO[i].asset].name +
+                  (limitO[i].direction ? ' long ' : ' short ') +
+                  'limit order cancelled'
+              );
               limitO.splice(i, 1);
               break;
             }
@@ -361,29 +384,41 @@ export const PositionData = () => {
                 asset: openP[i].asset,
                 accInterest: openP[i].accInterest,
                 liqPrice: openP[i].direction
-                  ? (parseFloat(openP[i].price) - (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString()
-                  // _tradePrice - ((_tradePrice*1e18/_leverage) * uint(int(_margin)+_accInterest) / _margin) * _liqPercent / 1e10;
-                  : (parseFloat(openP[i].price) + (((parseFloat(openP[i].price) * 1e18 / parseFloat(data.newLeverage)) * ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin))) * 0.9)).toString(),
+                  ? (
+                      parseFloat(openP[i].price) -
+                      ((parseFloat(openP[i].price) * 1e18) / parseFloat(data.newLeverage)) *
+                        ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin)) *
+                        0.9
+                    ).toString()
+                  : // _tradePrice - ((_tradePrice*1e18/_leverage) * uint(int(_margin)+_accInterest) / _margin) * _liqPercent / 1e10;
+                    (
+                      parseFloat(openP[i].price) +
+                      ((parseFloat(openP[i].price) * 1e18) / parseFloat(data.newLeverage)) *
+                        ((parseFloat(data.newMargin) + parseFloat(openP[i].accInterest)) / parseFloat(data.newMargin)) *
+                        0.9
+                    ).toString(),
                 isVisible: openP[i].isVisible
-              }
+              };
               if (data.isMarginAdded) {
-                toast.success((
-                  "Successfully added " +
-                  ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
-                  " margin to " +
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  assets[openP[i].asset].name +
-                  (openP[i].direction ? " long" : " short")
-                ));
+                toast.success(
+                  'Successfully added ' +
+                    ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
+                    ' margin to ' +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                    'x ' +
+                    assets[openP[i].asset].name +
+                    (openP[i].direction ? ' long' : ' short')
+                );
               } else {
-                toast.success((
-                  "Successfully removed " +
-                  ((parseFloat(openP[i].margin) - parseFloat(data.newMargin)) / 1e18).toFixed(2) +
-                  " margin from " +
-                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                  assets[openP[i].asset].name +
-                  (openP[i].direction ? " long" : " short")
-                ));
+                toast.success(
+                  'Successfully removed ' +
+                    ((parseFloat(openP[i].margin) - parseFloat(data.newMargin)) / 1e18).toFixed(2) +
+                    ' margin from ' +
+                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                    'x ' +
+                    assets[openP[i].asset].name +
+                    (openP[i].direction ? ' long' : ' short')
+                );
               }
               openP[i] = modP;
               break;
@@ -413,15 +448,16 @@ export const PositionData = () => {
                 accInterest: openP[i].accInterest,
                 liqPrice: openP[i].liqPrice,
                 isVisible: openP[i].isVisible
-              }
-              toast.success((
-                "Successfully opened " +
-                (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
-                " position on " +
-                assets[openP[i].asset].name +
-                (openP[i].direction ? " long" : " short")
-              ));
+              };
+              toast.success(
+                'Successfully opened ' +
+                  (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                  'x ' +
+                  ((parseFloat(data.newMargin) - parseFloat(openP[i].margin)) / 1e18).toFixed(2) +
+                  ' position on ' +
+                  assets[openP[i].asset].name +
+                  (openP[i].direction ? ' long' : ' short')
+              );
               openP[i] = modP;
               break;
             }
@@ -451,22 +487,24 @@ export const PositionData = () => {
                   accInterest: openP[i].accInterest,
                   liqPrice: openP[i].liqPrice,
                   isVisible: openP[i].isVisible
-                }
+                };
                 if (parseFloat(data.price) === 0) {
-                  toast.success((
-                    "Successfully removed TP from " +
-                    (openP[i].direction ? "long " : "short ") +
-                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    assets[openP[i].asset].name
-                  ));
+                  toast.success(
+                    'Successfully removed TP from ' +
+                      (openP[i].direction ? 'long ' : 'short ') +
+                      (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                      'x ' +
+                      assets[openP[i].asset].name
+                  );
                 } else {
-                  toast.success((
-                    "Successfully set " +
-                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    assets[openP[i].asset].name +
-                    (openP[i].direction ? " long TP to " : " short TP to ") +
-                    (parseFloat(data.price) / 1e18).toPrecision(7)
-                  ));
+                  toast.success(
+                    'Successfully set ' +
+                      (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                      'x ' +
+                      assets[openP[i].asset].name +
+                      (openP[i].direction ? ' long TP to ' : ' short TP to ') +
+                      (parseFloat(data.price) / 1e18).toPrecision(7)
+                  );
                 }
                 openP[i] = modP;
                 console.log('EVENT: TP Updated');
@@ -485,22 +523,24 @@ export const PositionData = () => {
                   accInterest: openP[i].accInterest,
                   liqPrice: openP[i].liqPrice,
                   isVisible: openP[i].isVisible
-                }
+                };
                 if (parseFloat(data.price) === 0) {
-                  toast.success((
-                    "Successfully removed SL from " +
-                    (openP[i].direction ? "long " : "short ") +
-                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    assets[openP[i].asset].name
-                  ));
+                  toast.success(
+                    'Successfully removed SL from ' +
+                      (openP[i].direction ? 'long ' : 'short ') +
+                      (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                      'x ' +
+                      assets[openP[i].asset].name
+                  );
                 } else {
-                  toast.success((
-                    "Successfully set " +
-                    (parseFloat(openP[i].leverage) / 1e18).toFixed(1) + "x " +
-                    assets[openP[i].asset].name +
-                    (openP[i].direction ? " long SL to " : " short SL to ") +
-                    (parseFloat(data.price) / 1e18).toPrecision(7)
-                  ));
+                  toast.success(
+                    'Successfully set ' +
+                      (parseFloat(openP[i].leverage) / 1e18).toFixed(1) +
+                      'x ' +
+                      assets[openP[i].asset].name +
+                      (openP[i].direction ? ' long SL to ' : ' short SL to ') +
+                      (parseFloat(data.price) / 1e18).toPrecision(7)
+                  );
                 }
                 openP[i] = modP;
                 console.log('EVENT: SL Updated');
@@ -514,7 +554,7 @@ export const PositionData = () => {
 
       return () => {
         socket.disconnect();
-      }
+      };
     }
   }, [address, chain, openPositions, limitOrders]);
 
@@ -538,7 +578,7 @@ export const PositionData = () => {
             accInterest: openP[i].accInterest,
             liqPrice: openP[i].liqPrice,
             isVisible: is
-          }
+          };
           openP[i] = modP;
           break;
         }
@@ -559,7 +599,7 @@ export const PositionData = () => {
             accInterest: limitO[i].accInterest,
             liqPrice: limitO[i].liqPrice,
             isVisible: is
-          }
+          };
           limitO[i] = modP;
           break;
         }
@@ -569,14 +609,12 @@ export const PositionData = () => {
     setLimitOrders(limitO);
   }
 
-  return (
-    {
-      positionData: {
-        openPositions: openPositions,
-        limitOrders: limitOrders,
-        allPositions: allPositions,
-        setVisible: setPositionVisible
-      }
+  return {
+    positionData: {
+      openPositions: openPositions,
+      limitOrders: limitOrders,
+      allPositions: allPositions,
+      setVisible: setPositionVisible
     }
-  );
+  };
 };
