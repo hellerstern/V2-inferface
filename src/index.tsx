@@ -3,6 +3,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { RainbowKitProvider, Theme, connectorsForWallets, Chain, DisclaimerComponent } from '@rainbow-me/rainbowkit';
 import {
+  injectedWallet,
   metaMaskWallet,
   ledgerWallet,
   walletConnectWallet,
@@ -91,14 +92,15 @@ const polygon = {
 };
 
 const { chains, provider } = configureChains(
-  [ /* polygon, arbitrum, */ arbitrumTestnet],
-  [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
+  [ polygon, arbitrum, arbitrumTestnet],
+  [alchemyProvider({ apiKey: 'wvN4L0nfcWjOeDHPaxQ4WotiwHRSnJE1' }), publicProvider()]
 );
 
 const connectors = connectorsForWallets([
   {
     groupName: 'Select your wallet',
     wallets: [
+      injectedWallet({ chains, shimDisconnect: true }),
       metaMaskWallet({ chains, shimDisconnect: true }),
       trustWallet({ chains, shimDisconnect: true }),
       walletConnectWallet({ chains }),

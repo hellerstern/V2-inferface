@@ -18,6 +18,7 @@ import { getShellWallet, getShellNonce } from '../../../../src/shell_wallet/inde
 import { oracleData } from 'src/context/socket';
 import { useAccount, useNetwork } from 'wagmi';
 import { ethers } from 'ethers';
+import { Timezone } from 'src/charting_library/datafeed-api';
 
 export interface ChartContainerProps {
 	asset: any;
@@ -65,6 +66,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 		},
 		custom_css_url: "css/style.css",
 		toolbar_bg: '#17191D',
+		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as Timezone,
 		loading_screen: { backgroundColor: "#17191D" },
 		drawings_access: {
 			type: 'black',

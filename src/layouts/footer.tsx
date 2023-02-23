@@ -9,6 +9,7 @@ import { GasStationSvg } from '../../src/config/images';
 import { lastOracleTime } from 'src/context/socket';
 import { ethers } from 'ethers';
 import { useNetwork, useAccount } from 'wagmi';
+import { getProvider } from 'src/contracts';
 
 declare const window: any;
 const { ethereum } = window;
@@ -34,7 +35,7 @@ export const Footer = () => {
 
   useEffect(() => {
     if (!isConnected) return;
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = getProvider();
     if (provider === undefined) return;
     provider.getGasPrice().then((r) => {
       setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3)) / 1e9);
