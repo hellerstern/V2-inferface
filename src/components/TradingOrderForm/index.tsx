@@ -675,6 +675,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   function handleApproveProxy() {
+    Promise.resolve(checkShellWallet(address as string));
     proxyRef.current = getShellAddress();
     timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
     approveProxy();
@@ -688,7 +689,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       toast.error('Not enough gas for proxy wallet');
       return;
     }
-    await checkShellWallet(address as string);
     await unlockShellWallet();
     const proxyAddress = getShellAddress();
     if (proxyAddress !== '') {
