@@ -3,7 +3,7 @@ import { Box, Button, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from '../../../src/constants/networks';
@@ -23,7 +23,6 @@ import {
   unlockShellWallet,
   checkShellWallet
 } from '../../../src/shell_wallet/index';
-import { getSigner } from 'src/contracts';
 
 const cookies = new Cookies();
 
@@ -78,6 +77,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     currentMargin.marginAssetDrop.address,
     getNetwork(chain?.id).addresses.trading
   );
+
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+
   useEffect(() => {
     setTokenBalance(
       ((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** currentMargin.marginAssetDrop.decimals).toFixed(2)
@@ -106,7 +109,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     const currentTime = Date.now() / 1000;
     const shellBalance = Promise.resolve(getShellBalance());
     if (
-      (getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() ||
+      getShellAddress().toLowerCase() !== String(proxyAddress).toLowerCase() ||
       currentTime > proxyTime ||
       Number(shellBalance) < minProxyGas
     ) {
@@ -656,15 +659,15 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   }
 
   async function getTradingContract() {
-    const currentNetwork = getNetwork(chain?.id);
-    const signer = await getShellWallet();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    const shellWalletSigner = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, shellWalletSigner);
   }
 
   function getTradingContractForApprove() {
     let contract: Contract;
-    const currentNetwork = getNetwork(chain?.id);
-    const signer = getSigner();
+    const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
+    if (provider === undefined) return;
     if (signer !== null && signer !== undefined) {
       contract = new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
       return contract;
@@ -682,19 +685,18 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
     await unlockShellWallet();
     const proxyAddress = getShellAddress();
-    if (proxyAddress !== "") {
+    if (proxyAddress !== '') {
       toast.dismiss();
-      toast.loading("Proxy approval pending...");
+      toast.loading('Proxy approval pending...');
       proxyRef.current = getShellAddress();
-      timeRef.current = (Math.floor(Date.now() / 1000) + 31536000);
+      timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
       setTimeout(() => {
         callApproveProxy?.();
-      }, 2000)
+      }, 2000);
     } else {
       toast.dismiss();
-      toast.error("Proxy approval failed!");
+      toast.error('Proxy approval failed!');
     }
-
   }
 
   async function initiateMarketOrder() {

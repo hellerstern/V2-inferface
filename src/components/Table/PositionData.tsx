@@ -5,17 +5,20 @@ import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { oracleData } from 'src/context/socket';
 import { toast } from 'react-toastify';
-import { Multicall, ContractCallContext } from 'ethereum-multicall';
+import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
+
+declare const window: any;
+const { ethereum } = window;
 
 export const PositionData = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { assets } = getNetwork(0);
-  const provider = useProvider();
 
   const [openPositions, setOpenPositions] = useState<any[]>([]);
   const [limitOrders, setLimitOrders] = useState<any[]>([]);
   const [allPositions, setAllPositions] = useState<any[]>([]);
+  const provider = useProvider();
 
   useEffect(() => {
     getPositionsIndex();
@@ -27,6 +30,7 @@ export const PositionData = () => {
     if (isGettingPositions.value) return;
     isGettingPositions.value = true;
     const currentNetwork = getNetwork(chain.id);
+    if (provider === undefined) return;
     const positionContract = new ethers.Contract(
       currentNetwork.addresses.positions,
       currentNetwork.abis.positions,
