@@ -654,7 +654,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       : s === 'Approve'
       ? approve?.()
       : s === 'Proxy'
-      ? approveProxy()
+      ? handleApproveProxy()
       : s === 'Ready' && (orderType === 'Market' ? initiateMarketOrder() : initiateLimitOrder());
   }
 
@@ -674,6 +674,11 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
+  function handleApproveProxy() {
+    proxyRef.current = getShellAddress();
+    timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
+    approveProxy();
+  }
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     if (tradingContract === undefined) return;
@@ -689,8 +694,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     if (proxyAddress !== '') {
       toast.dismiss();
       toast.loading('Proxy approval pending...');
-      proxyRef.current = getShellAddress();
-      timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
       callApproveProxy?.();
     } else {
       toast.dismiss();
