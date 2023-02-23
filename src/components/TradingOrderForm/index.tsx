@@ -686,6 +686,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       return;
     }
     await unlockShellWallet();
+    toast.dismiss();
     toast.loading("Proxy approval pending...");
     await callApproveProxy?.();
   }
