@@ -687,7 +687,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       toast.loading("Proxy approval pending...");
       proxyRef.current = getShellAddress();
       timeRef.current = (Math.floor(Date.now() / 1000) + 31536000);
-      callApproveProxy?.();
+      setTimeout(() => {
+        callApproveProxy?.();
+      }, 2000)
     } else {
       toast.dismiss();
       toast.error("Proxy approval failed!");
