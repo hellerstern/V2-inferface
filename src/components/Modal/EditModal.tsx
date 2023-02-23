@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef} from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -99,7 +99,6 @@ export const EditModal = (props: EditModalProps) => {
   const liveCloseFees = useCloseFees();
   useEffect(() => {
     setCloseFees(liveCloseFees);
-
   }, [liveCloseFees]);
 
   const [pairData, setPairData] = useState<any>({});
@@ -118,7 +117,12 @@ export const EditModal = (props: EditModalProps) => {
     [eu1oracleSocket].forEach((socket) => {
       socket.on('data', (data: any) => {
         if (positionRef.current) {
-          setOpenPrice(((data[positionRef.current.asset].price/1e18) + (data[positionRef.current.asset].price/1e18) * (data[positionRef.current.asset].spread / 1e10) * (positionRef.current.direction ? 1 : -1))); 
+          setOpenPrice(
+            data[positionRef.current.asset].price / 1e18 +
+              (data[positionRef.current.asset].price / 1e18) *
+                (data[positionRef.current.asset].spread / 1e10) *
+                (positionRef.current.direction ? 1 : -1)
+          );
         }
       });
     });
@@ -128,15 +132,15 @@ export const EditModal = (props: EditModalProps) => {
     if (isState) {
       setEditState({
         ...editState,
-        'stopLoss': position?.slPrice === "0" ? '' : (parseFloat(position?.slPrice)/1e18).toPrecision(7),
-        'profit': position?.tpPrice === "0" ? '' : (parseFloat(position?.tpPrice)/1e18).toPrecision(7),
-        'partialPro': '100',
-        'addNum': '',
-        'partial': partialArr[0],
-        'addMenu': partialArr[0],
-        'posDrop': partialArr[0],
-        'addToPositionMargin': ''
-      });      
+        stopLoss: position?.slPrice === '0' ? '' : (parseFloat(position?.slPrice) / 1e18).toPrecision(7),
+        profit: position?.tpPrice === '0' ? '' : (parseFloat(position?.tpPrice) / 1e18).toPrecision(7),
+        partialPro: '100',
+        addNum: '',
+        partial: partialArr[0],
+        addMenu: partialArr[0],
+        posDrop: partialArr[0],
+        addToPositionMargin: ''
+      });
     }
   }, [isState]);
 
@@ -145,23 +149,23 @@ export const EditModal = (props: EditModalProps) => {
   };
 
   const handleEditSL = (value: any) => {
-    setEditState({ ...editState, 'stopLoss': value });
+    setEditState({ ...editState, stopLoss: value });
   };
 
   const handleEditTP = (value: any) => {
-    setEditState({ ...editState, 'profit': value });
+    setEditState({ ...editState, profit: value });
   };
 
   const handleEditPartialPro = (value: any) => {
-    setEditState({ ...editState, 'partialPro': value });
+    setEditState({ ...editState, partialPro: value });
   };
 
   const handleEditAddNum = (value: any) => {
-    setEditState({ ...editState, 'addNum': value });
+    setEditState({ ...editState, addNum: value });
   };
 
   const handleEditAddToPositionMargin = (value: any) => {
-    setEditState({ ...editState, 'addToPositionMargin': value });
+    setEditState({ ...editState, addToPositionMargin: value });
   };
 
   // =======
@@ -169,8 +173,8 @@ export const EditModal = (props: EditModalProps) => {
   // =======
   async function getTradingContract() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const signer = await getShellWallet();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    const shellWalletSigner = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, shellWalletSigner);
   }
 
   function handleUpdateSL() {
@@ -178,7 +182,7 @@ export const EditModal = (props: EditModalProps) => {
   }
   async function updateSL() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const slInput = ethers.utils.parseEther(editState.stopLoss === '' ? "0" : editState.stopLoss);
+    const slInput = ethers.utils.parseEther(editState.stopLoss === '' ? '0' : editState.stopLoss);
 
     const _oracleData: any = oracleData[position.asset];
 
@@ -191,47 +195,50 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.timestamp
     ];
 
-    if (position.direction && parseInt(slInput.toString()) > parseInt(_oracleData.price) && parseInt(slInput.toString()) !== 0) {
-      toast.warn(
-        "Stop loss too high"
-      );
+    if (
+      position.direction &&
+      parseInt(slInput.toString()) > parseInt(_oracleData.price) &&
+      parseInt(slInput.toString()) !== 0
+    ) {
+      toast.warn('Stop loss too high');
       return;
-    } else if (!position.direction && parseInt(slInput.toString()) < parseInt(_oracleData.price) && parseInt(slInput.toString()) !== 0) {
-      toast.warn(
-        "Stop loss too low"
-      );
+    } else if (
+      !position.direction &&
+      parseInt(slInput.toString()) < parseInt(_oracleData.price) &&
+      parseInt(slInput.toString()) !== 0
+    ) {
+      toast.warn('Stop loss too low');
       return;
     }
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-    const tx = tradingContract.updateTpSl(false, position.id, slInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    const tx = tradingContract.updateTpSl(false, position.id, slInput, priceData, _oracleData.signature, address, {
+      gasPrice: gasPriceEstimate,
+      gasLimit: currentNetwork.gasLimit,
+      nonce: await getShellNonce()
+    });
     setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Updating stop loss...',
-        success: undefined,
-        error: 'Updating stop loss failed!'
-      }
-    );
+    const response: any = await toast.promise(tx, {
+      pending: 'Updating stop loss...',
+      success: undefined,
+      error: 'Updating stop loss failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Updating stop loss failed!'
-        );
+        toast.error('Updating stop loss failed!');
       }
     }, 1000);
-	}
+  }
 
   function handleUpdateTP() {
     updateTP();
   }
   async function updateTP() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const tpInput = ethers.utils.parseEther(editState.profit === '' ? "0" : editState.profit);
+    const tpInput = ethers.utils.parseEther(editState.profit === '' ? '0' : editState.profit);
 
     const _oracleData: any = oracleData[position.asset];
 
@@ -244,40 +251,43 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.timestamp
     ];
 
-    if (position.direction && parseInt(tpInput.toString()) < parseInt(_oracleData.price) && parseInt(tpInput.toString()) !== 0) {
-      toast.warn(
-        "Take profit too low"
-      );
+    if (
+      position.direction &&
+      parseInt(tpInput.toString()) < parseInt(_oracleData.price) &&
+      parseInt(tpInput.toString()) !== 0
+    ) {
+      toast.warn('Take profit too low');
       return;
-    } else if (!position.direction && parseInt(tpInput.toString()) > parseInt(_oracleData.price) && parseInt(tpInput.toString()) !== 0) {
-      toast.warn(
-        "Take profit too high"
-      );
+    } else if (
+      !position.direction &&
+      parseInt(tpInput.toString()) > parseInt(_oracleData.price) &&
+      parseInt(tpInput.toString()) !== 0
+    ) {
+      toast.warn('Take profit too high');
       return;
     }
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-    const tx = tradingContract.updateTpSl(true, position.id, tpInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
+    const tx = tradingContract.updateTpSl(true, position.id, tpInput, priceData, _oracleData.signature, address, {
+      gasPrice: gasPriceEstimate,
+      gasLimit: currentNetwork.gasLimit,
+      nonce: await getShellNonce()
+    });
     setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Updating take profit...',
-        success: undefined,
-        error: 'Updating take profit failed!'
-      }
-    );
+    const response: any = await toast.promise(tx, {
+      pending: 'Updating take profit...',
+      success: undefined,
+      error: 'Updating take profit failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Updating take profit failed!'
-        );
+        toast.error('Updating take profit failed!');
       }
     }, 1000);
-	}
+  }
 
   function handlePartialClose() {
     partialClose();
@@ -286,9 +296,7 @@ export const EditModal = (props: EditModalProps) => {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
     const _oracleData: any = oracleData[position.asset];
     if (_oracleData.is_closed) {
-      toast.warn(
-        "Cannot trade while market is closed"
-      );
+      toast.warn('Cannot trade while market is closed');
     }
 
     const priceData = [
@@ -299,36 +307,40 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.spread,
       _oracleData.timestamp
     ];
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.initiateCloseOrder(position.id, parseFloat(editState.partialPro)*1e8, priceData, _oracleData.signature, editState.partial.stablevault, editState.partial.address, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
-    setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Closing position...',
-        success: undefined,
-        error: 'Closing position failed!'
-      }
+    const tx = tradingContract.initiateCloseOrder(
+      position.id,
+      parseFloat(editState.partialPro) * 1e8,
+      priceData,
+      _oracleData.signature,
+      editState.partial.stablevault,
+      editState.partial.address,
+      address,
+      { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce() }
     );
+    setState(false);
+    const response: any = await toast.promise(tx, {
+      pending: 'Closing position...',
+      success: undefined,
+      error: 'Closing position failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Closing position failed!'
-        );
+        toast.error('Closing position failed!');
       }
     }, 1000);
-	}
+  }
 
   function handleModifyMargin() {
-    editState.addDrop === "Add" ? addMargin() : removeMargin();
+    editState.addDrop === 'Add' ? addMargin() : removeMargin();
   }
   async function addMargin() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const addMarginInput = ethers.utils.parseEther(editState.addNum === '' ? "0" : editState.addNum);
+    const addMarginInput = ethers.utils.parseEther(editState.addNum === '' ? '0' : editState.addNum);
 
     const _oracleData: any = oracleData[position.asset];
 
@@ -340,32 +352,37 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.spread,
       _oracleData.timestamp
     ];
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.addMargin(position.id, editState.addMenu.stablevault, editState.addMenu.address, addMarginInput, priceData, _oracleData.signature, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
-    setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Adding margin...',
-        success: undefined,
-        error: 'Adding margin failed!'
-      }
+    const tx = tradingContract.addMargin(
+      position.id,
+      editState.addMenu.stablevault,
+      editState.addMenu.address,
+      addMarginInput,
+      priceData,
+      _oracleData.signature,
+      [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
+      address,
+      { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce() }
     );
+    setState(false);
+    const response: any = await toast.promise(tx, {
+      pending: 'Adding margin...',
+      success: undefined,
+      error: 'Adding margin failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Adding margin failed!'
-        );
+        toast.error('Adding margin failed!');
       }
     }, 1000);
-	}
+  }
   async function removeMargin() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const removeMarginInput = ethers.utils.parseEther(editState.addNum === '' ? "0" : editState.addNum);
+    const removeMarginInput = ethers.utils.parseEther(editState.addNum === '' ? '0' : editState.addNum);
 
     const _oracleData: any = oracleData[position.asset];
 
@@ -377,36 +394,42 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.spread,
       _oracleData.timestamp
     ];
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.removeMargin(position.id, editState.addMenu.stablevault, editState.addMenu.address, removeMarginInput, priceData, _oracleData.signature, address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
-    setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Removing margin...',
-        success: undefined,
-        error: 'Removing margin failed!'
-      }
+    const tx = tradingContract.removeMargin(
+      position.id,
+      editState.addMenu.stablevault,
+      editState.addMenu.address,
+      removeMarginInput,
+      priceData,
+      _oracleData.signature,
+      address,
+      { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce() }
     );
+    setState(false);
+    const response: any = await toast.promise(tx, {
+      pending: 'Removing margin...',
+      success: undefined,
+      error: 'Removing margin failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Removing margin failed!'
-        );
+        toast.error('Removing margin failed!');
       }
     }, 1000);
-	}
+  }
 
   function handleAddToPosition() {
     addToPosition();
   }
   async function addToPosition() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const addMarginInput = ethers.utils.parseEther(editState.addToPositionMargin === '' ? "0" : editState.addToPositionMargin);
+    const addMarginInput = ethers.utils.parseEther(
+      editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin
+    );
 
     const _oracleData: any = oracleData[position.asset];
 
@@ -418,29 +441,34 @@ export const EditModal = (props: EditModalProps) => {
       _oracleData.spread,
       _oracleData.timestamp
     ];
-		
+
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 2);
-		const tx = tradingContract.addToPosition(position.id, priceData, _oracleData.signature, editState.posDrop.stablevault, editState.posDrop.address, addMarginInput, [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false], address, {gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce()});
-    setState(false);
-    const response: any = await toast.promise(
-      tx,
-      {
-        pending: 'Adding to position...',
-        success: undefined,
-        error: 'Adding to position failed!'
-      }
+    const tx = tradingContract.addToPosition(
+      position.id,
+      priceData,
+      _oracleData.signature,
+      editState.posDrop.stablevault,
+      editState.posDrop.address,
+      addMarginInput,
+      [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
+      address,
+      { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, nonce: await getShellNonce() }
     );
+    setState(false);
+    const response: any = await toast.promise(tx, {
+      pending: 'Adding to position...',
+      success: undefined,
+      error: 'Adding to position failed!'
+    });
     // eslint-disable-next-line
     setTimeout(async () => {
       const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
       if (receipt.status === 0) {
-        toast.error(
-          'Adding to position failed!'
-        );
+        toast.error('Adding to position failed!');
       }
     }, 1000);
-	}
+  }
 
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={isState}>
@@ -451,7 +479,7 @@ export const EditModal = (props: EditModalProps) => {
         <FeeLabelGroup>
           <FeeLabel>
             <TextLabel>Funding fees paid</TextLabel>
-            <FeeLabelValue>{(-parseFloat(position?.accInterest)/1e18).toFixed(2)}</FeeLabelValue>
+            <FeeLabelValue>{(-parseFloat(position?.accInterest) / 1e18).toFixed(2)}</FeeLabelValue>
           </FeeLabel>
         </FeeLabelGroup>
         <EditField>
@@ -460,13 +488,15 @@ export const EditModal = (props: EditModalProps) => {
             <TigrisInput label="Stop Loss" placeholder="-" value={editState.stopLoss} setValue={handleEditSL} />
             {isConnected ? (
               <>
-                <ApplyButton disabled={
-                  editState.stopLoss === '' && position?.slPrice === "0" ? true :
-                  editState.stopLoss === (parseFloat(position?.slPrice)/1e18).toPrecision(7)
+                <ApplyButton
+                  disabled={
+                    editState.stopLoss === '' && position?.slPrice === '0'
+                      ? true
+                      : editState.stopLoss === (parseFloat(position?.slPrice) / 1e18).toPrecision(7)
                   }
                   variant="contained"
                   onClick={() => handleUpdateSL()}
-                  >
+                >
                   Apply
                 </ApplyButton>
               </>
@@ -481,13 +511,15 @@ export const EditModal = (props: EditModalProps) => {
             <TigrisInput label="Take Profit" placeholder="-" value={editState.profit} setValue={handleEditTP} />
             {isConnected ? (
               <>
-                <ApplyButton disabled={
-                  editState.profit === '' && position?.tpPrice === "0" ? true :
-                  editState.profit === (parseFloat(position?.tpPrice)/1e18).toPrecision(7)
+                <ApplyButton
+                  disabled={
+                    editState.profit === '' && position?.tpPrice === '0'
+                      ? true
+                      : editState.profit === (parseFloat(position?.tpPrice) / 1e18).toPrecision(7)
                   }
                   variant="contained"
                   onClick={() => handleUpdateTP()}
-                  >
+                >
                   Apply
                 </ApplyButton>
               </>
@@ -507,11 +539,7 @@ export const EditModal = (props: EditModalProps) => {
               state={editState.partial}
               setState={handleEditState}
             />
-            <TigrisInput
-              label="%"
-              value={editState.partialPro}
-              setValue={handleEditPartialPro}
-            />
+            <TigrisInput label="%" value={editState.partialPro} setValue={handleEditPartialPro} />
             <ClosePositionButton onClick={() => handlePartialClose()}>Close Position</ClosePositionButton>
           </FieldAction>
         </EditField>
@@ -528,48 +556,44 @@ export const EditModal = (props: EditModalProps) => {
             />
             <CommonDropDown arrayData={marginArr} name="addDrop" state={editState.addDrop} setState={handleEditState} />
             <TigrisInputContainer>
-              <TigrisInput
-                label="Margin"
-                placeholder="-"
-                value={editState.addNum}
-                setValue={handleEditAddNum}
-              />
+              <TigrisInput label="Margin" placeholder="-" value={editState.addNum} setValue={handleEditAddNum} />
             </TigrisInputContainer>
           </FieldAction>
         </EditField>
         <FieldLabel>
           <TextLabel>New margin</TextLabel>
           <SecondaryLabel>
-          {
-            isState ?
-              editState.addNum !== "" ? 
-                (editState.addDrop === "Add" ? (parseFloat(position.margin)/1e18 + parseFloat(editState.addNum)) : (parseFloat(position.margin)/1e18 - parseFloat(editState.addNum))).toFixed(2)
-              :
-                (parseFloat(position.margin)/1e18).toFixed(2)
-            :
-              ""
-          }
+            {isState
+              ? editState.addNum !== ''
+                ? (editState.addDrop === 'Add'
+                    ? parseFloat(position.margin) / 1e18 + parseFloat(editState.addNum)
+                    : parseFloat(position.margin) / 1e18 - parseFloat(editState.addNum)
+                  ).toFixed(2)
+                : (parseFloat(position.margin) / 1e18).toFixed(2)
+              : ''}
           </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New leverage</TextLabel>
           <SecondaryLabel>
-          {
-            isState ?
-              editState.addNum !== "" ? 
-                (editState.addDrop === "Add" ?
-                  ((parseFloat(position.margin)/1e18)*(parseFloat(position.leverage)/1e18)/((parseFloat(position.margin)/1e18)+parseFloat(editState.addNum))).toFixed(2)
-                    :
-                  ((parseFloat(position.margin)/1e18)*(parseFloat(position.leverage)/1e18)/((parseFloat(position.margin)/1e18)-parseFloat(editState.addNum))).toFixed(2)
-                )
-              :
-                (parseFloat(position.leverage)/1e18).toFixed(2)
-            :
-              ""
-          }
+            {isState
+              ? editState.addNum !== ''
+                ? editState.addDrop === 'Add'
+                  ? (
+                      ((parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18)) /
+                      (parseFloat(position.margin) / 1e18 + parseFloat(editState.addNum))
+                    ).toFixed(2)
+                  : (
+                      ((parseFloat(position.margin) / 1e18) * (parseFloat(position.leverage) / 1e18)) /
+                      (parseFloat(position.margin) / 1e18 - parseFloat(editState.addNum))
+                    ).toFixed(2)
+                : (parseFloat(position.leverage) / 1e18).toFixed(2)
+              : ''}
           </SecondaryLabel>
         </FieldLabel>
-        <AddMarginButton variant="outlined" onClick={() => handleModifyMargin()}>{editState.addDrop + " margin"}</AddMarginButton>
+        <AddMarginButton variant="outlined" onClick={() => handleModifyMargin()}>
+          {editState.addDrop + ' margin'}
+        </AddMarginButton>
         <EditField>
           <FieldLabel>
             <TextLabel>Add to position</TextLabel>
@@ -587,41 +611,79 @@ export const EditModal = (props: EditModalProps) => {
               value={editState.addToPositionMargin}
               setValue={handleEditAddToPositionMargin}
             />
-            <OpenButton variant="outlined" onClick={handleAddToPosition}>Open</OpenButton>
+            <OpenButton variant="outlined" onClick={handleAddToPosition}>
+              Open
+            </OpenButton>
           </FieldAction>
         </EditField>
         <FieldLabel>
           <TextLabel>New margin</TextLabel>
           <SecondaryLabel>
-            {
-              (
-                parseFloat(position?.margin)/1e18
-                + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0)))
-              )
-              .toFixed(2)
-            }
+            {(
+              parseFloat(position?.margin) / 1e18 +
+              (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) -
+                parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) *
+                  (parseFloat(position?.leverage) / 1e18) *
+                  (openFees
+                    ? ((Number(openFees.daoFees) +
+                        Number(openFees.burnFees) -
+                        (referral !== ethers.constants.AddressZero ? openFees.referralFees / 1e10 : 0)) *
+                        (pairData?.feeMultiplier / 1e10)) /
+                      1e10
+                    : 0))
+            ).toFixed(2)}
           </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New position size</TextLabel>
           <SecondaryLabel>
-            {
-              (
-                (parseFloat(position?.margin)/1e18 + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))))
-                * parseFloat(position?.leverage)/1e18
-              ).toFixed(2)
-            }
+            {(
+              ((parseFloat(position?.margin) / 1e18 +
+                (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) -
+                  parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) *
+                    (parseFloat(position?.leverage) / 1e18) *
+                    (openFees
+                      ? ((Number(openFees.daoFees) +
+                          Number(openFees.burnFees) -
+                          (referral !== ethers.constants.AddressZero ? openFees.referralFees / 1e10 : 0)) *
+                          (pairData?.feeMultiplier / 1e10)) /
+                        1e10
+                      : 0))) *
+                parseFloat(position?.leverage)) /
+              1e18
+            ).toFixed(2)}
           </SecondaryLabel>
         </FieldLabel>
         <FieldLabel>
           <TextLabel>New open price</TextLabel>
           <SecondaryLabel>
-            {
-              (
-                (parseFloat(position?.price)/1e18) * (openPrice) * (parseFloat(position?.margin)/1e18 + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))))
-                / ((parseFloat(position?.margin)/1e18) * (openPrice) + (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) - (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) * (parseFloat(position?.leverage)/1e18) * (openFees ? (((Number(openFees.daoFees) + Number(openFees.burnFees) - (referral !== ethers.constants.AddressZero ? openFees.referralFees/1e10 : 0))*(pairData?.feeMultiplier/1e10))/1e10) : 0))) * (parseFloat(position?.price)/1e18))
-              ).toPrecision(6)
-            }
+            {(
+              ((parseFloat(position?.price) / 1e18) *
+                openPrice *
+                (parseFloat(position?.margin) / 1e18 +
+                  (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) -
+                    parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) *
+                      (parseFloat(position?.leverage) / 1e18) *
+                      (openFees
+                        ? ((Number(openFees.daoFees) +
+                            Number(openFees.burnFees) -
+                            (referral !== ethers.constants.AddressZero ? openFees.referralFees / 1e10 : 0)) *
+                            (pairData?.feeMultiplier / 1e10)) /
+                          1e10
+                        : 0)))) /
+              ((parseFloat(position?.margin) / 1e18) * openPrice +
+                (parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) -
+                  parseFloat(editState.addToPositionMargin === '' ? '0' : editState.addToPositionMargin) *
+                    (parseFloat(position?.leverage) / 1e18) *
+                    (openFees
+                      ? ((Number(openFees.daoFees) +
+                          Number(openFees.burnFees) -
+                          (referral !== ethers.constants.AddressZero ? openFees.referralFees / 1e10 : 0)) *
+                          (pairData?.feeMultiplier / 1e10)) /
+                        1e10
+                      : 0)) *
+                  (parseFloat(position?.price) / 1e18))
+            ).toPrecision(6)}
           </SecondaryLabel>
         </FieldLabel>
       </EditDialogContent>

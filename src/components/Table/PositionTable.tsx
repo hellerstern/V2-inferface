@@ -11,7 +11,7 @@ import { Close, Edit } from '@mui/icons-material';
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 import { EditModal } from '../Modal/EditModal';
 import { useAccount, useNetwork } from 'wagmi';
-import { getNetwork } from "../../../src/constants/networks";
+import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { getShellWallet, getShellNonce } from '../../../src/shell_wallet/index';
 import { oracleData, eu1oracleSocket } from 'src/context/socket';
@@ -43,7 +43,6 @@ interface IPositionTable {
 }
 
 export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFees }: IPositionTable) => {
-
   const [data, setData] = useState<any>(oracleData);
   useEffect(() => {
     eu1oracleSocket.on('data', (data: any) => {
@@ -70,8 +69,8 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
 
   async function getTradingContract() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const signer = await getShellWallet();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    const shellWalletSigner = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, shellWalletSigner);
   }
 
   function handleClosePositionClick(position: any) {
@@ -87,28 +86,30 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       const tx = tradingContract.initiateCloseOrder(
         position.id,
         10000000000,
-        [_oracleData.provider, _oracleData.is_closed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
+        [
+          _oracleData.provider,
+          _oracleData.is_closed,
+          position.asset,
+          _oracleData.price,
+          _oracleData.spread,
+          _oracleData.timestamp
+        ],
         _oracleData.signature,
         currentNetwork.addresses.tigusdvault,
         currentNetwork.addresses.tigusd,
         address,
         { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
       );
-      const response: any = await toast.promise(
-        tx,
-        {
-          pending: 'Closing position...',
-          success: undefined,
-          error: 'Closing position failed!'
-        }
-      );
+      const response: any = await toast.promise(tx, {
+        pending: 'Closing position...',
+        success: undefined,
+        error: 'Closing position failed!'
+      });
       // eslint-disable-next-line
       setTimeout(async () => {
         const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
         if (receipt.status === 0) {
-          toast.error(
-            'Closing position failed!'
-          );
+          toast.error('Closing position failed!');
         }
       }, 1000);
     } catch (err) {
@@ -125,26 +126,22 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       const tradingContract = await getTradingContract();
       const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
 
-      const tx = tradingContract.cancelLimitOrder(
-        id,
-        address,
-        { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
-      );
-      const response: any = await toast.promise(
-        tx,
-        {
-          pending: 'Cancelling limit order...',
-          success: undefined,
-          error: 'Cancelling limit order failed!'
-        }
-      );
+      const tx = tradingContract.cancelLimitOrder(id, address, {
+        gasPrice: gasPriceEstimate,
+        gasLimit: currentNetwork.gasLimit,
+        value: 0,
+        nonce: await getShellNonce()
+      });
+      const response: any = await toast.promise(tx, {
+        pending: 'Cancelling limit order...',
+        success: undefined,
+        error: 'Cancelling limit order failed!'
+      });
       // eslint-disable-next-line
       setTimeout(async () => {
         const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
         if (receipt.status === 0) {
-          toast.error(
-            'Cancelling limit order failed!'
-          );
+          toast.error('Cancelling limit order failed!');
         }
       }, 1000);
     } catch (err) {
@@ -166,13 +163,13 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       if (isTP) {
         if (position.direction) {
           if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Take profit too low");
+            toast.warning('Take profit too low');
             setForceRerender(Math.random());
             return;
           }
         } else {
           if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Take profit too high");
+            toast.warning('Take profit too high');
             setForceRerender(Math.random());
             return;
           }
@@ -180,23 +177,23 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
       } else {
         if (position.direction) {
           if (parseFloat(price.toString()) > parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Stop loss too high");
+            toast.warning('Stop loss too high');
             setForceRerender(Math.random());
             return;
           }
           if (parseFloat(price.toString()) < parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Stop loss past liquidation price!");
+            toast.warning('Stop loss past liquidation price!');
             setForceRerender(Math.random());
             return;
           }
         } else {
           if (parseFloat(price.toString()) < parseFloat(_oracleData.price) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Stop loss too low!");
+            toast.warning('Stop loss too low!');
             setForceRerender(Math.random());
             return;
           }
           if (parseFloat(price.toString()) > parseFloat(position.liqPrice) && parseFloat(price.toString()) !== 0) {
-            toast.warning("Stop loss past liquidation price!");
+            toast.warning('Stop loss past liquidation price!');
             setForceRerender(Math.random());
             return;
           }
@@ -207,26 +204,28 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
         isTP,
         position.id,
         price,
-        [_oracleData.provider, _oracleData.is_closed, position.asset, _oracleData.price, _oracleData.spread, _oracleData.timestamp],
+        [
+          _oracleData.provider,
+          _oracleData.is_closed,
+          position.asset,
+          _oracleData.price,
+          _oracleData.spread,
+          _oracleData.timestamp
+        ],
         _oracleData.signature,
         address,
         { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
       );
-      const response: any = await toast.promise(
-        tx,
-        {
-          pending: isTP ? 'Updating take profit...' : 'Updating stop loss...',
-          success: undefined,
-          error: isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
-        }
-      );
+      const response: any = await toast.promise(tx, {
+        pending: isTP ? 'Updating take profit...' : 'Updating stop loss...',
+        success: undefined,
+        error: isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
+      });
       // eslint-disable-next-line
       setTimeout(async () => {
         const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);
         if (receipt.status === 0) {
-          toast.error(
-            isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!'
-          );
+          toast.error(isTP ? 'Updating take profit failed!' : 'Updating stop loss failed!');
         }
       }, 1000);
     } catch (err) {
@@ -235,28 +234,29 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
   }
 
   function pnlPercent(position: any, cPrice: any, isAfterFees: any) {
+    const interest = position.accInterest / 1e18;
+    const leverage = position.leverage / 1e18;
+    const margin = position.margin / 1e18;
+    const openPrice = position.price / 1e18;
 
-    const interest = position.accInterest/1e18;
-    const leverage = position.leverage/1e18;
-    const margin = position.margin/1e18;
-    const openPrice = position.price/1e18;
-  
-    let fee:any;
+    let fee: any;
     if (isAfterFees) {
-        fee = (margin*leverage*cPrice/openPrice) * 0.001;
+      fee = ((margin * leverage * cPrice) / openPrice) * 0.001;
     } else {
-        fee = 0;
+      fee = 0;
     }
-  
-    const payoutAfterFee:number = position.direction ? (margin + (cPrice/openPrice-1)*leverage*margin+interest-fee) : (margin + (openPrice/cPrice-1)*leverage*margin+interest-fee);
-  
-    let pnlPercent = ((payoutAfterFee)/margin-1)*100;
+
+    const payoutAfterFee: number = position.direction
+      ? margin + (cPrice / openPrice - 1) * leverage * margin + interest - fee
+      : margin + (openPrice / cPrice - 1) * leverage * margin + interest - fee;
+
+    let pnlPercent = (payoutAfterFee / margin - 1) * 100;
     if (pnlPercent > 500) {
-        pnlPercent = 500;
+      pnlPercent = 500;
     }
     return (
-      <div style={{color: pnlPercent >= 0 ? '#26a69a' : '#EF5350'}}>
-      {payoutAfterFee.toFixed(2) + " (" + pnlPercent.toFixed(2) + "%)"}
+      <div style={{ color: pnlPercent >= 0 ? '#26a69a' : '#EF5350' }}>
+        {payoutAfterFee.toFixed(2) + ' (' + pnlPercent.toFixed(2) + '%)'}
       </div>
     );
   }
@@ -277,11 +277,11 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
     setAllVisible(isSetVisible);
     const prevVisible = isPositionVisible;
     const ids = [];
-    for (let i=0; i<openPositions.length; i++) {
+    for (let i = 0; i < openPositions.length; i++) {
       prevVisible[openPositions[i].id] = isSetVisible;
       ids.push(openPositions[i].id);
     }
-    for (let i=0; i<limitOrders.length; i++) {
+    for (let i = 0; i < limitOrders.length; i++) {
       prevVisible[limitOrders[i].id] = isSetVisible;
       ids.push(limitOrders[i].id);
     }
@@ -298,27 +298,29 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
             <TableCell>
               <TableCellContainer>
                 <VisibilityBox>
-                  {isAllVisible ? <BsEyeFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/> : <BsEyeSlashFill style={{cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => handleAllEyeClick(e)}/>}
+                  {isAllVisible ? (
+                    <BsEyeFill
+                      style={{ cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }}
+                      onClick={(e) => handleAllEyeClick(e)}
+                    />
+                  ) : (
+                    <BsEyeSlashFill
+                      style={{ cursor: 'pointer', fontSize: '12px', marginLeft: '0.5px' }}
+                      onClick={(e) => handleAllEyeClick(e)}
+                    />
+                  )}
                 </VisibilityBox>
               </TableCellContainer>
             </TableCell>
             <TableCell>User</TableCell>
             <TableCell>L/S</TableCell>
-            {
-              tableType === 1 ?
-              <TableCell>Type</TableCell> :
-              <></>
-            }
+            {tableType === 1 ? <TableCell>Type</TableCell> : <></>}
             <TableCell>Pair</TableCell>
             <TableCell>Size</TableCell>
             <TableCell>Margin</TableCell>
             <TableCell>Leverage</TableCell>
             <TableCell>Price</TableCell>
-            {
-              tableType === 0 ?
-              <TableCell>PnL</TableCell> :
-              <></>
-            }
+            {tableType === 0 ? <TableCell>PnL</TableCell> : <></>}
             <TableCell>Take Profit</TableCell>
             <TableCell>Stop Loss</TableCell>
             <TableCell>Liq</TableCell>
@@ -331,69 +333,80 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
               <TableCell>
                 <TableCellContainer>
                   <VisibilityBox>
-                    {(isPositionVisible[position.id] === true || isPositionVisible[position.id] === undefined) ? <BsEyeFill style={{ fontSize: '12px', marginLeft: '0.5px' }} onClick={(e) => {handleEyeClick(e, position.id, false);}}/> : <BsEyeSlashFill style={{ fontSize: '12px', marginLeft: '0.5px' }}  onClick={(e) => {handleEyeClick(e, position.id, true);}}/>}
+                    {isPositionVisible[position.id] === true || isPositionVisible[position.id] === undefined ? (
+                      <BsEyeFill
+                        style={{ fontSize: '12px', marginLeft: '0.5px' }}
+                        onClick={(e) => {
+                          handleEyeClick(e, position.id, false);
+                        }}
+                      />
+                    ) : (
+                      <BsEyeSlashFill
+                        style={{ fontSize: '12px', marginLeft: '0.5px' }}
+                        onClick={(e) => {
+                          handleEyeClick(e, position.id, true);
+                        }}
+                      />
+                    )}
                   </VisibilityBox>
                 </TableCellContainer>
               </TableCell>
-              <TableCell>
-                {position.trader.slice(0, 6)}
+              <TableCell>{position.trader.slice(0, 6)}</TableCell>
+              <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>
+                {position.direction ? 'Long' : 'Short'}
               </TableCell>
-              <TableCell style={{ color: position.direction ? '#26a69a' : '#EF5350' }}>{position.direction ? "Long" : "Short"}</TableCell>
-              {
-                tableType === 1 ?
-                <TableCell>{position.orderType === 1 ? "Limit" : "Stop"}</TableCell> :
-                <></>
-              }
+              {tableType === 1 ? <TableCell>{position.orderType === 1 ? 'Limit' : 'Stop'}</TableCell> : <></>}
               <TableCell>{assets[position.asset].name}</TableCell>
               <TableCell>{((position.margin / 1e18) * (position.leverage / 1e18)).toFixed(2)}</TableCell>
               <TableCell>{(position.margin / 1e18).toFixed(2)}</TableCell>
               <TableCell>{(position.leverage / 1e18).toFixed(2)}x</TableCell>
               <TableCell>{(position.price / 1e18).toPrecision(7)}</TableCell>
-              {
-                tableType === 0 ?
-                <TableCell style={{width: '150px'}}>{(data[position.asset]?.price) ? pnlPercent(position, data[position.asset].price/1e18, isAfterFees) : "Loading..."}</TableCell> :
+              {tableType === 0 ? (
+                <TableCell style={{ width: '150px' }}>
+                  {data[position.asset]?.price
+                    ? pnlPercent(position, data[position.asset].price / 1e18, isAfterFees)
+                    : 'Loading...'}
+                </TableCell>
+              ) : (
                 <></>
-              }
+              )}
               <TableCell>
-                {
-                  tableType === 1 ? (position.tpPrice / 1e18).toPrecision(7) :
-                  <InputStore
-                    handleUpdateTPSLChange={handleUpdateTPSLChange}
-                    position={position}
-                    isTP={true}
-                  />
-                }
+                {tableType === 1 ? (
+                  (position.tpPrice / 1e18).toPrecision(7)
+                ) : (
+                  <InputStore handleUpdateTPSLChange={handleUpdateTPSLChange} position={position} isTP={true} />
+                )}
               </TableCell>
               <TableCell>
-                {
-                  tableType === 1 ? (position.slPrice / 1e18).toPrecision(7) :
-                  <InputStore
-                    handleUpdateTPSLChange={handleUpdateTPSLChange}
-                    position={position}
-                    isTP={false}
-                  />
-                }
+                {tableType === 1 ? (
+                  (position.slPrice / 1e18).toPrecision(7)
+                ) : (
+                  <InputStore handleUpdateTPSLChange={handleUpdateTPSLChange} position={position} isTP={false} />
+                )}
               </TableCell>
               <TableCell>{(position.liqPrice / 1e18).toPrecision(7)}</TableCell>
               <TableCell>
                 <ActionContainer className="ActionField">
-                  {
-                  tableType === 0 ?
-                  <EditButton onClick={(e) => {
-                    handleClickEditOpen(position);
-                    e.stopPropagation();
-                  }}>
-                    <SmallText>Edit</SmallText>
-                    <Edit sx={{ fontSize: '18px' }} />
-                  </EditButton>
-                  :
-                  <></>
-                  }
-                  <CloseButton onClick={(e) => {
-                    tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id);
-                    e.stopPropagation();
-                  }}>
-                    {tableType === 0 ? "Close" : "Cancel"}
+                  {tableType === 0 ? (
+                    <EditButton
+                      onClick={(e) => {
+                        handleClickEditOpen(position);
+                        e.stopPropagation();
+                      }}
+                    >
+                      <SmallText>Edit</SmallText>
+                      <Edit sx={{ fontSize: '18px' }} />
+                    </EditButton>
+                  ) : (
+                    <></>
+                  )}
+                  <CloseButton
+                    onClick={(e) => {
+                      tableType === 0 ? handleClosePositionClick(position) : handleCancelOrderClick(position.id);
+                      e.stopPropagation();
+                    }}
+                  >
+                    {tableType === 0 ? 'Close' : 'Cancel'}
                     <Close sx={{ fontSize: '18px' }} />
                   </CloseButton>
                 </ActionContainer>
@@ -403,7 +416,7 @@ export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFe
           {/* No Trading Data */}
         </CustomTableBody>
       </Table>
-      <EditModal isState={isEditModalOpen} setState={setEditModalOpen} position={clickedPosition}/>
+      <EditModal isState={isEditModalOpen} setState={setEditModalOpen} position={clickedPosition} />
     </TableContainer>
   );
 };
@@ -414,13 +427,12 @@ interface IInputStore {
   isTP: boolean;
 }
 const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => {
-
   const [tpsl, setTpsl] = useState(initTpsl(isTP, position));
   function initTpsl(isTP: boolean, position: any) {
     if (isTP) {
-      return position.tpPrice/1e18 === 0 ? "" : (position.tpPrice / 1e18).toPrecision(7);
+      return position.tpPrice / 1e18 === 0 ? '' : (position.tpPrice / 1e18).toPrecision(7);
     } else {
-      return position.slPrice/1e18 === 0 ? "" : (position.slPrice / 1e18).toPrecision(7);
+      return position.slPrice / 1e18 === 0 ? '' : (position.slPrice / 1e18).toPrecision(7);
     }
   }
 
@@ -433,7 +445,7 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
       }}
       type="text"
       disableUnderline={true}
-      placeholder={"None"}
+      placeholder={'None'}
       value={tpsl}
       onChange={(e: any) => {
         setTpsl(
@@ -444,13 +456,12 @@ const InputStore = ({ handleUpdateTPSLChange, position, isTP }: IInputStore) => 
         );
       }}
       onKeyDown={(key) => {
-        if (key.code === "Enter" && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
-          handleUpdateTPSLChange(position, isTP, tpsl === "" ? "0" : tpsl);
+        if (key.code === 'Enter' && (isTP ? position.tpPrice : position.slPrice) !== tpsl) {
+          handleUpdateTPSLChange(position, isTP, tpsl === '' ? '0' : tpsl);
         }
       }}
     />
   );
-
 };
 
 const TableContainer = styled(Box)(({ theme }) => ({

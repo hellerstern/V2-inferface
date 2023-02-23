@@ -3,7 +3,7 @@ import { Box, Button, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState, useRef, useEffect } from 'react';
 import { TigrisInput, TigrisSlider } from '../Input';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 import { eu1oracleSocket, oracleData } from '../../../src/context/socket';
 import { IconDropDownMenu } from '../Dropdown/IconDrop';
 import { getNetwork } from '../../../src/constants/networks';
@@ -22,7 +22,6 @@ import {
   unlockShellWallet,
   checkShellWallet
 } from '../../../src/shell_wallet/index';
-import { getProvider, getSigner } from 'src/contracts';
 
 declare const window: any;
 const { ethereum } = window;
@@ -114,6 +113,10 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     currentMargin.marginAssetDrop.address,
     getNetwork(chain?.id).addresses.trading
   );
+
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+
   useEffect(() => {
     setTokenBalance(
       ((tokenLiveBalance ? Number(tokenLiveBalance) : 0) / 10 ** currentMargin.marginAssetDrop.decimals).toFixed(2)
@@ -638,16 +641,14 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
 
   async function getTradingContract() {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const signer = await getShellWallet();
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
+    const shellWalletSigner = await getShellWallet();
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, shellWalletSigner);
   }
 
   function getTradingContractForApprove() {
     let contract: Contract;
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const provider = getProvider();
     if (provider === undefined) return;
-    const signer = getSigner();
     if (signer !== null && signer !== undefined) {
       contract = new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, signer);
       return contract;
