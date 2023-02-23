@@ -69,8 +69,6 @@ export const checkShellWallet = async (address: string) => {
 
 export const unlockShellWallet = async () => {
     // const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : null;
-    const provider = getProvider();
-    if (provider === null) return;
     const signer = getSigner();
     const signerAddress = getAddress();
     if (!signerAddress || signerAddress === "") {
