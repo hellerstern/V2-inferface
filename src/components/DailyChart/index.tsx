@@ -39,7 +39,6 @@ export const DailyPerformanceChart = () => {
     });
 
     socket.on('AddressEvent', (data) => {
-      console.log(data.chainId, data.trader);
       if (chain?.id === data.chainId && data.trader === address) {
         fetchData();
       }

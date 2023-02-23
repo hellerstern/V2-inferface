@@ -151,7 +151,7 @@ export const sendGasBack = async (wallet: any) => {
         data: '0x00000000',
         value: 0
     });
-    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 2).toString();
+    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 3).toString();
     await _wallet.sendTransaction({
         to: wallet,
         value: _value,
