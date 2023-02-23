@@ -683,6 +683,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       toast.error('Not enough gas for proxy wallet');
       return;
     }
+    checkShellWallet(address as string);
     await unlockShellWallet();
     const proxyAddress = getShellAddress();
     if (proxyAddress !== '') {
