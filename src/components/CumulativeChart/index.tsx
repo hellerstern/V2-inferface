@@ -23,7 +23,6 @@ export const CumulativeChart = () => {
       const toFetch = `https://trader-stats-tr8mu.ondigitalocean.app/performance/${chainId}/${address}`;
       const response = await fetch(toFetch);
       const resData = await response.json();
-      console.log({ resData });
       if (resData !== data) {
         setData(resData);
       }

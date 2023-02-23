@@ -69,8 +69,6 @@ export const checkShellWallet = async (address: string) => {
 
 export const unlockShellWallet = async () => {
     // const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : null;
-    const provider = getProvider();
-    if (provider === null) return;
     const signer = getSigner();
     const signerAddress = getAddress();
     if (!signerAddress || signerAddress === "") {
@@ -151,7 +149,7 @@ export const sendGasBack = async (wallet: any) => {
         data: '0x00000000',
         value: 0
     });
-    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 2).toString();
+    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 3).toString();
     await _wallet.sendTransaction({
         to: wallet,
         value: _value,

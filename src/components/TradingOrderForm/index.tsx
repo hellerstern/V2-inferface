@@ -11,6 +11,7 @@ import { Contract, ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
+import { useApproveProxy, useProxyApproval } from 'src/hook/useProxy';
 import { useOpenInterest } from 'src/hook/useTradeInfo';
 import Cookies from 'universal-cookie';
 
@@ -23,8 +24,6 @@ import {
   checkShellWallet
 } from '../../../src/shell_wallet/index';
 
-declare const window: any;
-const { ethereum } = window;
 const cookies = new Cookies();
 
 interface IOrderForm {
@@ -39,50 +38,12 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [isMarketClosed, setMarketClosed] = useState(false);
   const { assets } = getNetwork(0);
 
-  useEffect(() => {
-    [eu1oracleSocket].forEach((socket) => {
-      socket.on('data', (data: any) => {
-        if (!data[currentPairIndex.current]) {
-          setMarketAvailable(false);
-          setOpenPrice('');
-          return;
-        }
-        setMarketAvailable(true);
-        setMarketClosed(data[currentPairIndex.current].is_closed);
-        if (orderTypeRef.current === 'Market') {
-          setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
-          setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
-        }
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    checkShellWallet(address as string);
-    getProxyApproval();
-  }, [address, chain]);
-
-  useEffect(() => {
-    setMarginAssets({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
-    const _currentMargin = { marginAssetDrop: getNetwork(chain?.id).marginAssets[1] };
-    setCurrentMargin(_currentMargin);
-    currentMarginRef.current = _currentMargin;
-  }, [chain]);
-
   const [marginAssets, setMarginAssets] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
 
   const [currentMargin, setCurrentMargin] = useState({ marginAssetDrop: getNetwork(chain?.id).marginAssets[1] });
   const currentMarginRef = useRef<any>(getNetwork(chain?.id).marginAssets[1]);
 
   const currentPairIndex = useRef(pairIndex);
-
-  useEffect(() => {
-    currentPairIndex.current = pairIndex;
-    try {
-      setOpenPrice(((oracleData[currentPairIndex.current] as any).price / 1e18).toPrecision(5));
-      setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));
-    } catch {}
-  }, [pairIndex]);
 
   const [isLong, setLong] = useState(true);
   const [openPrice, setOpenPrice] = useState('0');
@@ -107,6 +68,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [isProxyApproved, setIsProxyApproved] = useState(false);
   const [isTokenAllowed, setIsTokenAllowed] = useState(true);
   const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
+  const proxyRef = useRef(ethers.constants.AddressZero);
+  const timeRef = useRef(0);
+  const [callApproveProxy] = useApproveProxy(setIsProxyApproved, proxyRef.current, timeRef.current);
 
   const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
   const tokenLiveAllowance = useTokenAllowance(
@@ -137,10 +101,65 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setOi(liveOi);
   }, [liveOi]);
 
+  const liveProxyApproval = useProxyApproval();
+  useEffect(() => {
+    const { minProxyGas } = getNetwork(chain?.id);
+    const proxyAddress = (liveProxyApproval as any)?.proxy;
+    const proxyTime = (liveProxyApproval as any)?.time;
+    const currentTime = Date.now() / 1000;
+    const shellBalance = Promise.resolve(getShellBalance());
+    if (
+      getShellAddress().toLowerCase() !== String(proxyAddress).toLowerCase() ||
+      currentTime > proxyTime ||
+      Number(shellBalance) < minProxyGas
+    ) {
+      setIsProxyApproved(false);
+    } else {
+      setIsProxyApproved(true);
+    }
+  }, [liveProxyApproval, chain, address]);
+
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
     orderTypeRef.current = orderType;
   }, [orderType]);
+
+  useEffect(() => {
+    checkShellWallet(address as string);
+  }, [address, chain]);
+
+  useEffect(() => {
+    currentPairIndex.current = pairIndex;
+    try {
+      setOpenPrice(((oracleData[currentPairIndex.current] as any).price / 1e18).toPrecision(5));
+      setSpread(((oracleData[currentPairIndex.current] as any).spread / 1e10).toPrecision(5));
+    } catch {}
+  }, [pairIndex]);
+
+  useEffect(() => {
+    [eu1oracleSocket].forEach((socket) => {
+      socket.on('data', (data: any) => {
+        if (!data[currentPairIndex.current]) {
+          setMarketAvailable(false);
+          setOpenPrice('');
+          return;
+        }
+        setMarketAvailable(true);
+        setMarketClosed(data[currentPairIndex.current].is_closed);
+        if (orderTypeRef.current === 'Market') {
+          setOpenPrice((data[currentPairIndex.current].price / 1e18).toString());
+          setSpread((data[currentPairIndex.current].spread / 1e10).toPrecision(5));
+        }
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    setMarginAssets({ marginAssetDrop: getNetwork(chain?.id).marginAssets });
+    const _currentMargin = { marginAssetDrop: getNetwork(chain?.id).marginAssets[1] };
+    setCurrentMargin(_currentMargin);
+    currentMarginRef.current = _currentMargin;
+  }, [chain]);
 
   function handleDirectionChange(value: boolean) {
     setLong(value);
@@ -655,33 +674,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  async function getProxyApproval() {
-    if (!address) return;
-    const tradingContract = getTradingContractForApprove();
-    const { minProxyGas } = getNetwork(chain?.id);
-    if (tradingContract === undefined) return;
-    const proxy = await tradingContract?.proxyApprovals(address);
-
-    const proxyAddress = proxy.proxy;
-    const proxyTime = proxy.time;
-    const currentTime = Date.now() / 1000;
-    const shellBalance = await getShellBalance();
-
-    if (
-      (await getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() ||
-      currentTime > proxyTime ||
-      Number(shellBalance) < minProxyGas
-    ) {
-      setIsProxyApproved(false);
-    } else {
-      setIsProxyApproved(true);
-    }
-  }
-
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     if (tradingContract === undefined) return;
-    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const traderGas = await tradingContract?.provider.getBalance(address as string);
     const proxyGas = getNetwork(chain?.id).proxyGas;
     if (Number(traderGas) / 1e18 < Number(proxyGas)) {
@@ -689,28 +684,19 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       return;
     }
     await unlockShellWallet();
-    const now = Math.floor(Date.now() / 1000);
-    if (tradingContract === undefined) return;
-    const tx = tradingContract?.approveProxy(await getShellAddress(), now + 31536000, {
-      gasPrice: gasPriceEstimate,
-      value: ethers.utils.parseEther(proxyGas)
-    });
-    const response: any = await toast.promise(tx, {
-      pending: 'Proxy approval pending...',
-      success: undefined,
-      error: 'Proxy approval failed!'
-    });
-    // eslint-disable-next-line
-    setTimeout(async () => {
-      if (tradingContract === undefined) return;
-      const receipt = await tradingContract?.provider.getTransactionReceipt(response.hash);
-      if (receipt.status === 0) {
-        toast.error('Proxy approval failed!');
-      } else if (receipt.status === 1) {
-        toast.success('Successfully approved proxy!');
-      }
-      getProxyApproval();
-    }, 2000);
+    const proxyAddress = getShellAddress();
+    if (proxyAddress !== '') {
+      toast.dismiss();
+      toast.loading('Proxy approval pending...');
+      proxyRef.current = getShellAddress();
+      timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
+      setTimeout(() => {
+        callApproveProxy?.();
+      }, 2000);
+    } else {
+      toast.dismiss();
+      toast.error('Proxy approval failed!');
+    }
   }
 
   async function initiateMarketOrder() {
