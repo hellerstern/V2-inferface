@@ -12,7 +12,6 @@ import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
 
-// ** Types
 type DateType = Date | null | undefined;
 
 interface PickerProps {
