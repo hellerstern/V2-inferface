@@ -14,8 +14,7 @@ export const useApproveProxy = (setIsProxyApproved: any, proxyAddress: string, t
         args: [proxyAddress as `0x${string}`, time],
         overrides: {
             value: ethers.utils.parseEther(proxyGas)
-        },
-        cacheTime: 10000
+        }
     });
     const { write, data } = useContractWrite({
         ...config,
