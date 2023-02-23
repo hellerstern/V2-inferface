@@ -2,19 +2,20 @@ import { ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useContractRead, useAccount, useNetwork, useWaitForTransaction } from "wagmi";
 import { getNetwork } from "src/constants/networks";
 import { toast } from 'react-toastify';
-import { getShellAddress } from "src/shell_wallet";
 
-export const useApproveProxy = (setIsProxyApproved: any) => {
+export const useApproveProxy = (setIsProxyApproved: any, proxyAddress: string, time: number) => {
     const { chain } = useNetwork();
     const { abis, proxyGas, addresses } = getNetwork(chain?.id);
+    
     const { config } = usePrepareContractWrite({
         address: addresses.trading,
         abi: abis.trading,
         functionName: 'approveProxy',
-        args: [getShellAddress() as `0x${string}`, Math.floor(Date.now() / 1000) + 31536000],
+        args: [proxyAddress as `0x${string}`, time],
         overrides: {
             value: ethers.utils.parseEther(proxyGas)
-        }
+        },
+        cacheTime: 10000
     });
     const { write, data } = useContractWrite({
         ...config,
@@ -36,4 +37,19 @@ export const useApproveProxy = (setIsProxyApproved: any) => {
         }
     });
     return [write];
+}
+
+export const useProxyApproval = () => {
+    const { chain } = useNetwork();
+    const { address } = useAccount();
+    const { abis, addresses } = getNetwork(chain?.id);
+    const { data } = useContractRead({
+        address: addresses.trading,
+        abi: abis.trading,
+        functionName: 'proxyApprovals',
+        args: [address as `0x${string}`],
+        watch: true
+    });
+
+    return data
 }

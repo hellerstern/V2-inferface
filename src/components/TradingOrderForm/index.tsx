@@ -11,7 +11,7 @@ import { Contract, ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useApproveToken, useTokenAllowance, useTokenBalance } from 'src/hook/useToken';
-import { useApproveProxy } from 'src/hook/useProxy';
+import { useApproveProxy, useProxyApproval } from 'src/hook/useProxy';
 import { useOpenInterest } from 'src/hook/useTradeInfo';
 import Cookies from 'universal-cookie';
 
@@ -69,7 +69,9 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   const [isProxyApproved, setIsProxyApproved] = useState(false);
   const [isTokenAllowed, setIsTokenAllowed] = useState(true);
   const [approve] = useApproveToken(currentMargin.marginAssetDrop.address, getNetwork(chain?.id).addresses.trading);
-  const [callApproveProxy] = useApproveProxy(setIsProxyApproved);
+  const proxyRef = useRef(ethers.constants.AddressZero);
+  const timeRef = useRef(0);
+  const [callApproveProxy] = useApproveProxy(setIsProxyApproved, proxyRef.current, timeRef.current);
 
   const tokenLiveBalance = useTokenBalance(currentMargin.marginAssetDrop.address);
   const tokenLiveAllowance = useTokenAllowance(
@@ -96,16 +98,31 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     setOi(liveOi);
   }, [liveOi]);
 
+  const liveProxyApproval = useProxyApproval();
+  useEffect(() => {
+    const { minProxyGas } = getNetwork(chain?.id);
+    const proxyAddress = (liveProxyApproval as any)?.proxy;
+    const proxyTime = (liveProxyApproval as any)?.time;
+    const currentTime = Date.now() / 1000;
+    const shellBalance = Promise.resolve(getShellBalance());
+    if (
+      (getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() ||
+      currentTime > proxyTime ||
+      Number(shellBalance) < minProxyGas
+    ) {
+      setIsProxyApproved(false);
+    } else {
+      setIsProxyApproved(true);
+    }
+  }, [liveProxyApproval, chain, address]);
+
   const orderTypeRef = useRef(orderType);
   useEffect(() => {
     orderTypeRef.current = orderType;
   }, [orderType]);
 
   useEffect(() => {
-    if (!address || !chain) return;
-    checkShellWallet(address as string).then(() => {
-      getProxyApproval();
-    });
+    checkShellWallet(address as string);
   }, [address, chain]);
 
   useEffect(() => {
@@ -654,28 +671,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     }
   }
 
-  async function getProxyApproval() {
-    const tradingContract = await getTradingContract();
-    const { minProxyGas } = getNetwork(chain?.id);
-    if (tradingContract === undefined) return;
-    const proxy = await tradingContract?.proxyApprovals(address);
-
-    const proxyAddress = proxy.proxy;
-    const proxyTime = proxy.time;
-    const currentTime = Date.now() / 1000;
-    const shellBalance = await getShellBalance();
-
-    if (
-      (getShellAddress()).toLowerCase() !== String(proxyAddress).toLowerCase() ||
-      currentTime > proxyTime ||
-      Number(shellBalance) < minProxyGas
-    ) {
-      setIsProxyApproved(false);
-    } else {
-      setIsProxyApproved(true);
-    }
-  }
-
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     if (tradingContract === undefined) return;
@@ -686,9 +681,18 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       return;
     }
     await unlockShellWallet();
-    toast.dismiss();
-    toast.loading("Proxy approval pending...");
-    callApproveProxy?.();
+    const proxyAddress = getShellAddress();
+    if (proxyAddress !== "") {
+      toast.dismiss();
+      toast.loading("Proxy approval pending...");
+      proxyRef.current = getShellAddress();
+      timeRef.current = (Math.floor(Date.now() / 1000) + 31536000);
+      callApproveProxy?.();
+    } else {
+      toast.dismiss();
+      toast.error("Proxy approval failed!");
+    }
+
   }
 
   async function initiateMarketOrder() {
