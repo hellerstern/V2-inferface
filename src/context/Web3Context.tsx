@@ -16,7 +16,7 @@ interface propsType {
 const Web3Context = createContext<Web3ContextProps | null>(null);
 
 export const Web3Provider = (props: propsType) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const provider = useProvider();
   const { data: signer } = useSigner();
 
@@ -27,7 +27,7 @@ export const Web3Provider = (props: propsType) => {
       (async () => {
         // eslint-disable-next-line no-console
         // console.log(signer);
-        await initializeWeb3(provider, signer).then((res) => {
+        await initializeWeb3(provider, signer, address).then((res) => {
           setInitialized(res);
         });
       })();

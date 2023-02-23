@@ -1,7 +1,7 @@
 import { Box, Button, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { PRIVATE_ROUTES } from 'src/config/routes';

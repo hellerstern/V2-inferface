@@ -10,11 +10,10 @@ import { lastOracleTime } from 'src/context/socket';
 import { ethers } from 'ethers';
 import { useNetwork, useAccount } from 'wagmi';
 
-declare const window: any
+declare const window: any;
 const { ethereum } = window;
 
 export const Footer = () => {
-  
   const [lastData, setLastData] = useState(0);
   const [dateNow, setDateNow] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
@@ -30,26 +29,26 @@ export const Footer = () => {
 
     return () => {
       clearInterval(interval);
-    }
+    };
   }, []);
 
   useEffect(() => {
     if (!isConnected) return;
     const provider = new ethers.providers.Web3Provider(ethereum);
-    if(provider === undefined) return;
+    if (provider === undefined) return;
     provider.getGasPrice().then((r) => {
-      setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
+      setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3)) / 1e9);
     });
     const interval = setInterval(() => {
       if (!isConnected) return;
       provider.getGasPrice().then((r) => {
-        setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3))/1e9);
+        setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3)) / 1e9);
       });
     }, 10000);
 
     return () => {
       clearInterval(interval);
-    }
+    };
   }, [chain, isConnected]);
 
   return (
@@ -58,13 +57,13 @@ export const Footer = () => {
         <FooterWrapper>
           <FooterInfo>
             <TextCoin>
-              {
-                dateNow > lastData+10000 ?
-                  <TbPlugConnectedX color={'#FF0000'} /> :
-                dateNow > lastData+3000 ?
-                  <SiQuantconnect color={'#FFFF00'} /> :
-                  <BsFillCheckCircleFill color={'#219653'} />
-              }
+              {dateNow > lastData + 10000 ? (
+                <TbPlugConnectedX color={'#FF0000'} />
+              ) : dateNow > lastData + 3000 ? (
+                <SiQuantconnect color={'#FFFF00'} />
+              ) : (
+                <BsFillCheckCircleFill color={'#219653'} />
+              )}
               <Text>Oracle</Text>
             </TextCoin>
             <GasFee>
@@ -75,9 +74,18 @@ export const Footer = () => {
           <Line />
           <FooterNav>
             <NavLinks>
-              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://docs.tigris.trade", '_blank')}>Docs</SmallText>
-              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://discord.gg/tigris", '_blank')}>Discord</SmallText>
-              <SmallText sx={{cursor: 'pointer'}} onClick={() => window.open("https://twitter.com/tigristrades", '_blank')}>Twitter</SmallText>
+              <SmallText sx={{ cursor: 'pointer' }} onClick={() => window.open('https://docs.tigris.trade', '_blank')}>
+                Docs
+              </SmallText>
+              <SmallText sx={{ cursor: 'pointer' }} onClick={() => window.open('https://discord.gg/tigris', '_blank')}>
+                Discord
+              </SmallText>
+              <SmallText
+                sx={{ cursor: 'pointer' }}
+                onClick={() => window.open('https://twitter.com/tigristrades', '_blank')}
+              >
+                Twitter
+              </SmallText>
             </NavLinks>
             <SmallText>© 2023. All rights reserved</SmallText>
           </FooterNav>

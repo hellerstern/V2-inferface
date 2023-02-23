@@ -12,42 +12,43 @@ import { ethers } from 'ethers';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { getNetwork } from 'src/constants/networks';
 import { useTokenSupply } from 'src/hook/useToken';
+import { getProvider } from 'src/contracts';
 
-declare const window: any
+declare const window: any;
 const { ethereum } = window;
 
 const bridgeDict = [
   {
-      name: "Polygon",
-      icon: PolygonSvg,
-      nft: "5DF98AA475D8815df7cd4fC4549B5c150e8505Be",
-      chainId: 137,
-      layerzero: 109
+    name: 'Polygon',
+    icon: PolygonSvg,
+    nft: '5DF98AA475D8815df7cd4fC4549B5c150e8505Be',
+    chainId: 137,
+    layerzero: 109
   },
   {
-      name: "Arbitrum",
-      icon: ArbiScanSvg,
-      nft: "303c470c0e0342a1CCDd70b0a17a14b599FF1474",
-      chainId: 42161,
-      layerzero: 110
+    name: 'Arbitrum',
+    icon: ArbiScanSvg,
+    nft: '303c470c0e0342a1CCDd70b0a17a14b599FF1474',
+    chainId: 42161,
+    layerzero: 110
   }
-]
+];
 
 const urls = {
   Arbitrum: {
-    opensea: "https://opensea.io/collection/tigris-trade-arbi",
-    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
+    opensea: 'https://opensea.io/collection/tigris-trade-arbi',
+    treasury: 'https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7'
   },
   Polygon: {
-    opensea: "https://opensea.io/collection/tigris-trade",
-    treasury: "https://polygonscan.com/address/0x4f7046f36B5D5282A94cB448eAdB3cdf9Ff2b051"
+    opensea: 'https://opensea.io/collection/tigris-trade',
+    treasury: 'https://polygonscan.com/address/0x4f7046f36B5D5282A94cB448eAdB3cdf9Ff2b051'
   },
-  "Arbitrum Görli": {
-    opensea: "https://opensea.io/collection/tigris-trade-arbi",
-    treasury: "https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7"
+  'Arbitrum Görli': {
+    opensea: 'https://opensea.io/collection/tigris-trade-arbi',
+    treasury: 'https://arbiscan.io/address/0xF416C2b41Fb6c592c9BA7cB6B2f985ed593A51d7'
   },
-  dune: "https://dune.com/Henrystats/tigris-overview"
-}
+  dune: 'https://dune.com/Henrystats/tigris-overview'
+};
 
 export const Governance = () => {
   const { address } = useAccount();
@@ -58,18 +59,18 @@ export const Governance = () => {
   const defaultBridge = {
     name: currentNetwork.name,
     icon: currentNetwork.icon,
-    nft: (currentNetwork.addresses.govnft).substring(2),
+    nft: currentNetwork.addresses.govnft.substring(2),
     chainId: currentNetwork.network_id,
     layerzero: currentNetwork.layerzero
-  }
+  };
 
   const [editState, setEditState] = useState({
     fromData: defaultBridge,
     toData: bridgeDict[1]
   });
 
-  const handleEditState = (prop: string, value: any ) => {
-    if (prop === "fromData") {
+  const handleEditState = (prop: string, value: any) => {
+    if (prop === 'fromData') {
       switchNetwork?.(value.chainId);
     } else {
       setEditState({ ...editState, [prop]: value });
@@ -79,19 +80,22 @@ export const Governance = () => {
         setBridgeError(false);
       }
     }
-  }
+  };
 
   useSwitchNetwork({
     onSuccess(data) {
       const cNetwork = getNetwork(data.id);
       setCurrentNetwork(cNetwork);
-      setEditState({ ...editState, "fromData": {
-        name: cNetwork.name,
-        icon: cNetwork.icon,
-        nft: (cNetwork.addresses.govnft).substring(2),
-        chainId: cNetwork.network_id,
-        layerzero: cNetwork.layerzero
-      }});
+      setEditState({
+        ...editState,
+        fromData: {
+          name: cNetwork.name,
+          icon: cNetwork.icon,
+          nft: cNetwork.addresses.govnft.substring(2),
+          chainId: cNetwork.network_id,
+          layerzero: cNetwork.layerzero
+        }
+      });
       if (editState.toData.chainId === cNetwork.network_id) {
         setBridgeError(true);
       } else {
@@ -103,13 +107,16 @@ export const Governance = () => {
   useEffect(() => {
     const cNetwork = getNetwork(chain?.id);
     setCurrentNetwork(cNetwork);
-    setEditState({...editState, "fromData": {
-      name: cNetwork.name,
-      icon: cNetwork.icon,
-      nft: (cNetwork.addresses.govnft).substring(2),
-      chainId: cNetwork.network_id,
-      layerzero: cNetwork.layerzero
-    }});
+    setEditState({
+      ...editState,
+      fromData: {
+        name: cNetwork.name,
+        icon: cNetwork.icon,
+        nft: cNetwork.addresses.govnft.substring(2),
+        chainId: cNetwork.network_id,
+        layerzero: cNetwork.layerzero
+      }
+    });
     if (editState.toData.chainId === editState.fromData.chainId) {
       setBridgeError(true);
     } else {
@@ -141,30 +148,33 @@ export const Governance = () => {
 
   const [isBridgeError, setBridgeError] = useState(false);
   const govnftLiveSupply = useTokenSupply(getNetwork(chain?.id).addresses.govnft);
-  
+
   useEffect(() => {
     setGovSupply(govnftLiveSupply ? Number(govnftLiveSupply) : 0);
   }, [govnftLiveSupply]);
 
   async function getInfo() {
     if (!address || !chain) return;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    if(provider === undefined) return;
-    const nftsaleContract = new ethers.Contract(currentNetwork.addresses.nftsale, currentNetwork.abis.nftsale, provider);
+    const provider = getProvider();
+    if (provider === undefined) return;
+    const nftsaleContract = new ethers.Contract(
+      currentNetwork.addresses.nftsale,
+      currentNetwork.abis.nftsale,
+      provider
+    );
     const govnftContract = new ethers.Contract(currentNetwork.addresses.govnft, currentNetwork.abis.govnft, provider);
 
-    if (currentNetwork.network_id !== 137 ) {
-        setOwnedNfts(await govnftContract.balanceIds(address));
+    if (currentNetwork.network_id !== 137) {
+      setOwnedNfts(await govnftContract.balanceIds(address));
     } else {
-        setOwnedNfts([]);
-        fetch('https://tigristrade.info/stats/user_nfts/'+address)
-        .then(response => {
-            response.json().then(data => {
-                const ownedNFTs = [];
-                for(let i=0; i<data.nfts.length; i++) ownedNFTs.push(data.nfts[i].id);
-                setOwnedNfts(ownedNFTs);
-            });
+      setOwnedNfts([]);
+      fetch('https://tigristrade.info/stats/user_nfts/' + address).then((response) => {
+        response.json().then((data) => {
+          const ownedNFTs = [];
+          for (let i = 0; i < data.nfts.length; i++) ownedNFTs.push(data.nfts[i].id);
+          setOwnedNfts(ownedNFTs);
         });
+      });
     }
 
     const av = await nftsaleContract.available();
@@ -176,17 +186,17 @@ export const Governance = () => {
 
   function handleCheckbox(id: number) {
     if (!selectedNfts.includes(id)) {
-        selectedNfts.push(id);
+      selectedNfts.push(id);
     } else {
-        const index = selectedNfts.indexOf(id);
-        if (index > -1) {
-            selectedNfts.splice(index, 1);
-        }
+      const index = selectedNfts.indexOf(id);
+      if (index > -1) {
+        selectedNfts.splice(index, 1);
+      }
     }
     if (selectedNfts.length > 25) {
-        setIsMaxBridgeError(true);
+      setIsMaxBridgeError(true);
     } else {
-        setIsMaxBridgeError(false);
+      setIsMaxBridgeError(false);
     }
   }
 
@@ -197,26 +207,33 @@ export const Governance = () => {
           <CardGroup>
             <Card>
               <CardValue>$0.00</CardValue>
-              <CardMedia>
-                24h trading volume
-              </CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open(urls.dune, '_blank')}>
+              <CardMedia>24h trading volume</CardMedia>
+              <CardMedia
+                sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}
+                onClick={() => window.open(urls.dune, '_blank')}
+              >
                 Advanced Stats
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
             </Card>
             <Card>
-              <CardValue>{(govSupply/1).toString()} / 606</CardValue>
+              <CardValue>{(govSupply / 1).toString()} / 606</CardValue>
               <CardMedia>Circulating supply on {currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank')}>
-                  OpenSea
-                <OpenInNew sx={{ width: '15px', height: '15px' }}/>
+              <CardMedia
+                sx={{ color: '#3772FF', cursor: 'pointer', fontSize: '14px' }}
+                onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).opensea, '_blank')}
+              >
+                OpenSea
+                <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
             </Card>
             <Card>
               <CardValue>$100,000.00</CardValue>
               <CardMedia>{currentNetwork.name}</CardMedia>
-              <CardMedia sx={{ color: '#3772FF', cursor: 'pointer' }} onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank')}>
+              <CardMedia
+                sx={{ color: '#3772FF', cursor: 'pointer' }}
+                onClick={() => window.open((urls[currentNetwork.name as keyof typeof urls] as any).treasury, '_blank')}
+              >
                 Treasury Balance
                 <OpenInNew sx={{ width: '15px', height: '15px' }} />
               </CardMedia>
@@ -233,7 +250,7 @@ export const Governance = () => {
                 <NFTDetails>
                   <NFTDetailItem>
                     <ItemTitle>Max Supply</ItemTitle>
-                    <ItemValue sx={{color: '#B1B5C3'}}>10,000</ItemValue>
+                    <ItemValue sx={{ color: '#B1B5C3' }}>10,000</ItemValue>
                   </NFTDetailItem>
                   <NFTDetailItem>
                     <ItemTitle>Network</ItemTitle>
@@ -251,7 +268,7 @@ export const Governance = () => {
                   <NFTDetailItem>
                     <ItemTitle>Available NFTs</ItemTitle>
                     <ItemValue>
-                      {available/1} <span style={{ color: '#B1B5C3' }}>/ 200</span>
+                      {available / 1} <span style={{ color: '#B1B5C3' }}>/ 200</span>
                     </ItemValue>
                   </NFTDetailItem>
                   <NumberController>
@@ -261,14 +278,22 @@ export const Governance = () => {
                         type="text"
                         name="number"
                         placeholder="0"
-                        value={number.toString() === "NaN" ? 0 : number.toString()}
-                        setValue={(v: string) => setNumber(parseInt(v.replace(/[^0-9]/g, "")))}
+                        value={number.toString() === 'NaN' ? 0 : number.toString()}
+                        setValue={(v: string) => setNumber(parseInt(v.replace(/[^0-9]/g, '')))}
                       />
-                      <NumberPlusButton onClick={() => {number.toString() === '' ? setNumber(1) : setNumber(number + 1)}}>
+                      <NumberPlusButton
+                        onClick={() => {
+                          number.toString() === '' ? setNumber(1) : setNumber(number + 1);
+                        }}
+                      >
                         {' '}
                         +{' '}
                       </NumberPlusButton>
-                      <NumberMinusButton onClick={() => {if (number > 1) setNumber(number - 1)}}>
+                      <NumberMinusButton
+                        onClick={() => {
+                          if (number > 1) setNumber(number - 1);
+                        }}
+                      >
                         {' '}
                         -{' '}
                       </NumberMinusButton>
@@ -289,7 +314,7 @@ export const Governance = () => {
                 <FeeCardTitle>Fee distribution</FeeCardTitle>
                 <FeeCardContent>
                   <img src={tigusdLogo} alt="tigusd" width={30} height={30} />
-                  {(pending/1e18).toFixed(2)} tigUSD
+                  {(pending / 1e18).toFixed(2)} tigUSD
                 </FeeCardContent>
                 <PrimaryButton>Claim</PrimaryButton>
               </FeeCard>
@@ -311,24 +336,22 @@ export const Governance = () => {
                 />
                 <NftIDCheckContainer>
                   <FormGroup>
-                    {
-                      (ownedNfts).map((id:number) => (
-                        <FormControlLabel
-                          key={id}
-                          control={<TigrisCheckBox defaultChecked={false} onChange={() => handleCheckbox(id)}/>}
-                          label={<CheckBoxLabel primary="Gov NFT" secondary={"#" + id.toString()} />}
-                        />
-                      ))
-                    }
+                    {ownedNfts.map((id: number) => (
+                      <FormControlLabel
+                        key={id}
+                        control={<TigrisCheckBox defaultChecked={false} onChange={() => handleCheckbox(id)} />}
+                        label={<CheckBoxLabel primary="Gov NFT" secondary={'#' + id.toString()} />}
+                      />
+                    ))}
                   </FormGroup>
                 </NftIDCheckContainer>
-                {
-                  isBridgeError ?
-                  <ErrorButton>Bridge networks must be different</ErrorButton> :
-                  isMaxBridgeError ?
-                  <ErrorButton>Max 25 NFTs</ErrorButton> :
+                {isBridgeError ? (
+                  <ErrorButton>Bridge networks must be different</ErrorButton>
+                ) : isMaxBridgeError ? (
+                  <ErrorButton>Max 25 NFTs</ErrorButton>
+                ) : (
                   <PrimaryButton>Bridge</PrimaryButton>
-                }
+                )}
               </BridgeAction>
             </ClaimBridgeSection>
           </GovernanceAction>

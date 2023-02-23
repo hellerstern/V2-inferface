@@ -11,8 +11,9 @@ import { toast } from 'react-toastify';
 import { VaultInput } from 'src/components/Input';
 import { PolygonSvg, ethLogo } from 'src/config/images';
 import { useGasBalance } from 'src/hook/useGasBalance';
+import { getSigner } from 'src/contracts';
 
-declare const window: any
+declare const window: any;
 const { ethereum } = window;
 
 export const Proxy = () => {
@@ -20,8 +21,8 @@ export const Proxy = () => {
   const { chain } = useNetwork();
   const { proxyGas } = getNetwork(chain?.id);
 
-  const [shellAddress, setShellAddress] = useState("Loading...");
-  const [gasBalanceData, setGasBalanceData] = useState<any>({formatted: "0", symbol: "ETH"});
+  const [shellAddress, setShellAddress] = useState('Loading...');
+  const [gasBalanceData, setGasBalanceData] = useState<any>({ formatted: '0', symbol: 'ETH' });
   const liveGasBalance = useGasBalance(getShellAddress());
   useEffect(() => {
     checkShellWallet(address as string);
@@ -37,29 +38,35 @@ export const Proxy = () => {
     fundValue: proxyGas
   });
   const handleEditState = (prop: string, value: any) => {
-    setEditState({ ...editState, [prop]: value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0')});
+    setEditState({
+      ...editState,
+      [prop]: value
+        .replace(/[^0-9.]/g, '')
+        .replace(/(\..*?)\..*/g, '$1')
+        .replace(/^0[^.]/, '0')
+    });
   };
-  
+
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
   function getApprovalHours() {
-    if (shellExpire.current === 0) return "0"
+    if (shellExpire.current === 0) return '0';
     const now = Math.floor(Date.now() / 1000);
-    const h = Math.floor((shellExpire.current-now) / 3600);
+    const h = Math.floor((shellExpire.current - now) / 3600);
     setHours(h > 0 ? h : 0);
   }
   function getApprovalMinutes() {
-    if (shellExpire.current === 0) return "0"
+    if (shellExpire.current === 0) return '0';
     const now = Math.floor(Date.now() / 1000);
-    const m = Math.floor((shellExpire.current-now) % 3600 / 60);
+    const m = Math.floor(((shellExpire.current - now) % 3600) / 60);
     setMinutes(m > 0 ? m : 0);
   }
   function getApprovalSeconds() {
-    if (shellExpire.current === 0) return "0"
+    if (shellExpire.current === 0) return '0';
     const now = Math.floor(Date.now() / 1000);
-    const s = Math.floor((shellExpire.current-now) % 60);
+    const s = Math.floor((shellExpire.current - now) % 60);
     setSeconds(s > 0 ? s : 0);
   }
 
@@ -73,7 +80,7 @@ export const Proxy = () => {
 
   async function getTradingContract() {
     const currentNetwork = getNetwork(chain?.id);
-    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, new ethers.providers.Web3Provider(ethereum).getSigner());
+    return new ethers.Contract(currentNetwork.addresses.trading, currentNetwork.abis.trading, getSigner());
   }
 
   async function getProxy() {
@@ -88,13 +95,11 @@ export const Proxy = () => {
   }
   async function sendGasBackToWallet() {
     const tx = sendGasBack(address);
-    await toast.promise(tx,
-      {
-        pending: "Sending gas back...",
-        success: "Successfully sent gas back!",
-        error: "Failed to send gas back!"
-      }
-    );
+    await toast.promise(tx, {
+      pending: 'Sending gas back...',
+      success: 'Successfully sent gas back!',
+      error: 'Failed to send gas back!'
+    });
   }
 
   function handleExtendShell() {
@@ -102,18 +107,19 @@ export const Proxy = () => {
   }
   async function extendShell() {
     const tradingContract = await getTradingContract();
-    if(!tradingContract) return;
+    if (!tradingContract) return;
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const now = Math.floor(Date.now() / 1000);
-    const tx = tradingContract?.approveProxy(shellAddress, now + 86400*parseFloat(editState.extendValue), {gasPrice: gasPriceEstimate, value: 0});
-    await toast.promise(tx,
-      {
-        pending: "Setting approval period...",
-        success: "Successfully set approval period!",
-        error: "Failed to set approval period!"
-      }
-    );
-    shellExpire.current = now + 86400*parseFloat(editState.extendValue);
+    const tx = tradingContract?.approveProxy(shellAddress, now + 86400 * parseFloat(editState.extendValue), {
+      gasPrice: gasPriceEstimate,
+      value: 0
+    });
+    await toast.promise(tx, {
+      pending: 'Setting approval period...',
+      success: 'Successfully set approval period!',
+      error: 'Failed to set approval period!'
+    });
+    shellExpire.current = now + 86400 * parseFloat(editState.extendValue);
   }
 
   function handleFundShell() {
@@ -121,16 +127,17 @@ export const Proxy = () => {
   }
   async function fundShell() {
     const tradingContract = await getTradingContract();
-    if(!tradingContract) return;
+    if (!tradingContract) return;
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
-    const tx = tradingContract?.approveProxy(shellAddress, shellExpire.current, {gasPrice: gasPriceEstimate, value: ethers.utils.parseEther(editState.fundValue)});
-    await toast.promise(tx,
-      {
-        pending: "Funding proxy wallet...",
-        success: "Successfully funded proxy wallet!",
-        error: "Failed to fund proxy wallet!"
-      }
-    );
+    const tx = tradingContract?.approveProxy(shellAddress, shellExpire.current, {
+      gasPrice: gasPriceEstimate,
+      value: ethers.utils.parseEther(editState.fundValue)
+    });
+    await toast.promise(tx, {
+      pending: 'Funding proxy wallet...',
+      success: 'Successfully funded proxy wallet!',
+      error: 'Failed to fund proxy wallet!'
+    });
   }
 
   function copy() {
@@ -138,22 +145,22 @@ export const Proxy = () => {
   }
 
   const handleAddressClick = () => {
-    let newLink = "";
-    if(shellAddress !== undefined && isConnected) {
-        if(chain?.id === 137) {
-          newLink = "https://polygonscan.com/address/";
-        } else if(chain?.id === 42161) {
-          newLink = "https://arbiscan.io/address/"
-        } else if(chain?.id === 421613) {
-          newLink = "https://goerli.arbiscan.io/address/"
-        } else {
-          newLink = "https://etherscan.io/"
-        }
-        window.open(`${newLink}${shellAddress}`, "_blank");
+    let newLink = '';
+    if (shellAddress !== undefined && isConnected) {
+      if (chain?.id === 137) {
+        newLink = 'https://polygonscan.com/address/';
+      } else if (chain?.id === 42161) {
+        newLink = 'https://arbiscan.io/address/';
+      } else if (chain?.id === 421613) {
+        newLink = 'https://goerli.arbiscan.io/address/';
+      } else {
+        newLink = 'https://etherscan.io/';
+      }
+      window.open(`${newLink}${shellAddress}`, '_blank');
     } else {
-      window.open("https://etherscan.io/", "_blank");
+      window.open('https://etherscan.io/', '_blank');
     }
-  }
+  };
 
   return (
     <Container>
@@ -167,17 +174,24 @@ export const Proxy = () => {
             />
             <AddressSection>
               <p>Address</p>
-              <DesktopAddress onClick={() => handleAddressClick()} style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}>
+              <DesktopAddress
+                onClick={() => handleAddressClick()}
+                style={{ color: '#3772FF', fontSize: '14px', textTransform: 'capitalize' }}
+              >
                 {isConnected ? shellAddress : 'Wallet is not connected'}
               </DesktopAddress>
-              <MobileAddress onClick={() => handleAddressClick()}>{isConnected ? shellAddress : 'Wallet is not connected'}</MobileAddress>
+              <MobileAddress onClick={() => handleAddressClick()}>
+                {isConnected ? shellAddress : 'Wallet is not connected'}
+              </MobileAddress>
             </AddressSection>
             <CopyAddressButton onClick={() => copy()}>Copy proxy wallet address</CopyAddressButton>
           </MediaContent>
         </ShellWalletMedia>
         <ShellWalletAction>
           <GasBalanceContainer>
-            <GasBalance>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasBalance>
+            <GasBalance>
+              {gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : '0'} {chain?.nativeCurrency.symbol}
+            </GasBalance>
             <p style={{ color: '#B1B5C3', fontSize: '15px', lineHeight: '20px' }}>Proxy wallet gas balance</p>
           </GasBalanceContainer>
           <ApproveContainer>
@@ -201,11 +215,25 @@ export const Proxy = () => {
           <ApproveLabel>Proxy wallet approval period</ApproveLabel>
           <ButtonGroup>
             <InputFieldContainer>
-              <VaultInput name='extendValue' type='text' value={editState.extendValue} setValue={handleEditState} placeholder={'0'} component={<InputLabel content="Days" />} />
+              <VaultInput
+                name="extendValue"
+                type="text"
+                value={editState.extendValue}
+                setValue={handleEditState}
+                placeholder={'0'}
+                component={<InputLabel content="Days" />}
+              />
               <ExtendApproveButton onClick={() => handleExtendShell()}>Set approval period</ExtendApproveButton>
             </InputFieldContainer>
-             <InputFieldContainer>
-              <VaultInput name='fundValue' type='text' value={editState.fundValue} setValue={handleEditState} placeholder={'0'} component={<TokenUnit symbol={chain?.nativeCurrency.symbol} />} />
+            <InputFieldContainer>
+              <VaultInput
+                name="fundValue"
+                type="text"
+                value={editState.fundValue}
+                setValue={handleEditState}
+                placeholder={'0'}
+                component={<TokenUnit symbol={chain?.nativeCurrency.symbol} />}
+              />
               <SendGasButton onClick={() => handleFundShell()}>Fund proxy wallet</SendGasButton>
             </InputFieldContainer>
             <WithdrawButton onClick={() => handleSendGasBack()}>Withdraw balance</WithdrawButton>
@@ -470,26 +498,22 @@ const InputFieldContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down(360)]: {
     flexDirection: 'column'
   }
-}))
+}));
 
 interface LabelProps {
-  content: string | undefined
+  content: string | undefined;
 }
 
 const InputLabel = ({ content }: LabelProps) => {
-  return(
-    <InputLabelContainer>
-      {content}
-    </InputLabelContainer>
-  )
-}
+  return <InputLabelContainer>{content}</InputLabelContainer>;
+};
 
 const InputLabelContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   fontSize: '12px',
-    [theme.breakpoints.down(1024)]: {
+  [theme.breakpoints.down(1024)]: {
     fontSize: '14px'
   },
   [theme.breakpoints.down(490)]: {
@@ -501,10 +525,10 @@ const InputLabelContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down(360)]: {
     fontSize: '14px'
   }
-}))
+}));
 
 interface TokenUnitProps {
-  symbol?: string
+  symbol?: string;
 }
 
 const TokenUnit = ({ symbol }: TokenUnitProps) => {
@@ -512,32 +536,30 @@ const TokenUnit = ({ symbol }: TokenUnitProps) => {
   if (symbol === 'ETH') {
     icon = ethLogo;
   } else if (symbol === 'MATIC') {
-    icon = PolygonSvg
+    icon = PolygonSvg;
   }
-  return(
+  return (
     <TokenUnitContainer>
-        <TokenIcon src={icon} alt='token-icon' />
-        <TokenName>
-            { symbol }
-        </TokenName>
+      <TokenIcon src={icon} alt="token-icon" />
+      <TokenName>{symbol}</TokenName>
     </TokenUnitContainer>
-  )
-}
+  );
+};
 
 const TokenIcon = styled('img')(({ theme }) => ({
   width: '20px',
   height: '20px'
-}))
+}));
 
 const TokenUnitContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: "center",
+  alignItems: 'center',
   gap: '10px'
-}))
+}));
 
 const TokenName = styled(Box)(({ theme }) => ({
   fontSize: '12px',
-    [theme.breakpoints.down(1024)]: {
+  [theme.breakpoints.down(1024)]: {
     fontSize: '14px'
   },
   [theme.breakpoints.down(490)]: {
@@ -549,4 +571,4 @@ const TokenName = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down(360)]: {
     fontSize: '14px'
   }
-}))
+}));
