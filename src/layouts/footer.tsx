@@ -7,8 +7,8 @@ import { TbPlugConnectedX } from 'react-icons/tb';
 import { Container } from '../../src/components/Container';
 import { GasStationSvg } from '../../src/config/images';
 import { lastOracleTime } from 'src/context/socket';
-import { ethers } from 'ethers';
-import { useNetwork, useAccount } from 'wagmi';
+import { useNetwork, useAccount, useProvider } from 'wagmi';
+import { getProvider } from 'src/contracts';
 
 declare const window: any;
 const { ethereum } = window;
@@ -17,6 +17,7 @@ export const Footer = () => {
   const [lastData, setLastData] = useState(0);
   const [dateNow, setDateNow] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
+  const provider = getProvider();
 
   const { chain } = useNetwork();
   const { isConnected } = useAccount();
@@ -34,7 +35,6 @@ export const Footer = () => {
 
   useEffect(() => {
     if (!isConnected) return;
-    const provider = new ethers.providers.Web3Provider(ethereum);
     if (provider === undefined) return;
     provider.getGasPrice().then((r) => {
       setGasPrice(parseFloat(parseFloat(r.toString()).toPrecision(3)) / 1e9);

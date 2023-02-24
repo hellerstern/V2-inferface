@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAccount, useProvider, useSigner } from 'wagmi';
 import { initializeWeb3 } from 'src/contracts';
-import { Signer } from 'ethers';
 
 interface Web3ContextProps {
   isConnected: boolean;
@@ -19,11 +18,26 @@ export const Web3Provider = (props: propsType) => {
   const { isConnected, address } = useAccount();
   const provider = useProvider();
   const { data: signer } = useSigner();
+  const [isProviderReady, setIsProviderReady] = useState(false);
+  const [isSignerReady, setIsSignerReady] = useState(false);
+
+  const checkProviderAndSigner = useCallback(async () => {
+    if (provider) {
+      setIsProviderReady(true);
+    }
+    if (signer) {
+      setIsSignerReady(true);
+    }
+  }, [provider, signer]);
+
+  useEffect(() => {
+    checkProviderAndSigner();
+  }, [checkProviderAndSigner]);
 
   const [isInitialized, setInitialized] = useState(false);
   console.log({ isInitialized });
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && isProviderReady && isSignerReady) {
       (async () => {
         // eslint-disable-next-line no-console
         // console.log(signer);
@@ -34,7 +48,7 @@ export const Web3Provider = (props: propsType) => {
     } else {
       setInitialized(false);
     }
-  }, [isConnected, signer]);
+  }, [isConnected, signer, isProviderReady, isSignerReady]);
 
   return <Web3Context.Provider value={{ isConnected, isInitialized }}>{props.children}</Web3Context.Provider>;
 };

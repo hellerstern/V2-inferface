@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import Wallet from "ethereumjs-wallet";
 import { ethers } from 'ethers';
+import { getProvider, getSigner, getAddress } from "src/contracts";
 import Cookies from 'universal-cookie';
-import { useAccount } from "wagmi";
 // eslint-disable-next-line
 const encryptpwd = require('encrypt-with-password');
 
@@ -20,10 +21,11 @@ export const generateShellWallet = async () => {
         return;
     }
     isGenerating = true;
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
+    const provider = getProvider();
     if(provider === undefined) return;
-    const signer = provider.getSigner();
-    const signerAddress = await signer.getAddress();
+    const signer = getSigner();
+    const signerAddress = getAddress();
 
     const wallet = Wallet.generate();
     const privateKey = wallet.getPrivateKeyString();
@@ -31,6 +33,7 @@ export const generateShellWallet = async () => {
 
     let signature;
     try {
+        if(signer === undefined) return;
         signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + address)).toString();
     } catch (err) {
         console.log(err);
@@ -65,10 +68,9 @@ export const checkShellWallet = async (address: string) => {
 }
 
 export const unlockShellWallet = async () => {
-    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : null;
-    if (provider === null) return;
-    const signer = provider.getSigner();
-    const signerAddress = await signer.getAddress();
+    // const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : null;
+    const signer = getSigner();
+    const signerAddress = getAddress();
     if (!signerAddress || signerAddress === "") {
         return;
     }
@@ -88,6 +90,7 @@ export const unlockShellWallet = async () => {
             if (isGenerating) return;
             isGenerating = true;
             try {
+                if(signer === undefined) return;
                 signature = (await signer.signMessage("Sign this message to unlock shell wallet.\nShell Wallet: " + currentAddress)).toString();
             } catch (err) {
                 console.log(err);
@@ -108,14 +111,18 @@ export const getShellAddress = () => {
 export const getShellBalance = async () => {
     if (!currentAddress) return "0";
 
-    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
+    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
+    const provider = getProvider();
+    if(provider === undefined) return;
     const balance = await provider.getBalance(currentAddress);
 
     return ethers.utils.formatEther(balance);
 }
 
 export const getShellNonce = async () => {
-    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
+    const provider = getProvider();
+    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
+    if(provider === undefined) return;
     return await provider.getTransactionCount(currentAddress, "pending");
 }
 
@@ -124,8 +131,9 @@ export const getShellWallet = async () => {
         await unlockShellWallet();
     }
 
-    const provider = ethereum ? new ethers.providers.Web3Provider(ethereum) : ethers.providers.getDefaultProvider();
+    const provider = getProvider();
     const wallet = new ethers.Wallet(shell_private, provider);
+    console.log({ provider, wallet })
 
     return wallet;
 }
@@ -133,13 +141,15 @@ export const getShellWallet = async () => {
 export const sendGasBack = async (wallet: any) => {
     const _wallet = await getShellWallet();
     const gasPriceEstimate = await _wallet.getGasPrice();
-    const balance = ethers.utils.parseEther(await getShellBalance());
+    const balance_ = await getShellBalance();
+    if(balance_ === undefined) return;
+    const balance = ethers.utils.parseEther(balance_);
     const gasLimitEstimate = await _wallet.estimateGas({
         to: wallet,
         data: '0x00000000',
         value: 0
     });
-    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 2).toString();
+    const _value = (parseInt(balance.toString()) - parseInt(gasPriceEstimate.toString()) * parseInt(gasLimitEstimate.toString()) * 3).toString();
     await _wallet.sendTransaction({
         to: wallet,
         value: _value,
