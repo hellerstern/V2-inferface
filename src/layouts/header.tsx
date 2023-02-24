@@ -29,13 +29,13 @@ export const Header = () => {
   const [notiData, setNotiData] = useState<string[]>([]);
   const [notiCount, setNotiCount] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [shellAddress, setShellAddress] = useState("");
+  const [shellAddress, setShellAddress] = useState('');
 
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const { disconnect } = useDisconnect();
 
-  const [gasBalanceData, setGasBalanceData] = useState<any>({formatted: "0", symbol: "ETH"});
+  const [gasBalanceData, setGasBalanceData] = useState<any>({ formatted: '0', symbol: 'ETH' });
   const liveGasBalance = useGasBalance(shellAddress);
   useEffect(() => {
     checkShellWallet(address as string);
@@ -111,44 +111,43 @@ export const Header = () => {
                     }}
                     style={{ color: page === 0 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 0 ? 500 : 400 }}
                   />
-                  {
-                    chain?.id === 42161 || chain?.id === 137 &&
-                    <CustomTab
-                      label="Vault"
-                      {...a11yProps(1)}
-                      onClick={() => {
-                        setMiniPage(0);
-                        navigate('/');
-                      }}
-                      style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
-                    />
-                  }
-                  {
-                    chain?.id === 42161 || chain?.id === 137 &&
-                    <CustomTab
-                      label="Governance"
-                      {...a11yProps(2)}
-                      onClick={() => {
-                        setMiniPage(0);
-                        navigate('/');
-                      }}
-                      style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
-                    />
-                  }
-                  {
-                    chain?.id === 42161 || chain?.id === 137 &&
-                    <CustomTab
-                      label="Referral"
-                      {...a11yProps(3)}
-                      onClick={() => {
-                        setMiniPage(0);
-                        navigate('/');
-                      }}
-                      style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
-                    />
-                  }
-                  {
-                    chain?.id === 421613 &&
+                  {chain?.id === 42161 ||
+                    (chain?.id === 137 && (
+                      <CustomTab
+                        label="Vault"
+                        {...a11yProps(1)}
+                        onClick={() => {
+                          setMiniPage(0);
+                          navigate('/');
+                        }}
+                        style={{ color: page === 1 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 1 ? 500 : 400 }}
+                      />
+                    ))}
+                  {chain?.id === 42161 ||
+                    (chain?.id === 137 && (
+                      <CustomTab
+                        label="Governance"
+                        {...a11yProps(2)}
+                        onClick={() => {
+                          setMiniPage(0);
+                          navigate('/');
+                        }}
+                        style={{ color: page === 2 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 2 ? 500 : 400 }}
+                      />
+                    ))}
+                  {chain?.id === 42161 ||
+                    (chain?.id === 137 && (
+                      <CustomTab
+                        label="Referral"
+                        {...a11yProps(3)}
+                        onClick={() => {
+                          setMiniPage(0);
+                          navigate('/');
+                        }}
+                        style={{ color: page === 3 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 3 ? 500 : 400 }}
+                      />
+                    ))}
+                  {chain?.id === 421613 && (
                     <CustomTab
                       label="Faucet"
                       {...a11yProps(4)}
@@ -159,21 +158,23 @@ export const Header = () => {
                       }}
                       style={{ color: page === 4 ? '#FFFFFF' : '#B1B5C3', fontWeight: page === 4 ? 500 : 400 }}
                     />
-                  }
+                  )}
                 </Tabs>
               </TabContainer>
               <MobileTab onClick={() => setModalOpen(true)}>
                 <Dehaze />
               </MobileTab>
               <Actions>
-                {
-                  isConnected ? 
-                    <ShellButton onClick={() => navigate('/proxy')}>
-                      <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-                      <GasAmount>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasAmount>
-                    </ShellButton>
-                  : <></>
-                }
+                {isConnected ? (
+                  <ShellButton onClick={() => navigate('/proxy')}>
+                    <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
+                    <GasAmount>
+                      {gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : '0'} {chain?.nativeCurrency.symbol}
+                    </GasAmount>
+                  </ShellButton>
+                ) : (
+                  <></>
+                )}
                 <ConnectButton
                   accountStatus="address"
                   showBalance={{
@@ -182,7 +183,9 @@ export const Header = () => {
                   }}
                 />
                 <IconButton
-                  onClick={() => {navigate('/profile/' + (TraderProfile().username as string))}}
+                  onClick={() => {
+                    navigate('/profile/' + (TraderProfile().username as string));
+                  }}
                   sx={{ marginLeft: 1 }}
                 >
                   <Avatar sx={{ width: 30, height: 30 }}>
@@ -254,7 +257,9 @@ export const Header = () => {
             </WalletButtons>
             <MobileShellButton onClick={() => navigate('/proxy')}>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
-              <GasAmount>{gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : "0"} {chain?.nativeCurrency.symbol}</GasAmount>
+              <GasAmount>
+                {gasBalanceData ? gasBalanceData?.formatted.slice(0, 6) : '0'} {chain?.nativeCurrency.symbol}
+              </GasAmount>
             </MobileShellButton>
           </ModalContainer>
           <LanguageList />
