@@ -432,8 +432,6 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
       _oracleData.timestamp
     ];
 
-    console.log(newLiqPrice);
-
     if (position.direction) {
       if (newLiqPrice < currentLiq) {
         const newLeverage = 0.9 / (1 - newLiqPrice / (parseFloat(position.price) / 1e18));

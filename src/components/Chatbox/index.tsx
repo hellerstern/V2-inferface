@@ -77,7 +77,6 @@ export const Chatbox = () => {
   const [messages, setMessages] = useState<any[]>([]);
 
   async function fetchMessages() {
-    console.log("LATEST MESSAGE");
     if (fetchTimeout > Date.now()) return;
     setFetchTimeout(Date.now() + 200);
     const toFetch = 'https://chatbox-server-l9yj9.ondigitalocean.app/messages?start='+((messageTracker.current - 19).toString())+'&end='+((messageTracker.current + 1).toString());

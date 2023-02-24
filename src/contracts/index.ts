@@ -8,8 +8,7 @@ let address: string | undefined;
 export const initializeWeb3 = async (provider_: any, signer_: any, address_: string | undefined) => {
     provider = provider_;
     signer = signer_;
-    address = address_
-    console.log({ provider, signer, address })
+    address = address_;
     return true;
 };
 

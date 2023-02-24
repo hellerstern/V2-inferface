@@ -16,7 +16,6 @@ export const TradingLogsBoard = () => {
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = 'bottom-start';
 
   const exportPDF = () => {
-    console.log('string: ', exportData);
     const unit = 'pt';
     const size = 'A4'; // Use A1, A2, A3 or A4
     const orientation = 'portrait'; // portrait or landscape

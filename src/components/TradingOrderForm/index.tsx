@@ -735,8 +735,6 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       _ref
     ];
 
-    console.log({ _tradeInfo });
-
     try {
       const _oracleData: any = oracleData[pairIndex];
 
