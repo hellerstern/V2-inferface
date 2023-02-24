@@ -62,7 +62,7 @@ export const DailyPerformanceChart = () => {
       y: YAxis,
       formatter: function () {
         let tooltip = '<div style="color:#00DBE3;">' + '$' + Number(this.y).toFixed(2) + '</div><br/>';
-        const temp = Highcharts.dateFormat('%b %eth %Y, %H:%M', Number(this.x));
+        const temp = Highcharts.dateFormat('%b %e %Y, %H:%M', Number(this.x));
         tooltip += `<div style = "color : #C4C4F6; padding-top : 10px;">${temp}</div>`;
         return tooltip;
       },
