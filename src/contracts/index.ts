@@ -9,6 +9,7 @@ export const initializeWeb3 = async (provider_: any, signer_: any, address_: str
     provider = provider_;
     signer = signer_;
     address = address_
+    console.log({ provider, signer, address })
     return true;
 };
 

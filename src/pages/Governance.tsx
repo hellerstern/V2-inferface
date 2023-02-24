@@ -12,6 +12,7 @@ import { ethers } from 'ethers';
 import { useAccount, useNetwork, useProvider, useSwitchNetwork } from 'wagmi';
 import { getNetwork } from 'src/constants/networks';
 import { useTokenSupply } from 'src/hook/useToken';
+import { getProvider } from 'src/contracts';
 
 declare const window: any;
 const { ethereum } = window;
@@ -82,7 +83,7 @@ export const Governance = () => {
   };
 
   useSwitchNetwork({
-    onSuccess(data) {
+    onSuccess(data: { id: any }) {
       const cNetwork = getNetwork(data.id);
       setCurrentNetwork(cNetwork);
       setEditState({
@@ -147,7 +148,7 @@ export const Governance = () => {
 
   const [isBridgeError, setBridgeError] = useState(false);
   const govnftLiveSupply = useTokenSupply(getNetwork(chain?.id).addresses.govnft);
-  const provider = useProvider();
+  const provider = getProvider();
 
   useEffect(() => {
     setGovSupply(govnftLiveSupply ? Number(govnftLiveSupply) : 0);

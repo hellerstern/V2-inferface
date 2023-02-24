@@ -23,6 +23,7 @@ import {
   unlockShellWallet,
   checkShellWallet
 } from '../../../src/shell_wallet/index';
+import { getProvider, getSigner } from 'src/contracts';
 
 const cookies = new Cookies();
 
@@ -78,8 +79,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
     getNetwork(chain?.id).addresses.trading
   );
 
-  const provider = useProvider();
-  const { data: signer } = useSigner();
+  const provider = getProvider();
+  const signer = getSigner();
 
   useEffect(() => {
     setTokenBalance(
@@ -725,6 +726,8 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       _ref
     ];
 
+    console.log({ _tradeInfo });
+
     try {
       const _oracleData: any = oracleData[pairIndex];
 
@@ -762,6 +765,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
           success: undefined,
           error: 'Opening position failed!'
         });
+        console.log({ response });
         // eslint-disable-next-line
         setTimeout(async () => {
           const receipt = await tradingContract.provider.getTransactionReceipt(response.hash);

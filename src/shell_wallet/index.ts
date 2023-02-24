@@ -132,8 +132,8 @@ export const getShellWallet = async () => {
     }
 
     const provider = getProvider();
-    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
     const wallet = new ethers.Wallet(shell_private, provider);
+    console.log({ provider, wallet })
 
     return wallet;
 }

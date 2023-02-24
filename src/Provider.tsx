@@ -4,9 +4,9 @@
  * Martial Color tool: https://material.io/resources/color
  */
 
+import React from 'react';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { Theme, ThemeOptions } from '@mui/material/styles';
-import React from 'react';
 import StoreProvider from './context/StoreContext';
 import { Web3Provider } from './context/Web3Context';
 /**
