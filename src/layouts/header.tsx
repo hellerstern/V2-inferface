@@ -20,6 +20,8 @@ import { TraderProfile } from 'src/context/profile';
 import { getShellAddress, checkShellWallet } from 'src/shell_wallet';
 import NotificationMenu from 'src/components/Menu/NotificationMenu';
 import { useGasBalance } from 'src/hook/useGasBalance';
+import '../Rainbowkit.css';
+import { WalletConnectButton } from 'src/components/WalletConnectButton';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -243,8 +245,8 @@ export const Header = () => {
             <IconButton sx={{ width: 40, height: 40 }} onClick={() => setModalOpen(false)}>
               <Close />
             </IconButton>
-            <WalletButtons>
-              {isConnected ? (
+            {/* <WalletButtons> */}
+            {/* {isConnected ? (
                 <>
                   <ContAddy>
                     {address?.slice(0, 4)}...{address?.slice(-4)}
@@ -253,8 +255,9 @@ export const Header = () => {
                 </>
               ) : (
                 <CustomConnectButton />
-              )}
-            </WalletButtons>
+              )} */}
+            <WalletConnectButton />
+            {/* </WalletButtons> */}
             <MobileShellButton onClick={() => navigate('/proxy')}>
               <img src={GasStationSvg} alt="gas-station" style={{ width: '20px', height: '20px' }} />
               <GasAmount>

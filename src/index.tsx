@@ -17,7 +17,7 @@ import {
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-
+// import '@rainbow-me/rainbowkit/styles.css';
 import './Rainbowkit.css';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -92,8 +92,8 @@ const polygon = {
 };
 
 const { chains, provider } = configureChains(
-  [ /* polygon, arbitrum, */ arbitrumTestnet],
-  [alchemyProvider({ apiKey: 'wvN4L0nfcWjOeDHPaxQ4WotiwHRSnJE1', priority: 0 }), publicProvider({priority: 1})]
+  [/* polygon, arbitrum, */ arbitrumTestnet],
+  [alchemyProvider({ apiKey: 'wvN4L0nfcWjOeDHPaxQ4WotiwHRSnJE1', priority: 0 }), publicProvider({ priority: 1 })]
 );
 
 const connectors = connectorsForWallets([
