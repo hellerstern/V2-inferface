@@ -678,6 +678,7 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
   async function approveProxy() {
     const tradingContract = getTradingContractForApprove();
     if (tradingContract === undefined) return;
+    const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const traderGas = await tradingContract?.provider.getBalance(address as string);
     const proxyGas = getNetwork(chain?.id).proxyGas;
     if (Number(traderGas) / 1e18 < Number(proxyGas)) {
@@ -685,19 +686,27 @@ export const TradingOrderForm = ({ pairIndex }: IOrderForm) => {
       return;
     }
     await unlockShellWallet();
-    const proxyAddress = getShellAddress();
-    if (proxyAddress !== '') {
-      toast.dismiss();
-      toast.loading('Proxy approval pending...');
-      proxyRef.current = getShellAddress();
-      timeRef.current = Math.floor(Date.now() / 1000) + 31536000;
-      setTimeout(() => {
-        callApproveProxy?.();
-      }, 2000);
-    } else {
-      toast.dismiss();
-      toast.error('Proxy approval failed!');
-    }
+    const now = Math.floor(Date.now() / 1000);
+    if (tradingContract === undefined) return;
+    const tx = tradingContract?.approveProxy(await getShellAddress(), now + 31536000, {
+      gasPrice: gasPriceEstimate,
+      value: ethers.utils.parseEther(proxyGas)
+    });
+    const response: any = await toast.promise(tx, {
+      pending: 'Proxy approval pending...',
+      success: undefined,
+      error: 'Proxy approval failed!'
+    });
+    // eslint-disable-next-line
+    setTimeout(async () => {
+      if (tradingContract === undefined) return;
+      const receipt = await tradingContract?.provider.getTransactionReceipt(response.hash);
+      if (receipt.status === 0) {
+        toast.error('Proxy approval failed!');
+      } else if (receipt.status === 1) {
+        toast.success('Successfully approved proxy!');
+      }
+    }, 2000);
   }
 
   async function initiateMarketOrder() {
