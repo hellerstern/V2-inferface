@@ -38,7 +38,6 @@ export const Home = () => {
         response.json().then((data) => {
           navigate('/');
           const ref = data.toString();
-          console.log({ ref });
           cookies.set('ref', ref);
         });
       });

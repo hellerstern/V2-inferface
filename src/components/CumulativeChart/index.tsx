@@ -17,7 +17,6 @@ export const CumulativeChart = () => {
 
   const fetchData = async () => {
     const chainId = chain?.id;
-    console.log('chainId', chainId);
     if (address && chainId) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const toFetch = `https://trader-stats-tr8mu.ondigitalocean.app/performance/${chainId}/${address}`;

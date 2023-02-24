@@ -4,7 +4,7 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import './index.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNetwork, useAccount } from 'wagmi';
 import socketio from "socket.io-client";
 
@@ -21,7 +21,7 @@ export const DailyPerformanceChart = () => {
       const toFetch = `https://trader-stats-tr8mu.ondigitalocean.app/performance/${chainId}/${address}`;
       const response = await fetch(toFetch);
       const resData = await response.json();
-      if (resData !== data) {
+      if (resData.length !== data.length) {
         setData(resData);
       }
     }
@@ -40,7 +40,10 @@ export const DailyPerformanceChart = () => {
 
     socket.on('AddressEvent', (data) => {
       if (chain?.id === data.chainId && data.trader === address) {
-        fetchData();
+        isSetting.current = true;
+        setTimeout(() => {
+          fetchData();
+        }, 0);
       }
     });
 
@@ -48,6 +51,15 @@ export const DailyPerformanceChart = () => {
       socket.disconnect();
     }
   }, [chain, address]);
+
+  const isSetting = useRef(false)
+  useEffect(() => {
+    if (isSetting.current) {
+      const _data = [...data];
+      isSetting.current = false;
+      setData(_data);
+    }
+  }, [data]);
 
   const configPrice = {
     yAxis: {

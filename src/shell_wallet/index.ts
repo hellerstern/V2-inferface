@@ -133,7 +133,6 @@ export const getShellWallet = async () => {
 
     const provider = getProvider();
     const wallet = new ethers.Wallet(shell_private, provider);
-    console.log({ provider, wallet })
 
     return wallet;
 }

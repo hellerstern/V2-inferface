@@ -11,7 +11,6 @@ export async function getProfileData() {
     const username = localStorage.getItem("DefaultTraderProfile") === null ? "NoProfile" : JSON.parse(localStorage.getItem("DefaultTraderProfile")).username;
     const response = await fetch(`https://profile-server-zjwgc.ondigitalocean.app/profile/`+username.toString());
     const data = await response.json();
-    console.log(data);
     if (data.error) {
         return "NoProfile";
     } else {

@@ -35,12 +35,9 @@ export const Web3Provider = (props: propsType) => {
   }, [checkProviderAndSigner]);
 
   const [isInitialized, setInitialized] = useState(false);
-  console.log({ isInitialized });
   useEffect(() => {
     if (isConnected && isProviderReady && isSignerReady) {
       (async () => {
-        // eslint-disable-next-line no-console
-        // console.log(signer);
         await initializeWeb3(provider, signer, address).then((res) => {
           setInitialized(res);
         });
