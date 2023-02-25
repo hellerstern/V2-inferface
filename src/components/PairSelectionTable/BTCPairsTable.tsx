@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { ethLogo, linkLogo, xmrLogo } from '../../config/images';
 import { getNetwork } from '../../../src/constants/networks';
-import { eu1oracleSocket, oracleData, priceChangeData, priceChangeSocket } from '../../../src/context/socket';
+import { oracleSocket1, oracleData, priceChangeData, priceChangeSocket } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, pairIndex: number) {
   return {
@@ -79,7 +79,7 @@ interface PriceCellProps {
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   const { assets } = getNetwork(0);
   useEffect(() => {
-    eu1oracleSocket.on('data', (data: any) => {
+    oracleSocket1.on('data', (data: any) => {
       if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }

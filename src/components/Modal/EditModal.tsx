@@ -16,7 +16,7 @@ import { ethers } from 'ethers';
 import { getNetwork } from 'src/constants/networks';
 import { getShellWallet, getShellNonce } from 'src/shell_wallet';
 import { toast } from 'react-toastify';
-import { oracleData, eu1oracleSocket } from 'src/context/socket';
+import { oracleData, oracleSocket1 } from 'src/context/socket';
 import { useReferral, useCloseFees, useOpenFees, usePairData } from 'src/hook/useTradeInfo';
 
 const marginArr = ['Add', 'Remove'];
@@ -114,7 +114,7 @@ export const EditModal = (props: EditModalProps) => {
   }, [position]);
 
   useEffect(() => {
-    [eu1oracleSocket].forEach((socket) => {
+    [oracleSocket1].forEach((socket) => {
       socket.on('data', (data: any) => {
         if (positionRef.current) {
           setOpenPrice(

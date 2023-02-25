@@ -14,7 +14,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { getShellWallet, getShellNonce } from '../../../src/shell_wallet/index';
-import { oracleData, eu1oracleSocket } from 'src/context/socket';
+import { oracleData, oracleSocket1 } from 'src/context/socket';
 import { toast } from 'react-toastify';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -45,7 +45,7 @@ interface IPositionTable {
 export const PositionTable = ({ tableType, setPairIndex, positionData, isAfterFees }: IPositionTable) => {
   const [data, setData] = useState<any>(oracleData);
   useEffect(() => {
-    eu1oracleSocket.on('data', (data: any) => {
+    oracleSocket1.on('data', (data: any) => {
       setData(data);
     });
   }, []);

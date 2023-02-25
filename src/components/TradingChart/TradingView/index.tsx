@@ -12,7 +12,7 @@ import {
 import Datafeed from './datafeed.js';
 import { useEffect } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
-import { eu1oracleSocket } from '../../../../src/context/socket';
+import { oracleSocket1 } from '../../../../src/context/socket';
 import { toast } from 'react-toastify';
 import { getShellWallet, getShellNonce } from '../../../../src/shell_wallet/index';
 import { oracleData } from 'src/context/socket';
@@ -107,7 +107,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 
   useEffect(() => {
     tvWidget.current.onChartReady(() => {
-      [eu1oracleSocket].forEach((socket) => {
+      [oracleSocket1].forEach((socket) => {
         socket.on('data', (data: any) => {
           if (!data[currentAsset.current]) return;
           const spreadPrices = {

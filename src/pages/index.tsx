@@ -8,7 +8,7 @@ import { Referral } from './Referral';
 import { Faucet } from './Faucet';
 import { Trade } from './Trade';
 import { Vault } from './Vault';
-import { eu1oracleSocket } from 'src/context/socket';
+import { oracleSocket1 } from 'src/context/socket';
 import { getNetwork } from 'src/constants/networks';
 import Cookies from 'universal-cookie';
 
@@ -19,7 +19,7 @@ export const Home = () => {
   const cookies = new Cookies();
   const { assets } = getNetwork(0);
   useEffect(() => {
-    eu1oracleSocket.on('data', (data: any) => {
+    oracleSocket1.on('data', (data: any) => {
       const pairIndex = parseInt(localStorage.getItem("LastPairSelected") ? localStorage.getItem("LastPairSelected") as string : "0");
       const pair = assets[pairIndex].name;
       if (data[pairIndex]) {

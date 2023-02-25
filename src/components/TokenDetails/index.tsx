@@ -9,7 +9,7 @@ import { Container } from '../../../src/components/Container';
 import usePreventBodyScroll from '../../../src/hook/usePreventBodyScroll';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { LeftArrow, RightArrow } from './arrow';
-import { eu1oracleSocket, lastOracleTime } from '../../../src/context/socket';
+import { oracleSocket1, lastOracleTime } from '../../../src/context/socket';
 import { PairSelectionModal } from '../Modal/PairSelectionModal';
 import { useCloseFees, useOpenFees, useOpenInterest, usePairData, useReferral, useVaultFunding } from 'src/hook/useTradeInfo';
 import { ethers } from 'ethers';
@@ -66,7 +66,7 @@ export const TokenDetails = ({
   ];
 
   useEffect(() => {
-    eu1oracleSocket.on('data', (data: any) => {
+    oracleSocket1.on('data', (data: any) => {
       setOracleData(data);
     });
   }, []);

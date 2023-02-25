@@ -32,7 +32,7 @@ export const DailyPerformanceChart = () => {
       fetchData();
     }
 
-    const socket = socketio('https://us1events.tigristrade.info', { transports: ['websocket'] });
+    const socket = socketio(new Date().getTimezoneOffset() < -120 ? 'https://us1events.tigristrade.info' : 'https://eu1events.tigristrade.info', { transports: ['websocket'] });
 
     socket.on('error', (error: any) => {
       console.log('Events Socket Error:', error);
