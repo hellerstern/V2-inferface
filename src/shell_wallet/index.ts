@@ -6,9 +6,6 @@ import Cookies from 'universal-cookie';
 // eslint-disable-next-line
 const encryptpwd = require('encrypt-with-password');
 
-declare const window: any
-const { ethereum } = window;
-
 let currentAddress = "";
 let shell_private = "";
 
@@ -21,7 +18,6 @@ export const generateShellWallet = async () => {
         return;
     }
     isGenerating = true;
-    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
     const provider = getProvider();
     if(provider === undefined) return;
     const signer = getSigner();
@@ -68,7 +64,6 @@ export const checkShellWallet = async (address: string) => {
 }
 
 export const unlockShellWallet = async () => {
-    // const provider = ethereum ? new ethers.providers.JsonRpcProvider(ethereum) : null;
     const signer = getSigner();
     const signerAddress = getAddress();
     if (!signerAddress || signerAddress === "") {
@@ -111,7 +106,6 @@ export const getShellAddress = () => {
 export const getShellBalance = async () => {
     if (!currentAddress) return "0";
 
-    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
     const provider = getProvider();
     if(provider === undefined) return;
     const balance = await provider.getBalance(currentAddress);
@@ -121,7 +115,6 @@ export const getShellBalance = async () => {
 
 export const getShellNonce = async () => {
     const provider = getProvider();
-    // const provider = new ethers.providers.JsonRpcProvider(ethereum);
     if(provider === undefined) return;
     return await provider.getTransactionCount(currentAddress, "pending");
 }

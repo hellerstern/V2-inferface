@@ -5,10 +5,7 @@ import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { oracleData } from 'src/context/socket';
 import { toast } from 'react-toastify';
-import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
-
-declare const window: any;
-const { ethereum } = window;
+import { Multicall, ContractCallContext } from 'ethereum-multicall';
 
 export const PositionData = () => {
   const { address } = useAccount();
