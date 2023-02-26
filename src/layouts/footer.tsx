@@ -8,16 +8,12 @@ import { Container } from '../../src/components/Container';
 import { GasStationSvg } from '../../src/config/images';
 import { lastOracleTime } from 'src/context/socket';
 import { useNetwork, useAccount, useProvider } from 'wagmi';
-import { getProvider } from 'src/contracts';
-
-declare const window: any;
-const { ethereum } = window;
 
 export const Footer = () => {
   const [lastData, setLastData] = useState(0);
   const [dateNow, setDateNow] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
-  const provider = getProvider();
+  const provider = useProvider();
 
   const { chain } = useNetwork();
   const { isConnected } = useAccount();

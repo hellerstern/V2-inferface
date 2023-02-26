@@ -5,10 +5,7 @@ import { getNetwork } from '../../../src/constants/networks';
 import { ethers } from 'ethers';
 import { oracleData } from 'src/context/socket';
 import { toast } from 'react-toastify';
-import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
-
-declare const window: any;
-const { ethereum } = window;
+import { Multicall, ContractCallContext } from 'ethereum-multicall';
 
 export const PositionData = () => {
   const { address } = useAccount();
@@ -137,7 +134,7 @@ export const PositionData = () => {
 
   useEffect(() => {
     if (address !== undefined) {
-      const socket = socketio('https://us1events.tigristrade.info', { transports: ['websocket'] });
+      const socket = socketio(new Date().getTimezoneOffset() < -120 ? 'https://us1events.tigristrade.info' : 'https://eu1events.tigristrade.info', { transports: ['websocket'] });
 
       socket.on('error', (error: any) => {
         console.log('Events Socket Error:', error);

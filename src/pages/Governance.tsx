@@ -14,9 +14,6 @@ import { getNetwork } from 'src/constants/networks';
 import { useTokenSupply } from 'src/hook/useToken';
 import { getProvider } from 'src/contracts';
 
-declare const window: any;
-const { ethereum } = window;
-
 const bridgeDict = [
   {
     name: 'Polygon',
@@ -170,7 +167,7 @@ export const Governance = () => {
       setOwnedNfts([]);
       fetch('https://tigristrade.info/stats/user_nfts/' + address).then((response) => {
         response.json().then((data) => {
-          const ownedNFTs = [];
+          const ownedNFTs: any[] = [];
           for (let i = 0; i < data.nfts.length; i++) ownedNFTs.push(data.nfts[i].id);
           setOwnedNfts(ownedNFTs);
         });

@@ -12,7 +12,7 @@ import {
 import Datafeed from './datafeed.js';
 import { useEffect } from 'react';
 import { getNetwork } from '../../../constants/networks/index';
-import { eu1oracleSocket } from '../../../../src/context/socket';
+import { oracleSocket1 } from '../../../../src/context/socket';
 import { toast } from 'react-toastify';
 import { getShellWallet, getShellNonce } from '../../../../src/shell_wallet/index';
 import { oracleData } from 'src/context/socket';
@@ -107,7 +107,7 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
 
   useEffect(() => {
     tvWidget.current.onChartReady(() => {
-      [eu1oracleSocket].forEach((socket) => {
+      [oracleSocket1].forEach((socket) => {
         socket.on('data', (data: any) => {
           if (!data[currentAsset.current]) return;
           const spreadPrices = {
@@ -418,11 +418,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
   }
   async function modifyMargin(position: any, line: IOrderLineAdapter) {
     const currentNetwork = getNetwork(chain === undefined ? 0 : chain.id);
-    const _oracleData: any = oracleData[asset];
     const tradingContract = await getTradingContract();
     const gasPriceEstimate = Math.round((await tradingContract.provider.getGasPrice()).toNumber() * 1.5);
     const currentLiq = parseFloat(position.liqPrice) / 1e18;
     const newLiqPrice = line.getPrice();
+    const _oracleData: any = oracleData[asset];
     const _priceData = [
       _oracleData.provider,
       _oracleData.is_closed,
@@ -517,9 +517,11 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
         const toAdd = positionSize / newLeverage - parseFloat(position.margin) / 1e18;
         const tx = tradingContract.addMargin(
           position.id,
-          currentNetwork.addresses.tigusd,
           currentNetwork.addresses.tigusdvault,
+          currentNetwork.addresses.tigusd,
           ethers.utils.parseEther(toAdd.toFixed(18)),
+          _priceData,
+          _oracleData.signature,
           [0, 0, 0, ethers.constants.HashZero, ethers.constants.HashZero, false],
           address,
           { gasPrice: gasPriceEstimate, gasLimit: currentNetwork.gasLimit, value: 0, nonce: await getShellNonce() }
@@ -538,14 +540,6 @@ export const TVChartContainer = ({ asset, positionData }: ChartContainerProps) =
           }
         }, 1000);
       } else if (newLiqPrice < currentLiq) {
-        const _priceData = [
-          _oracleData.provider,
-          _oracleData.is_closed,
-          position.asset,
-          _oracleData.price,
-          _oracleData.spread,
-          _oracleData.timestamp
-        ];
         const newLeverage = 0.9 / (newLiqPrice / (parseFloat(position.price) / 1e18) - 1);
         if (newLeverage > 100) {
           toast.warning('Leverage too high!');

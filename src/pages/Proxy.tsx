@@ -13,9 +13,6 @@ import { PolygonSvg, ethLogo } from 'src/config/images';
 import { useGasBalance } from 'src/hook/useGasBalance';
 import { getSigner } from 'src/contracts';
 
-declare const window: any;
-const { ethereum } = window;
-
 export const Proxy = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();

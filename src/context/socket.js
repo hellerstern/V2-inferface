@@ -1,20 +1,20 @@
 import { createContext } from "react";
 import socketio from "socket.io-client";
 
-export const eu1oracleSocket = socketio.connect('https://eu1.tigrisoracle.net', {transports: ['websocket'] });
-eu1oracleSocket.on('connect', () => {
-    console.log('[eu1-oracleSocket] Connected');
+export const oracleSocket1 = socketio.connect(new Date().getTimezoneOffset() < -120 ? 'https://us1.tigrisoracle.net' : 'https://eu1.tigrisoracle.net', {transports: ['websocket'] });
+oracleSocket1.on('connect', () => {
+    console.log('[oracleSocket1] Connected');
 });
   
-eu1oracleSocket.on('disconnect', (reason) => {
-    console.log('[eu1-oracleSocket] Disconnected:', reason);
+oracleSocket1.on('disconnect', (reason) => {
+    console.log('[oracleSocket1] Disconnected:', reason);
 });
 
-eu1oracleSocket.on('error', (error) => {
-    console.log('[eu1-oracleSocket] Error:', error);
+oracleSocket1.on('error', (error) => {
+    console.log('[oracleSocket1] Error:', error);
 });
 
-eu1oracleSocket.on('data', (data) => {
+oracleSocket1.on('data', (data) => {
     oracleData = data;
     lastOracleTime = Date.now();
 });

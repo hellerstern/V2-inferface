@@ -21,7 +21,7 @@ import {
   uniLogo,
   xmrLogo
 } from '../../config/images';
-import { eu1oracleSocket, oracleData, priceChangeData, priceChangeSocket } from '../../../src/context/socket';
+import { oracleSocket1, oracleData, priceChangeData, priceChangeSocket } from '../../../src/context/socket';
 
 function createData(pair: React.ReactElement, pairIndex: number) {
   return {
@@ -95,7 +95,7 @@ interface PriceCellProps {
 
 export const PriceCell = ({ setPairIndex, pairIndex }: PriceCellProps) => {
   useEffect(() => {
-    eu1oracleSocket.on('data', (data: any) => {
+    oracleSocket1.on('data', (data: any) => {
       if (data[pairIndex] && data[pairIndex].price !== oraclePrice) {
         setOraclePrice(data[pairIndex].price);
       }
